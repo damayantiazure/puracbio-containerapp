@@ -1,0 +1,30 @@
+parameters:
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+# First-time parameters
+- name: AppConfigurationStoreName
+  type: string
+- name: FeatureFlagName
+  type: string
+# Updatable Parameters
+- name: Description
+  type: string
+  default: ' '
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Add FeatureFlag to AppConfig'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Setting FeatureFlag '${{ parameters.FeatureFlagName }}' in Appconfig ${{ parameters.AppConfigurationStoreName }}";
+
+      az appconfig feature set 
+      --name ${{ parameters.AppConfigurationStoreName }} 
+      --feature ${{ parameters.FeatureFlagName }}
+      --description "${{ parameters.Description }}"
+      --yes
+      ;

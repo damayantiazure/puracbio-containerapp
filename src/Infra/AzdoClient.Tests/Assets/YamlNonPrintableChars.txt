@@ -1,0 +1,37 @@
+﻿name: $(version).$(Rev:r)
+trigger:
+  enabled: false
+variables:
+- name: version
+  value: 1.0
+- name: appName
+  value: 'example-application'
+resources:
+  repositories:
+  - repository: pipelines
+    type: git
+    name: exampleProject/pipelines
+
+stages:
+- stage: build
+  jobs:
+  - job: Build
+    displayName: Build application
+    timeoutInMinutes: 600
+    pool:
+      name: Rabo-Linux-Production
+    steps:
+    - task: AzureCLI@2
+      name: terraformApply
+      displayName: Terraform Apply
+      inputs:
+        azureSubscription: reg-dev-eu-innersource (SPN)
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        failOnStandardError: false
+        inlineScript: "$lines = Get-Content -Path error.log\nforeach ($line in $lines) {\n  $line = $line.Replace(\"\e[0m\e[0m\e[1m\", \"\")\n  If ( \"true\" -eq $true ) {\n    Write-Host $line.Replace(\"Error:\", \"##vso[task.logissue type=error]\")\n  } else {\n    Write-Host $line.Replace(\"Error:\", \"##vso[task.logissue type=warning]\")\n  }\n}"
+        workingDirectory: $(System.DefaultWorkingDirectory)/azure
+        addSpnToEnvironment: true
+        buildToolOptions:  "\u0022C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin\\msbuild.exe\u0022 \u0022B2CFunctionApp.sln\u0022 /t:rebuild "
+        csmFile: '$(Build.SourcesDirectory)\examples\Templates\vnet.json'
+        location: \"D:\\Emarkets\\Data\\eorders\"

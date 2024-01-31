@@ -1,0 +1,12 @@
+variables:
+  # Extension
+  environment: azdo-production-check
+  extensionId: PipelineBreaker
+  extension: Pipeline Breaker
+  shareWith: raboweb
+
+  # Azure Function
+  functionAppName: pipelinebreakerv2prd
+  blockUnregisteredPipelinesEnabled: true
+  blockIncompliantPipelinesEnabled: true
+  throwWarningsIncompliantPipelinesEnabled: true

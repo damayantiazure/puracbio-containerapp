@@ -1,0 +1,29 @@
+parameters:
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  - name: FunctionAppName
+  - name: KeyVaultName
+
+steps:
+- task: AzureCLI@2
+  displayName: 'KeyVault - set access policies for Function App'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Set access policies Key Vault for Function App"
+      
+      $functionAppManagedIdentity = az functionapp identity show
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --query principalId 
+      -o tsv;
+      
+      az keyvault set-policy
+      --name ${{ parameters.KeyVaultName }}
+      --object-id $functionAppManagedIdentity
+      --secret-permissions get
+      --certificate-permissions get
+      --key-permissions get
+      ;

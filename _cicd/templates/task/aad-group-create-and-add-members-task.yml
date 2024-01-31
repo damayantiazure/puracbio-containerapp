@@ -1,0 +1,37 @@
+parameters:
+# Task-level parameters
+- name: OutputStepName
+  default: AadGroupTaskOutput
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+# Specific parameters
+- name: artifactName
+  type: string
+- name: groupSubname
+  type: string
+- name: memberObjectIds
+  type: string
+- name: urlResource
+  type: string
+
+# Create an AAD group and Set members, existing members which are not in the variable memberObjectIds will be removed
+steps:
+- task: AzureCLI@2
+  displayName: Create AAD Group and Set Membership
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptPath: $(System.ArtifactsDirectory)/${{parameters.artifactName}}/CallDSM.ps1
+    arguments: "-urlPath '/api/multicookers/CreateAADGroupAndSetMembership' -jsonBody '''{ \"aad_group_sub_name\": \"${{parameters.groupSubname}}\", \"member_object_ids\": \"${{parameters.memberObjectIds}}\" }''' -urlResource '${{parameters.urlResource}}' -azdoVariables 'groupid,groupdisplayname,newaadgroupmemberids' -variableStartname 'grpcreate'"
+    addSpnToEnvironment: true
+- task: AzureCLI@2
+  displayName: Set Output Vars for AAD Group Task
+  name: ${{ parameters.OutputStepName }} # Required when providing output variables
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "##vso[task.setvariable variable=GroupId;isOutput=true]$(grpcreate.groupid)";
+      Write-Host "##vso[task.setvariable variable=GroupDisplayName;isOutput=true]$(grpcreate.groupdisplayname)";

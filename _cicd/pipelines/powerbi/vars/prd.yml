@@ -1,0 +1,6 @@
+variables:
+  AzureServiceConnectionName: reg-prd-eu-tas (SPN)
+  SubscriptionId: 0cea37a3-6bdc-43cb-be5f-e6d390b05a3c
+  BackendResourceGroupName: reg-prd-eu-tas-tfstate-rg
+  BackendStorageAccountName: tfbackendstateprdsa
+  BackendContainerName: tfstateprd

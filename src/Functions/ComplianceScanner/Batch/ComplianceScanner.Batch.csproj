@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <AssemblyName>Rabobank.Compliancy.Functions.ComplianceScanner.Batch</AssemblyName>
+    <RootNamespace>Rabobank.Compliancy.Functions.ComplianceScanner.Batch</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\Shared Settings\Logs\logsettings.development.json" Link="logsettings.development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\Shared Settings\Logs\logsettings.production.json" Link="logsettings.production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Rabobank.Compliancy.Functions.ComplianceScanner.Batch.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.9.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.14.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.3" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.11.3" />
+    <PackageReference Include="Polly" Version="7.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infra\AzdoClient\AzdoClient.csproj" />
+    <ProjectReference Include="..\..\..\Infra\Sm9Client\Sm9Client.csproj" />
+    <ProjectReference Include="..\..\..\Infra\StorageClient\StorageClient.csproj" />
+    <ProjectReference Include="..\..\..\Rabobank.Compliancy.Infrastructure\Rabobank.Compliancy.Infrastructure.csproj" />
+    <ProjectReference Include="..\Shared\ComplianceScanner.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+    <None Update="logsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetBuildPipelineActivity&quot; &quot;$(ProjectDir)$(OutDir)GetBuildPipelineActivity&quot; &gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetClassicReleasePipelineActivity&quot; &quot;$(ProjectDir)$(OutDir)GetClassicReleasePipelineActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetClassicReleasePipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)GetClassicReleasePipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetPipelineRegistrationsActivity&quot; &quot;$(ProjectDir)$(OutDir)GetPipelineRegistrationsActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetProjectActivity&quot; &quot;$(ProjectDir)$(OutDir)GetProjectActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)GetYamlReleasePipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)GetYamlReleasePipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\SharedFunctions\$(OutDir)ResolvePrecedingPipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)ResolvePrecedingPipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)CIScanOrchestrator&quot; &quot;$(ProjectDir)$(OutDir)CiScanOrchestrator&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ProjectScanOrchestrator&quot; &quot;$(ProjectDir)$(OutDir)ProjectScanOrchestrator&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ScanCiBuildPipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)ScanCiBuildPipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ScanCiClassicReleasePipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)ScanCiClassicReleasePipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ScanCiProjectActivity&quot; &quot;$(ProjectDir)$(OutDir)ScanCiProjectActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ScanCiRepositoriesActivity&quot; &quot;$(ProjectDir)$(OutDir)ScanCiRepositoriesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)ScanCiYamlReleasePipelinesActivity&quot; &quot;$(ProjectDir)$(OutDir)ScanCiYamlReleasePipelinesActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)UploadCompliancyReportActivity&quot; &quot;$(ProjectDir)$(OutDir)UploadCompliancyReportActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)UploadCompliancyToLogAnalyticsActivity&quot; &quot;$(ProjectDir)$(OutDir)UploadCompliancyToLogAnalyticsActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)VerifyCiCompliancyActivity&quot; &quot;$(ProjectDir)$(OutDir)VerifyCiCompliancyActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)VerifyPrincipleCompliancyActivity&quot; &quot;$(ProjectDir)$(OutDir)VerifyPrincipleCompliancyActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src/Functions/ComplianceScanner/Shared/$(OutDir)UploadExceptionReportToLogAnalyticsActivity&quot; &quot;$(ProjectDir)$(OutDir)UploadExceptionReportToLogAnalyticsActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat&#xD;&#xA;echo XCOPY /S /I /E &quot;$(SolutionDir)src\Functions\ComplianceScanner\Shared\$(OutDir)GetRegisteredDeviationsActivity&quot; &quot;$(ProjectDir)$(OutDir)GetRegisteredDeviationsActivity&quot; &gt;&gt; $(ProjectDir)$(OutDir)execute-after-build.bat" />
+  </Target>
+
+</Project>

@@ -1,0 +1,99 @@
+# Summary:
+# This task creates or updates an Availability test for an Application Insights instance
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: Location
+  default: westeurope
+# First time only parameters
+- name: WebTestName
+  type: string
+- name: ApplicationInsightsResourceId
+  type: string
+# Updatable parameters
+- name: Enabled
+  type: boolean
+  default: true
+- name: Description
+  type: string
+- name: ListOfLocationIds
+  type: object
+  default: # represents the IDs of the azure source locations to ping from. The default includes all common regions
+    - emea-nl-ams-azr    
+    - us-ca-sjc-azr    
+    - emea-ru-msa-edge    
+    - emea-se-sto-edge    
+    - apac-sg-sin-azr    
+    - us-tx-sn1-azr    
+    - us-il-ch1-azr    
+    - emea-gb-db3-azr    
+    - apac-jp-kaw-edge    
+    - emea-ch-zrh-edge    
+    - emea-fr-pra-edge    
+    - us-va-ash-azr    
+    - apac-hk-hkn-azr    
+    - us-fl-mia-edge    
+    - latam-br-gru-edge    
+    - emea-au-syd-edge
+- name: FrequencyInSeconds
+  default: 300
+  values:
+    - 300
+    - 600
+    - 900
+- name: HttpVerb
+  default: GET
+  values:
+    - GET
+    - HEAD
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+- name: RequestUrl
+- name: ExpectedStatusCode
+  type: number
+  default: 200
+- name: TimeoutInSeconds
+  default: 30
+  values:
+    - 30
+    - 60
+    - 90
+    - 120
+- name: RetryEnabled
+  type: boolean
+  default: false
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update Application Insights Web Test'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      az monitor app-insights web-test create 
+      --resource-group "${{ parameters.ResourceGroupName }}" 
+      --web-test-name "${{ parameters.WebTestName }}" 
+      --defined-web-test-name "${{ parameters.WebTestName }}" 
+      --synthetic-monitor-id "${{ parameters.WebTestName }}" 
+      --description "${{ parameters.Description }}" 
+      --location "${{ parameters.Location }}" 
+      --locations Id="${{ join('" --locations Id="',parameters.ListOfLocationIds) }}" 
+      --web-test-kind "standard" 
+      --enabled ${{ parameters.Enabled }} 
+      --frequency ${{ parameters.FrequencyInSeconds }} 
+      --http-verb "${{ parameters.HttpVerb }}" 
+      --request-url "${{ parameters.RequestUrl }}" 
+      --expected-status-code "${{ parameters.ExpectedStatusCode }}" 
+      --retry-enabled ${{ parameters.RetryEnabled }}
+      --timeout ${{ parameters.TimeoutInSeconds }}
+      --ssl-lifetime-check 100
+      --ssl-check true 
+      --tags hidden-link:${{ parameters.ApplicationInsightsResourceId }}=Resource

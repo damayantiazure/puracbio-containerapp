@@ -1,0 +1,36 @@
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+name: 1.0.$(Rev:r)
+
+variables:
+- template: vars/global.yml
+- template: ../sharedvars/global.yml
+- group: AZDO-COMPLIANCY # Contains Cross-pipeline used secrets
+
+stages:
+
+#######################################################
+#  Build
+#######################################################
+
+- template: ../../templates/stage/build-function-stage.yml
+  parameters:
+    pipelineVariables: ../../pipelines/azdoclient/vars/global.yml
+    env:
+      token: $(azdoPatDev)
+    
+#######################################################
+#  Publish Nuget
+#######################################################    
+
+- template: ../../templates/stage/publish-nuget-stage.yml
+  parameters:
+    pipelineVariables: ../../pipelines/azdoclient/vars/global.yml

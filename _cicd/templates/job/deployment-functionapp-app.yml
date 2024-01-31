@@ -1,0 +1,78 @@
+parameters: 
+# job-level parameters
+- name: TechnicalName
+  type: string
+  default: DeployApp
+- name: dependsOn
+  type: object
+  default: []
+- name: condition
+  type: string
+  default: ''
+- name: AgentPool
+  type: string
+- name: environment
+  type: string
+# step-level parameters
+- name: FunctionAppName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: ServiceConnectionName
+  type: string
+- name: AppSettings
+  type: string
+- name: useStagingSlot
+  type: boolean
+  default: true
+- name: SlotName
+  type: string
+  default: staging
+- name: SlotSettings
+  type: string
+  default: ''
+# additional steps
+- name: ClosingSteps
+  type: stepList
+  default: []
+
+jobs:
+- deployment: ${{ parameters.TechnicalName }}
+  displayName: Deploy App to ${{ parameters.FunctionAppName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: ${{ parameters.AgentPool }}
+  environment: ${{ parameters.environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: ../task/functionapp-deploy-task.yml
+          parameters:
+            azureSubscription: ${{ parameters.ServiceConnectionName }}
+            functionAppName: ${{ parameters.FunctionAppName }}
+            resourceGroupName: ${{ parameters.ResourceGroupName }}
+            useStagingSlot: ${{ parameters.useStagingSlot }}
+        - template: ../task/functionapp-set-runtime-version.yml
+          parameters:
+            azureSubscription: ${{ parameters.ServiceConnectionName }}
+            functionAppName: ${{ parameters.FunctionAppName }}
+            resourceGroupName: ${{ parameters.ResourceGroupName }}
+            ${{ if parameters.useStagingSlot }}:
+              slotName: ${{ parameters.SlotName }}
+        - template: ../task/appsettings-set-task.yml
+          parameters:
+            azureSubscription: ${{ parameters.ServiceConnectionName }}
+            functionAppName: ${{ parameters.FunctionAppName }}
+            resourceGroupName: ${{ parameters.ResourceGroupName }}
+            settings: ${{ parameters.AppSettings }}
+            ${{ if parameters.useStagingSlot }}:
+              slotName: ${{ parameters.SlotName }}
+              slotSettings: ${{ parameters.SlotSettings }}
+        - ${{ if parameters.useStagingSlot }}:
+          - template: ../task/functionapp-swap-slots-task.yml
+            parameters:
+              azureSubscription: ${{ parameters.ServiceConnectionName }}
+              functionAppName: ${{ parameters.FunctionAppName }}
+              resourceGroupName: ${{ parameters.ResourceGroupName }}
+        - ${{ parameters.ClosingSteps }}

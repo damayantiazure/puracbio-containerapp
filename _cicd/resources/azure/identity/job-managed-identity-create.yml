@@ -1,0 +1,50 @@
+parameters:
+# Job-level parameters
+- name: JobName
+  default: CreateManagedIdentity
+- name: condition
+  type: string
+  default: true
+- name: dependsOn
+  type: object
+  default: []
+- name: AgentPoolName
+# Common parameters
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: Location
+  default: westeurope
+- name: ManagedIdentityName
+- name: CountOfIdentities
+  type: number
+  default: 1
+
+jobs:
+- job: ${{ parameters.JobName }}
+  displayName: "Create Managed Identities"
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  steps:
+  - template: ../common/task-create-resourcegroup.yml
+    parameters:
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      ResourceGroupName: ${{ parameters.ResourceGroupName }}
+      Location: ${{ parameters.Location }}
+  - ${{ if eq(parameters.CountOfIdentities, 1)}}:
+    - template: task-managed-identity-create.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        ResourceGroupName: ${{ parameters.ResourceGroupName }}
+        Location: ${{ parameters.Location }}
+        ManagedIdentityName: ${{ parameters.ManagedIdentityName }}
+  - ${{ if gt(parameters.CountOfIdentities, 1)}}:
+    - template: task-managed-identity-create-multiple.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        ResourceGroupName: ${{ parameters.ResourceGroupName }}
+        Location: ${{ parameters.Location }}
+        ManagedIdentityBaseName: ${{ parameters.ManagedIdentityName }}
+        CountOfIdentities: ${{ parameters.CountOfIdentities }}

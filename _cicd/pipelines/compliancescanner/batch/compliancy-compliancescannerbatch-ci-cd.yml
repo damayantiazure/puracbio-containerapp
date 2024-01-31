@@ -1,0 +1,245 @@
+parameters:
+- name: UpdateInfraDev
+  displayName: Should Infra for Dev be Updated?
+  type: boolean
+  default: false
+- name: UpdateSecretsDev
+  displayName: Should Keyvault Secrets in Dev be Updated as well?
+  type: boolean
+  default: false
+
+trigger:
+- main
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+name: 1.0.$(Rev:r)
+
+variables:
+# Base Name for Azure Function used for naming convention
+- name: FunctionAppBaseName
+  value: complscannerbatch
+- name: ManagedIdentityAmount
+  value: 10
+# Global/common Variables for whole pipeline
+- template: ../../sharedvars/global.yml
+- template: ../../sharedvars/variables-conditions.yml
+  parameters:
+    UpdateInfraDev: ${{ parameters.UpdateInfraDev }}
+    UpdateSecretsDev: ${{ parameters.UpdateSecretsDev }}
+# Cross-pipeline used secrets from Library
+- group: AZDO-COMPLIANCY
+
+stages:
+
+#######################################################
+#  BUILD
+#######################################################
+- template: ../../../templates/stage/build-function-stage.yml
+  parameters:
+    pipelineVariables: ../../pipelines/compliancescanner/batch/vars/global.yml
+    env: # These are taken from the pipeline variables
+      clientSecret: $(clientSecretDev)
+      token: $(azdoPatDev)
+    startAzurite: true
+    copyComplianceScannerShared: true
+
+#######################################################
+#  DEV
+#######################################################
+
+- template: ../../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraDev
+    displayName: DEV - Infra
+    dependsOn: []
+    condition: eq(variables.DeployInfraToDev, true)
+    environment: ${{ variables.environmentCheckDev }} # from global
+    # Template-specific parameters
+    StageEnv: dev
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    # Function App parameters
+    useStagingSlot: false
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsDev
+  displayName: DEV - Secrets
+  dependsOn: InfraDev
+  condition: and(succeeded(), eq(variables.DeploySecretsToDev, true))
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../../sharedvars/dev.yml
+  jobs:
+  - template: ../../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: ${{ variables.agentPool }}
+      keyVaultName: ${{ variables.keyVaultName }}
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: cmdbApiKey
+        value: $CMDBAPIKEY
+      - name: extensionSecret
+        value: $EXTENSIONSECRET
+      - name: tableStorageConnectionString
+        value: $TABLESTORAGECONNECTIONSTRING
+      - name: azdoPat
+        value: $AZDOPAT
+      - name: clientSecret
+        value: $CLIENTSECRET
+      - name: auditLoggingEventQueueStorageConnectionString
+        value: $AUDITLOGGINGEVENTQUEUESTORAGECONNECTIONSTRING
+      env: # These are taken from the pipeline variables
+        CMDBAPIKEY: $(cmdbApiKeyDev)
+        EXTENSIONSECRET: $(extensionSecretDev)
+        TABLESTORAGECONNECTIONSTRING: $(tableStorageConnectionStringDev)
+        AZDOPAT: $(azdoPatDev)
+        CLIENTSECRET: $(clientSecretDev)
+        AUDITLOGGINGEVENTQUEUESTORAGECONNECTIONSTRING: $(auditLoggingEventQueueStorageConnectionStringDev)
+        
+- stage: DeployDev
+  dependsOn: 
+  - Build
+  - InfraDev
+  - SecretsDev
+  condition:
+    and
+    (
+      in(dependencies.Build.result,'Succeeded','SucceededWithIssues'),
+      in(dependencies.InfraDev.result, 'Succeeded', 'Skipped'),
+      in(dependencies.SecretsDev.result, 'Succeeded', 'Skipped')
+    )
+  displayName: DEV - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../../sharedvars/dev.yml
+  jobs:
+  - template: ../../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheckDev }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+      useStagingSlot: false
+
+- stage: SmokeTestDev
+  displayName: DEV - Smoke Test
+  dependsOn: 
+  - DeployDev  
+  condition: in(dependencies.DeployDev.result,'Succeeded','SucceededWithIssues')
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../../sharedvars/dev.yml
+  jobs:
+  - template: ../../../templates/job/smoke-test-job.yml
+    parameters:
+      functionAppName: ${{ variables.functionAppName }}
+      functions:  
+      - name: diagnostics
+        route: diagnostics
+        method: GET
+
+
+#######################################################
+#  PROD
+#######################################################
+- template: ../../../templates/stage/production-approval-stage.yml
+
+- template: ../../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraPrd
+    displayName: PROD - Infra
+    dependsOn: ProductionApproval
+    condition: succeeded()
+    environment: ${{ variables.environmentCheck }} # from global
+    # Template-specific parameters
+    StageEnv: prd
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    # Function App parameters
+    useStagingSlot: false
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsPrd
+  displayName: PROD - Secrets
+  dependsOn: InfraPrd
+  condition: succeeded()
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../../sharedvars/prd.yml
+  jobs:
+  - template: ../../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: ${{ variables.agentPool }}
+      keyVaultName: ${{ variables.keyVaultName }}
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: cmdbApiKey 
+        value: $CMDBAPIKEY
+      - name: extensionSecret 
+        value: $EXTENSIONSECRET
+      - name: tableStorageConnectionString 
+        value: $TABLESTORAGECONNECTIONSTRING
+      - name: azdoPat 
+        value: $AZDOPAT
+      - name: clientSecret
+        value: $CLIENTSECRET
+      - name: auditLoggingEventQueueStorageConnectionString
+        value: $AUDITLOGGINGEVENTQUEUESTORAGECONNECTIONSTRING
+      env: # These are taken from the pipeline variables
+        CMDBAPIKEY: $(cmdbApiKeyPrd)
+        EXTENSIONSECRET: $(extensionSecretPrd)
+        TABLESTORAGECONNECTIONSTRING: $(tableStorageConnectionStringPrd)
+        AZDOPAT: $(azdoPatPrd)
+        CLIENTSECRET: $(clientSecretPrd)
+        AUDITLOGGINGEVENTQUEUESTORAGECONNECTIONSTRING: $(auditLoggingEventQueueStorageConnectionStringPrd)
+      environment: ${{ variables.environmentCheck }}
+- stage: DeployProduction
+  displayName: PROD - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../../sharedvars/prd.yml
+  jobs:
+  - template: ../../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheck }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+      useStagingSlot: false
+      ClosingSteps: 
+      - template: /templates/common/task/close-change-task.yml@innersourceTemplates
+
+- stage: SmokeTestPrd
+  displayName: PROD - Smoke Test
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  jobs:
+  - template: ../../../templates/job/smoke-test-job.yml
+    parameters:
+      functionAppName: ${{ variables.functionAppName }}
+      functions:  
+      - name: diagnostics 
+        route: diagnostics
+        method: GET

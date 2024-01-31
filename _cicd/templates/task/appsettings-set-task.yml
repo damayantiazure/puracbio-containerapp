@@ -1,0 +1,63 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: functionAppName
+  type: string
+- name: resourceGroupName
+  type: string
+- name: slotName
+  type: string
+  default: ''
+- name: settings
+  type: string
+- name: slotSettings
+  type: string
+  default: ''
+
+
+steps:
+- ${{ if and(ne(parameters.slotName, ''),eq(parameters.slotSettings, '')) }}: 
+  - task: AzureCLI@2
+    displayName: Deploy AppSettings for When Slot Defined
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true
+      inlineScript: >
+        az functionapp config appsettings set
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --slot ${{ parameters.slotName }}
+        --settings ${{parameters.settings}}
+
+
+- ${{ if and(ne(parameters.slotName, ''),ne(parameters.slotSettings, '')) }}:
+  - task: AzureCLI@2
+    displayName: Deploy Slot-specific AppSettings for Slot
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true
+      inlineScript: >
+        az functionapp config appsettings set
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --slot ${{ parameters.slotName }}
+        --settings ${{parameters.settings}}
+        --slot-settings ${{ parameters.slotSettings }}
+
+- ${{ if and(eq(parameters.slotName, ''),eq(parameters.slotSettings, '')) }}:
+  - task: AzureCLI@2
+    displayName: Deploy AppSettings When No Slot Defined
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true
+      inlineScript: >
+        az functionapp config appsettings set
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --settings ${{parameters.settings}}

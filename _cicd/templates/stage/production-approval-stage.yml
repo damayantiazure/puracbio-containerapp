@@ -1,0 +1,35 @@
+parameters:
+- name: agentPool
+  type: string
+  default: Rabo-Linux-Production
+- name: sm9ChangeTemplate
+  type: string
+  default: TAS ADO Generic Change Template
+- name: ciName
+  type: string
+  default: AZDO-COMPLIANCY
+- name: environmentApproval
+  type: string
+  default: azdo-production-approval
+- name: enableSm9CreateChange
+  type: boolean
+  default: true
+
+stages:
+- stage: ProductionApproval
+  condition: and(succeeded(), eq(variables.isMain, true))
+  displayName: PROD - Approval
+  jobs:
+  - deployment: ProductionApproval
+    condition: ${{ parameters.enableSm9CreateChange }}
+    displayName: PROD - Approval
+    pool: ${{ parameters.agentPool }}
+    environment: ${{ parameters.environmentApproval }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - template: /templates/common/task/create-change-task.yml@innersourceTemplates
+              parameters:
+                template: ${{ parameters.sm9ChangeTemplate }}
+                assets: ${{ parameters.ciName }}

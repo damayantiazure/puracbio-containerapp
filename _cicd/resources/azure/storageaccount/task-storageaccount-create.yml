@@ -1,0 +1,63 @@
+parameters:
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: StorageAccountName
+- name: Location
+  default: westeurope
+- name: Sku
+  default: Standard_LRS
+  values:
+    - Premium_LRS
+    - Premium_ZRS
+    - Standard_GRS
+    - Standard_GZRS
+    - Standard_LRS
+    - Standard_RAGRS
+    - Standard_RAGZRS
+    - Standard_ZRS
+- name: HttpsOnly
+  type: boolean
+  default: true
+- name: DefaultAction
+  default: Deny
+  values:
+    - Allow
+    - Deny # Requires Tag "AcceptedException_storage-H-004"
+- name: Tags
+  default: '""' # Clears any existing tags
+- name: Bypass
+  default: None
+  values:
+    - AzureServices
+    - Logging
+    - Metrics
+    - None
+  
+steps:
+- task: AzureCLI@2
+  displayName: Create or Update Storage account
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+
+    inlineScript: >-
+      $ErrorActionPreference = 'Stop';
+
+      Write-Host "Deploying Storage Account '${{ parameters.StorageAccountName }}'";
+
+      az storage account create
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --location '${{ parameters.Location }}'
+      --name '${{ parameters.StorageAccountName }}'
+      --kind StorageV2
+      --https-only ${{ parameters.HttpsOnly }}
+      --sku ${{ parameters.Sku }}
+      --default-action ${{ parameters.DefaultAction }}
+      --allow-blob-public-access false
+      --allow-cross-tenant-replication false
+      --min-tls-version TLS1_2
+      --bypass ${{ parameters.Bypass }}
+      --tags ${{ parameters.Tags }}
+      --query id
+      ;

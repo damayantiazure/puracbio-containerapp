@@ -1,0 +1,43 @@
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+variables:
+- template: vars/global.yml
+- template: ../sharedvars/global.yml
+- group: AZDO-COMPLIANCY # Contains Cross-pipeline used secrets
+
+stages:
+
+#######################################################
+#  Build
+#######################################################
+
+- stage: Build
+  displayName: Build
+  jobs:
+  - template: /templates/netcore/job/static-analysis-job.yml@innersourceTemplates
+    parameters:
+      agentPool: Rabo-Windows-Production
+      fortifyApplicationName: $(fortifyApplicationName)
+      fortifyServiceEndPoint: $(fortifyServiceEndPoint)
+      nexusIQApplicationId: $(nexusIQApplicationId)
+      nexusIQServiceEndPoint: $(nexusIQServiceEndPoint)
+      beforeNexusIQScan: 
+      - template: templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+      - template: ../../templates/task/dotnet-build-projects-task.yml
+        parameters:
+          projects: $(buildProjectFile)
+      sonarQubeEndpoint: $(sonarQubeEndpoint)
+      sonarQubeProjectKey: $(sonarQubeProjectKey)
+      sonarQubeProjectName: $(sonarQubeProjectName)
+      beforeSonarScan:
+      - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+      - template: ../../resources/dotnet/test/task-dotnet-test.yml
+      - template: /templates/netcore/task/code-coverage-task.yml@innersourceTemplates

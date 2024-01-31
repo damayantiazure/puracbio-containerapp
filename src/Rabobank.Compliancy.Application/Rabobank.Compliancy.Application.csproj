@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Rabobank.Compliancy.Application</RootNamespace>
+    <AssemblyName>Rabobank.Compliancy.Application</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Rules\Rules.csproj" />
+    <ProjectReference Include="..\Rabobank.Compliancy.Domain\Rabobank.Compliancy.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

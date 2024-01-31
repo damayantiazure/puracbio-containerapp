@@ -1,0 +1,24 @@
+parameters:
+- name: azdoPat
+  type: string
+- name: organization
+  type: string
+- name: projectId
+  type: string
+- name: buildId
+  type: number
+- name: releaseId
+  type: number
+
+jobs:
+- job: SmokeTestPreparations  
+  displayName: Prepare smoketest
+  steps:
+  - template: ../../templates/task/remove-tags-from-pipeline-task.yml
+    parameters:
+      displayName: Remove tags from pipeline
+      azdoPat: ${{ parameters.azdoPat }}
+      organization: ${{ parameters.organization }}
+      projectId: ${{ parameters.projectId }}
+      buildId: ${{ parameters.buildId }}
+      releaseId: ${{ parameters.releaseId }}

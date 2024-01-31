@@ -1,0 +1,77 @@
+# Summary:
+# This task creates or updates an App Service plan
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: FunctionAppPlanName
+  type: string
+# First time only parameters
+- name: Location
+  type: string
+  default: westeurope
+- name: OsType
+  type: string
+  values: 
+    - Linux
+    - Windows
+  default: Windows
+# Updatable parameters
+- name: Sku
+  type: string
+  default: EP1
+  values:
+    - EP1
+    - EP2
+    - EP3
+- name: MaxBurst
+  type: number
+  default: 10
+    
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update Function App Plan'
+  inputs:
+    azureSubscription: ${{parameters.ServiceConnectionName}}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+        Write-Host "# Validating if plan with same name already exists";
+      
+        Write-Host "FunctionAppPlanName: '${{ parameters.FunctionAppPlanName }}'";
+
+        $result = az functionapp plan list
+        --resource-group "${{ parameters.ResourceGroupName }}" 
+        --query "[?name=='${{ parameters.FunctionAppPlanName }}'].[name]" 
+        -o tsv
+        ;
+
+        if ($result -ne "${{ parameters.FunctionAppPlanName }}")
+        {
+        Write-Host "# No existing App plan found. Creating new App Plan";
+
+        $isLinuxOs = "${{ parameters.OsType }}" -eq "Linux";
+
+        az functionapp plan create
+        --name '${{ parameters.FunctionAppPlanName }}'
+        --resource-group '${{ parameters.ResourceGroupName }}'
+        --sku '${{ parameters.Sku }}'
+        --max-burst ${{ parameters.MaxBurst }}
+        --is-linux $isLinuxOs
+        --location ${{ parameters.Location }}
+        ;
+        }
+        else
+        {
+        Write-Host "# Existing App plan found. Updating existing App plan";
+
+        az functionapp plan update
+        --name '${{ parameters.FunctionAppPlanName }}'
+        --resource-group '${{ parameters.ResourceGroupName }}'
+        --sku '${{ parameters.Sku }}'
+        --max-burst ${{ parameters.MaxBurst }}
+        ;
+        }

@@ -1,0 +1,38 @@
+parameters:
+  - name: AzureServiceConnectionName
+    type: string
+  - name: BackendResourceGroupName
+    type: string
+  - name: BackendStorageAccountName
+    type: string
+  - name: BackendContainerName
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: artifactName
+    type: string
+  - name: terraformVersion
+    type: string
+
+steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: "current"
+      artifactName: "${{ parameters.artifactName }}"
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+    displayName: Install terraform version ${{ parameters.terraformVersion }}
+    inputs:
+      terraformVersion: ${{ parameters.terraformVersion }}
+      installLatest: false
+      useSpecificVersion: true
+
+  - task: TerraformTaskV4@4
+    displayName: Terraform apply
+    inputs:
+      provider: "azurerm"
+      command: apply
+      environmentServiceNameAzureRM: ${{ parameters.AzureServiceConnectionName  }}
+      workingDirectory: $(Build.ArtifactStagingDirectory)
+      commandOptions: "-auto-approve ${{ parameters.EnvironmentNamePrefix }}.plan"

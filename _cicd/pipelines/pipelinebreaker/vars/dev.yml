@@ -1,0 +1,11 @@
+variables:
+  # Extension
+  environment: azdo-test
+  extensionId: PipelineBreaker-Dev
+  extension: Pipeline Breaker (Dev)
+
+  # Azure Function
+  functionAppName: pipelinebreakerv2dev
+  blockUnregisteredPipelinesEnabled: true
+  blockIncompliantPipelinesEnabled: true
+  throwWarningsIncompliantPipelinesEnabled: true

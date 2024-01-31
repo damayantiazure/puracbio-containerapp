@@ -1,0 +1,77 @@
+parameters:
+- name: functionAppName
+  type: string
+- name: StageEnv
+  type: string
+  values:
+  - dev
+  - prd
+
+jobs:
+- job: SmokeTest
+  displayName: Invoke Azure Functions  
+  
+  # As this job runs AzureFunction@1 tasks that need to run as an Agentless Job, the pool is fixed to 'server'
+  pool: server
+
+  variables:
+    ${{ if eq(parameters.StageEnv, 'dev') }}:
+      Organization: raboweb-test
+      ProjectId: fe8a52c1-b73a-471b-aa2d-b83a948194c0 # TAS Smoke Tests
+      ReleaseId: 13
+      BuildId: 535564
+
+    ${{ elseif eq(parameters.StageEnv, 'prd') }}:
+      Organization: raboweb
+      ProjectId: 4591e69f-f66d-4ce1-a950-76da9b1ab19b # TAS Smoke Tests
+      ReleaseId: 51
+      BuildId: 6605157
+
+  # Call the Azure Functions
+  steps:
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: diagnostics 
+      route: diagnostics
+      method: GET
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: validategatesClassicCallback
+      route: validate-classic-approvers/${{ variables.ProjectId }}/${{ variables.ReleaseId }}/${{ variables.Organization }}
+      method: POST
+      key: 'not-required'
+      headers: |
+        {
+        "Content-Type":"application/json", 
+        "PlanUrl": "$(system.CollectionUri)", 
+        "ProjectId": "$(system.TeamProjectId)", 
+        "HubName": "$(system.HostType)", 
+        "PlanId": "$(system.PlanId)", 
+        "JobId": "$(system.JobId)", 
+        "TimelineId": "$(system.TimelineId)", 
+        "TaskInstanceId": "$(system.TaskInstanceId)", 
+        "AuthToken": "$(system.AccessToken)"
+        }
+      waitForCompletion: true
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: validategatesYamlCallback
+      route: validate-yaml-approvers/${{ variables.ProjectId }}/${{ variables.BuildId }}/${{ variables.Organization }}
+      method: POST
+      key: 'not-required'
+      headers: |
+        {
+        "Content-Type":"application/json", 
+        "PlanUrl": "$(system.CollectionUri)", 
+        "ProjectId": "$(system.TeamProjectId)", 
+        "HubName": "$(system.HostType)", 
+        "PlanId": "$(system.PlanId)", 
+        "JobId": "$(system.JobId)", 
+        "TimelineId": "$(system.TimelineId)", 
+        "TaskInstanceId": "$(system.TaskInstanceId)", 
+        "AuthToken": "$(system.AccessToken)"
+        }
+      waitForCompletion: true

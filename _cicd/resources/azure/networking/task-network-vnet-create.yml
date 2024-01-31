@@ -1,0 +1,42 @@
+parameters:
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  - name: VnetName
+  - name: AdressRangeSize
+    type: number
+    default: 16
+  - name: AdressRangeBase
+    default: 10.0.0.0
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update virtual network'
+  inputs:
+    azureSubscription: ${{parameters.ServiceConnectionName}}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+        Write-Host "Verifying if virtual-network with name '${{ parameters.VnetName }}' exists";
+
+        $result = az network vnet list 
+        --resource-group ${{ parameters.ResourceGroupName }} 
+        --query "[?name=='${{ parameters.VnetName }}'].[name]" 
+        -o tsv;
+      
+        if ($result -ne "${{ parameters.VnetName }}")
+        {
+        Write-Host "Creating new virtual-network";
+
+        az network vnet create
+        --name ${{parameters.VnetName}}
+        --resource-group ${{parameters.ResourceGroupName}}
+        ;
+        }
+      
+        Write-Host "Updating existing virtual-network";
+      
+        az network vnet update
+        --name ${{ parameters.VnetName }}
+        --resource-group ${{ parameters.ResourceGroupName }}
+        --address-prefixes ${{ parameters.AdressRangeBase }}/${{ parameters.AdressRangeSize }}
+        ;

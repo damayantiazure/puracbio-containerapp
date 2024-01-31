@@ -1,0 +1,73 @@
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+variables:
+- template: vars/global.yml
+- template: ../sharedvars/global.yml
+
+stages:
+#######################################################
+#  BUILD
+#######################################################
+- template: ../../templates/stage/build-decorator-stage.yml
+  parameters:
+    rootFolderOrFile: ${{variables.rootFolderOrFile}}
+    archiveFile: ${{variables.archiveFile}}
+
+#######################################################
+#  DEV
+#######################################################
+- stage: PublishDev
+  displayName: DEV - Publish extension
+  variables:
+  - template: vars/dev.yml
+  - template: ../sharedvars/dev.yml
+  jobs:
+  - template: ../../templates/job/package-and-publish-extension-job.yml
+    parameters:
+      environment: ${{variables.environment}}
+      destinationFolder: ${{variables.destinationFolder}}
+      sourcePath: [$(System.DefaultWorkingDirectory)/decorator]
+      extensionId: ${{variables.extensionId}}
+      extensionName: ${{variables.extension}}
+      shareWith: ${{variables.organizations}}
+      filePattern: '*.yml'
+      secretTokens: 'PIPELINEBREAKER_FUNCTIONAPPNAME:${{variables.functionAppName}}'
+
+#######################################################
+#  PROD
+#######################################################
+- template: ../../templates/stage/production-approval-stage.yml
+
+- stage: PublishPrd
+  displayName: PRD - Publish extension
+  condition: and(succeeded(), eq(variables.isMain, true))
+  variables:
+  - template: vars/prd.yml
+  - template: ../sharedvars/prd.yml
+  jobs:
+  - template: ../../templates/job/package-and-publish-extension-job.yml
+    parameters:
+      environment: ${{variables.environment}}
+      destinationFolder: ${{variables.destinationFolder}}
+      sourcePath: [$(System.DefaultWorkingDirectory)/decorator]
+      extensionId: ${{variables.extensionId}}
+      extensionName: ${{variables.extension}}
+      shareWith: ${{variables.shareWith}}
+      filePattern: '*.yml'
+      secretTokens: 'PIPELINEBREAKER_FUNCTIONAPPNAME:${{variables.functionAppName}}'
+
+- stage: CloseChange
+  condition: succeeded('ProductionApproval')
+  jobs:
+  - job: CloseChangeJob
+    pool: $(agentPool)
+    steps:
+    - template: /templates/common/task/close-change-task.yml@innersourceTemplates

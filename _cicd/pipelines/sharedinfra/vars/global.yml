@@ -1,0 +1,13 @@
+variables:
+  agentPool: Rabo-Linux-Production
+  ciName: AZDO-COMPLIANCY
+  sm9ChangeTemplate: TAS ADO Generic Change Template
+  logAnalyticsContributorGroup: 529fb987-1d51-49b2-b3e3-cb1624e68429
+  functionAppId: 99cdc9f6-c82a-4762-aabe-e30007071ebf
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  environmentApproval: azdo-production-approval
+  environmentCheck: azdo-production-check
+  pathtoPublish: _cicd/pipelines/sharedinfra/operations
+  euResAADAzureAzdoCompliancyGroup: 0b94e5fc-dad9-407d-89e7-87dd16687a72
+  euAutAADAzdoCompliancyAegisGroup: 5fb4e1cc-ab53-40ed-a1e3-14f39b776146  
+  terraformRootFolder: "$(System.DefaultWorkingDirectory)/_cicd/pipelines/sharedinfra/terraform"

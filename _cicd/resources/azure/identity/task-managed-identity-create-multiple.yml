@@ -1,0 +1,60 @@
+parameters:
+# Task-level parameters
+- name: StepName
+  default: CreateMultipleManagedIdentities
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: Location
+  type: string
+  default: westeurope
+# Task-Specific parameters
+- name: ManagedIdentityBaseName
+  type: string
+- name: CountOfIdentities
+  type: number
+
+  
+steps:
+- task: AzureCLI@2
+  name: ${{ parameters.StepName }} # Required when providing output variables
+  displayName: 'Create or Update Multiple Managed Identities'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Creating ${{ parameters.CountOfIdentities }} Managed Identities in resource group ${{ parameters.ResourceGroupName }}";
+
+      $array = 1..${{ parameters.CountOfIdentities }};
+
+      foreach ($item in $array)
+      {
+      $paddedNumber = $item.ToString('00');
+
+      $identityName = "${{ parameters.ManagedIdentityBaseName }}-${paddedNumber}";
+      
+      az identity create
+      --name $identityName
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --location ${{ parameters.Location }}
+      ;
+      }
+
+      Write-Host "Listing current Managed Identities for Resource Group ${{ parameters.ResourceGroupName }}";
+
+      $currentIdentities = az identity list --resource-group ${{ parameters.ResourceGroupName }};
+      $currentIdentities;
+
+      $objectIds = ($currentIdentities | ConvertFrom-Json).principalId -join ";";
+      $clientIds = ($currentIdentities | ConvertFrom-Json).clientId -join ";";
+      $resourceIds = ($currentIdentities | ConvertFrom-Json).id -join " ";
+
+      Write-Host "##vso[task.setvariable variable=Identities;isOutput=true]$currentIdentities";
+      Write-Host "##vso[task.setvariable variable=SemicolonSeparatedObjectIds;isOutput=true]$objectIds";
+      Write-Host "##vso[task.setvariable variable=SemicolonSeparatedClientIds;isOutput=true]$clientIds";
+      Write-Host "##vso[task.setvariable variable=SpaceSeparatedResourceIds;isOutput=true]$resourceIds";
+
+    # This script is idempotent and will simply return the existing managed identities if they already exist

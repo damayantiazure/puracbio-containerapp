@@ -1,0 +1,37 @@
+{
+  "id": "6cf93429-967c-445f-8e04-cc21b7dea364",
+  "eventType": "ms.vss-release.deployment-completed-event",
+  "publisherId": "rm",
+  "message": {
+    "text": "Deployment of release Release-18 on stage Stage 1 succeeded.",
+    "html": "Deployment on stage <a href='https://dev.azure.com/raboweb-test/SOx-compliant-demo/_release?_a=environment-summary&definitionId=14&definitionEnvironmentId=26'>Stage 1</a> succeeded.",
+    "markdown": "Deployment on stage [Stage 1](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_release?_a=environment-summary&definitionId=14&definitionEnvironmentId=26) succeeded."
+  },
+  "detailedMessage": {
+    "text": "Deployment of release Release-18 on stage Stage 1 succeeded. Time to deploy: 00:02:16.",
+    "html": "Deployment on stage <a href='https://dev.azure.com/raboweb-test/SOx-compliant-demo/_release?_a=environment-summary&definitionId=14&definitionEnvironmentId=26'>Stage 1</a> succeeded. Time to deploy: 00:02:16.",
+    "markdown": "Deployment on stage [Stage 1](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_release?_a=environment-summary&definitionId=14&definitionEnvironmentId=26) succeeded. Time to deploy: 00:02:16."
+  },
+  "resource": {
+    "id": 398,
+    "url": "https://dev.azure.com/raboweb-test/SOx%20compliant%20demo/_release?releaseId=398&_a=release-summary",
+    "stageName": "Stage 1",
+    "attemptId": 1
+  },
+  "resourceVersion": "3.0-preview.1",
+  "resourceContainers": {
+    "collection": {
+      "id": "764e9f75-d69a-4705-9b33-b8e0d95c63d3",
+      "baseUrl": "https://vsrm.dev.azure.com/raboweb-test/"
+    },
+    "account": {
+      "id": "b0ae02f6-64d2-439b-a771-4ec43a2465a2",
+      "baseUrl": "https://vsrm.dev.azure.com/raboweb-test/"
+    },
+    "project": {
+      "id": "53410703-e2e5-4238-9025-233bd7c811b3",
+      "baseUrl": "https://vsrm.dev.azure.com/raboweb-test/"
+    }
+  },
+  "createdDate": "2021-06-01T08:05:35.0204487Z"
+}

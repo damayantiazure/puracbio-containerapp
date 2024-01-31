@@ -1,0 +1,284 @@
+parameters:
+- name: UpdateInfraDev
+  displayName: Should Infra for Dev be Updated?
+  type: boolean
+  default: false
+- name: UpdateSecretsDev
+  displayName: Should Keyvault Secrets in Dev be Updated as well?
+  type: boolean
+  default: false
+
+trigger:
+- main
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+name: 1.0.$(Rev:r)
+
+variables:
+# Base Name for Azure Function used for naming convention
+- name: FunctionAppBaseName
+  value: sm9changesv2
+- name: ManagedIdentityAmount
+  value: 3
+# Global/common Variables for whole pipeline
+- template: vars/global.yml
+- template: ../sharedvars/global.yml
+- template: ../sharedvars/variables-conditions.yml
+  parameters:
+    UpdateInfraDev: ${{ parameters.UpdateInfraDev }}
+    UpdateSecretsDev: ${{ parameters.UpdateSecretsDev }}
+# Cross-pipeline used secrets from Library
+- group: AZDO-COMPLIANCY
+
+stages:
+#######################################################
+#  BUILD
+#######################################################
+- template: ../../templates/stage/build-function-stage.yml
+  parameters:
+    pipelineVariables: ../../pipelines/sm9changes/vars/global.yml
+    env:
+      rabobank-apikey: $(cmdbApiKeyDev)
+
+#######################################################
+#  DEV
+#######################################################
+
+- template: ../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraDev
+    displayName: DEV - Infra
+    dependsOn: []
+    condition: eq(variables.DeployInfraToDev, true)
+    environment: ${{ variables.environmentCheckDev }} # from global
+    # Template-specific parameters
+    StageEnv: dev
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    # Function App Plan parameters
+    MaxBurst: 20
+    # Function App parameters
+    PrewarmedInstances: 3
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsDev
+  displayName: DEV - Secrets
+  dependsOn: InfraDev
+  condition: and(succeeded(), eq(variables.DeploySecretsToDev, true))
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../sharedvars/dev.yml
+  jobs:
+  - template: ../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: $(agentPool)
+      keyVaultName: $(keyVaultName)
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: cmdbApiKey 
+        value: $CMDBAPIKEY
+      - name: azdoPat 
+        value: $AZDOPAT
+      - name: clientSecret
+        value: $clientSecret
+      - name: tableStorageConnectionString
+        value: $tableStorageConnectionString
+      env: 
+        CMDBAPIKEY: $(cmdbApiKeyDev)
+        AZDOPAT: $(azdoPatDev)
+        clientSecret: $(clientSecret)
+        tableStorageConnectionString: $(tableStorageConnectionStringDev)
+
+- stage: DeployDev
+  dependsOn: 
+  - Build
+  - InfraDev
+  - SecretsDev
+  condition:
+    and
+    (
+      in(dependencies.Build.result,'Succeeded','SucceededWithIssues'),
+      in(dependencies.InfraDev.result, 'Succeeded', 'Skipped'),
+      in(dependencies.SecretsDev.result, 'Succeeded', 'Skipped')
+    )
+  displayName: DEV - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../sharedvars/dev.yml
+  jobs:
+  - template: ../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheckDev }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+
+- stage: SmokeTestDev
+  displayName: DEV - Smoke Test  
+  dependsOn: 
+  - DeployDev  
+  condition: in(dependencies.DeployDev.result,'Succeeded','SucceededWithIssues')
+  variables:
+  - name: StageEnv
+    value: dev
+  - template: vars/global.yml
+    parameters:
+      StageEnv: ${{ variables.StageEnv }}
+  - template: ../sharedvars/${{ variables.StageEnv }}.yml
+  jobs:
+  # Dynamically retrieve the required App Key to call the functions
+  - job: GetAppKeys
+    displayName: Get App Key(s) needed to run smoketests
+    pool: ${{ variables.agentPool }}
+    steps:  
+    - template: ../../templates/task/functionapp-get-app-key.yml
+      parameters:
+        ServiceConnectionName: ${{ variables.azureSubscription }}
+        resourceGroup: ${{ variables.resourceGroup }}
+        functionAppName: ${{ variables.functionAppName }}
+        VarOutput: true
+  - template: ./job-sm9-smoke-test-prepare.yml
+    parameters:
+      azdoPat: $(azdoPatDev)      
+      organization: ${{ variables.smoketestOrganization }}
+      projectId: ${{ variables.smoketestProjectId }}
+      buildId: ${{ variables.smoketestBuildId }}
+      releaseId: ${{ variables.smoketestReleaseId }}
+  - template: ./job-sm9-smoke-test.yml
+    parameters:
+      dependsOn: GetAppKeys
+      resourceGroup: ${{ variables.resourceGroup }}
+      functionAppName: ${{ variables.functionAppName }}
+      FunctionAppKey: $[ dependencies.GetAppKeys.outputs['GetFunctionAppKey.AppKey'] ]
+      StageEnv: ${{ variables.StageEnv }}
+      organization: ${{ variables.smoketestOrganization }}
+      projectId: ${{ variables.smoketestProjectId }}
+      buildId: ${{ variables.smoketestBuildId }}
+      releaseId: ${{ variables.smoketestReleaseId }}
+      ciAsset: ${{ variables.smoketestCiAsset }}
+
+
+#######################################################
+#  PROD
+#######################################################
+- template: ../../templates/stage/production-approval-stage.yml
+
+- template: ../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraPrd
+    displayName: PROD - Infra
+    dependsOn: ProductionApproval
+    condition: succeeded()
+    environment: ${{ variables.environmentCheck }} # from global
+    # Template-specific parameters
+    StageEnv: prd
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    # Function App Plan parameters
+    MaxBurst: 20
+    # Function App parameters
+    PrewarmedInstances: 3
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsPrd
+  displayName: PROD - Secrets
+  dependsOn: InfraPrd
+  condition: succeeded()
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../sharedvars/prd.yml
+  jobs:
+  - template: ../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: $(agentPool)
+      keyVaultName: $(keyVaultName)
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: cmdbApiKey 
+        value: $CMDBAPIKEY
+      - name: azdoPat 
+        value: $AZDOPAT
+      - name: clientSecret
+        value: $clientSecret
+      - name: tableStorageConnectionString
+        value: $tableStorageConnectionString
+      env: 
+        CMDBAPIKEY: $(cmdbApiKeyPrd)
+        AZDOPAT: $(azdoPatPrd)
+        clientSecret: $(clientSecret)
+        tableStorageConnectionString: $(tableStorageConnectionStringPrd)
+      environment: ${{variables.environmentCheck}}
+
+- stage: DeployProduction
+  displayName: PROD - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../sharedvars/prd.yml
+  jobs:
+  - template: ../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheck }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+      ClosingSteps: 
+      - template: /templates/common/task/close-change-task.yml@innersourceTemplates
+
+- stage: SmokeTestPrd  
+  displayName: PROD - Smoke Test
+  variables:
+  - name: StageEnv
+    value: prd
+  - template: vars/global.yml
+    parameters:
+      StageEnv: ${{ variables.StageEnv }}
+  - template: ../sharedvars/${{ variables.StageEnv }}.yml
+  jobs:
+  # Dynamically retrieve the required App Key to call the functions
+  - job: GetAppKeys
+    displayName: Get App Key(s) needed to run smoketests
+    pool: ${{ variables.agentPool }}
+    steps:  
+    - template: ../../templates/task/functionapp-get-app-key.yml
+      parameters:
+        ServiceConnectionName: ${{ variables.azureSubscription }}
+        resourceGroup: ${{ variables.resourceGroup }}
+        functionAppName: ${{ variables.functionAppName }}
+        VarOutput: true
+  - template: ./job-sm9-smoke-test-prepare.yml
+    parameters:
+      azdoPat: $(azdoPatPrd)
+      organization: ${{ variables.smoketestOrganization }}
+      projectId: ${{ variables.smoketestProjectId }}
+      buildId: ${{ variables.smoketestBuildId }}
+      releaseId: ${{ variables.smoketestReleaseId }}
+  - template: ./job-sm9-smoke-test.yml
+    parameters:
+      dependsOn: GetAppKeys
+      resourceGroup: ${{ variables.resourceGroup }}
+      functionAppName: ${{ variables.functionAppName }}
+      FunctionAppKey: $[ dependencies.GetAppKeys.outputs['GetFunctionAppKey.AppKey'] ]
+      StageEnv: ${{ variables.StageEnv }}
+      organization: ${{ variables.smoketestOrganization }}
+      projectId: ${{ variables.smoketestProjectId }}
+      buildId: ${{ variables.smoketestBuildId }}
+      releaseId: ${{ variables.smoketestReleaseId }}
+      ciAsset: ${{ variables.smoketestCiAsset }}

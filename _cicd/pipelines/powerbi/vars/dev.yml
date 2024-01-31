@@ -1,0 +1,6 @@
+variables:
+  AzureServiceConnectionName: reg-dev-eu-devaut (SPN)
+  SubscriptionId: 06dc44e1-5a27-4289-a2bf-e81da276cafe
+  BackendResourceGroupName: reg-dev-eu-devaut-tfstate-rg
+  BackendStorageAccountName: tfbackendstatedevsa
+  BackendContainerName: tfstatedev

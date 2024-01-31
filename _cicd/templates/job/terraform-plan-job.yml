@@ -1,0 +1,63 @@
+parameters:
+  - name: JobName
+    default: TerraformPlan
+  - name: dependsOn
+    type: object
+    default: []
+  - name: AgentPoolName
+    type: string
+  - name: AzureServiceConnectionName
+    type: string
+  - name: BackendResourceGroupName
+    type: string
+  - name: BackendStorageAccountName
+    type: string
+  - name: BackendContainerName
+    type: string
+  - name: BackendStateKey
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: terraformRootFolder
+    type: string
+  - name: artifactName
+    type: string
+  - name: TerraformVarPath
+    type: string
+  - name: variables
+    type: object
+    default: []
+  - name: azureDataAzdoCompliancyGroupId
+    type: string  
+  - name: workspaceId
+    type: string
+  - name: logAnalyticsResourceGroupId
+    type: string
+  - name: Destroy
+    type: boolean
+    default: false
+
+
+jobs:
+- job: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  pool: ${{ parameters.AgentPoolName }}
+  displayName: Terraform plan
+  variables:
+  - ${{ parameters.variables }}
+  steps:
+  - template: ../task/terraform-plan-task.yml
+    parameters:
+      AzureServiceConnectionName: ${{ parameters.AzureServiceConnectionName }}
+      BackendResourceGroupName: ${{ parameters.BackendResourceGroupName }}
+      BackendStorageAccountName: ${{ parameters.BackendStorageAccountName }}
+      BackendContainerName: ${{ parameters.BackendContainerName }}
+      BackendStateKey: ${{ parameters.BackendStateKey }}
+      EnvironmentNamePrefix: ${{ parameters.EnvironmentNamePrefix }}
+      terraformRootFolder: ${{ parameters.terraformRootFolder }}
+      artifactName: ${{ parameters.artifactName }}
+      TerraformVarPath: ${{ parameters.TerraformVarPath }}
+      Destroy: ${{ parameters.Destroy }}
+      azureDataAzdoCompliancyGroupId: ${{ parameters.azureDataAzdoCompliancyGroupId }}      
+      workspaceId: ${{ parameters.workspaceId }}
+      logAnalyticsResourceGroupId: ${{ parameters.logAnalyticsResourceGroupId }}

@@ -1,0 +1,96 @@
+{
+  "dataProviderSharedData": {},
+  "dataProviders": {
+    "ms.vss-web.component-data": {},
+    "ms.vss-web.shared-data": null,
+    "ms.vss-build-web.checks-panel-data-provider": [
+      {
+        "approvals": [
+          {
+            "steps": [
+              {
+                "id": 1,
+                "status": 2,
+                "actualApprover": {
+                  "displayName": "Brouwer, R (Rik)",
+                  "id": "7f50e539-be67-6754-bbd8-0bcc6f6b38e1",
+                  "uniqueName": "Rik.Brouwer@rabobank.com",
+                  "descriptor": "aad.N2Y1MGU1MzktYmU2Ny03NzU0LWJiZDgtMGJjYzZmNmIzOGUx"
+                },
+                "assignedApprover": {
+                  "displayName": "Brouwer, R (Rik)",
+                  "id": "7f50e539-be67-6754-bbd8-0bcc6f6b38e1",
+                  "uniqueName": "Rik.Brouwer@rabobank.com",
+                  "descriptor": "aad.N2Y1MGU1MzktYmU2Ny03NzU0LWJiZDgtMGJjYzZmNmIzOGUx"
+                },
+                "order": 1,
+                "lastModifiedOn": "2020-04-21T12:59:00.8378697Z",
+                "comment": null,
+                "permissions": 1,
+                "isStepReassigned": false
+              },
+              {
+                "id": 2,
+                "status": 2,
+                "actualApprover": null,
+                "assignedApprover": {
+                  "displayName": "Peter Dol",
+                  "id": "2dbe73bd-5f5c-6152-b980-1b9e87449195",
+                  "uniqueName": "Peter.Dol@rabobank.nl",
+                  "descriptor": "aad.MmRiZTczYmQtNWY1Yy03MTUyLWI5ODAtMWI5ZTg3NDQ5MTk1"
+                },
+                "order": 1,
+                "lastModifiedOn": "2020-04-21T12:59:00.8378697Z",
+                "comment": null,
+                "permissions": 1,
+                "isStepReassigned": false
+              },
+              {
+                "id": 3,
+                "status": 4,
+                "actualApprover": {
+                  "displayName": "Peter Dol",
+                  "id": "2dbe73bd-5f5c-6152-b980-1b9e87449195",
+                  "uniqueName": "Peter.Dol@rabobank.nl",
+                  "descriptor": "aad.MmRiZTczYmQtNWY1Yy03MTUyLWI5ODAtMWI5ZTg3NDQ5MTk1"
+                },
+                "assignedApprover": {
+                  "displayName": "Peter Dol",
+                  "id": "2dbe73bd-5f5c-6152-b980-1b9e87449195",
+                  "uniqueName": "Peter.Dol@rabobank.nl",
+                  "descriptor": "aad.MmRiZTczYmQtNWY1Yy03MTUyLWI5ODAtMWI5ZTg3NDQ5MTk1"
+                },
+                "order": 1,
+                "lastModifiedOn": "2020-04-21T14:21:20.3457733Z",
+                "comment": null,
+                "permissions": 1,
+                "isStepReassigned": false
+              }
+            ],
+            "blockedApprovers": [],
+            "instructions": null,
+            "minRequiredApprovers": 1,
+            "resource": {
+              "type": "environment",
+              "id": "6",
+              "name": "test123",
+              "checkId": "f7c907e4-27c1-4926-84c6-09b2f870e45e"
+            },
+            "createdDate": "2020-04-21T12:59:00.837Z",
+            "parentStage": "e9f4c0d7-9d98-5e26-c7a8-d82697d50416",
+            "timeout": 43200,
+            "id": "f7c907e4-27c1-4926-84c6-09b2f870e45e",
+            "status": 4,
+            "resultMessage": null,
+            "typeId": "8c6f20a7-a545-4486-9777-f762fafe0d4d",
+            "permissions": 0
+          }
+        ],
+        "checks": [],
+        "stageId": "e9f4c0d7-9d98-5e26-c7a8-d82697d50416",
+        "stageName": "Production",
+        "projectId": "53410703-e2e5-4238-9025-233bd7c811b3"
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+parameters:
+  - name: agentPool
+    type: string
+    default: Rabo-Linux-Production
+  - name: buildProjectFile
+    type: string
+  - name: publishProjectFiles
+    type: string
+  - name: projectFileName 
+    type: string 
+  - name: copyComplianceScannerShared 
+    type: boolean
+    default: false
+  - name: setHubName
+    type: boolean
+    default: false
+  - name: hostJsonPath
+    type: string
+    default: ""
+  - name: hubNamePrefix
+    type: string
+    default: ""
+
+jobs:
+  - job: Publish
+    displayName: Publish
+    pool: ${{parameters.agentPool}}
+    steps:
+      - ${{ if eq(parameters.setHubName, true) }}:
+        - template: ../task/functionapp-set-hubname-task.yml
+          parameters:
+            hostJsonPath: ${{parameters.hostJsonPath}}
+            hubNamePrefix: ${{parameters.hubNamePrefix}}
+      - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+      - template: ../task/dotnet-build-projects-task.yml
+        parameters:
+          projects: ${{parameters.buildProjectFile}}
+      - template: ../task/dotnet-publish-projects-task.yml
+        parameters:
+          projects: ${{parameters.publishProjectFiles}}
+      - template:  ../task/copy-files-task.yml
+        parameters:
+          sourceFolder: $(build.ArtifactStagingDirectory)/Shared 
+          files: |
+                **/function.json
+          targetFolder: $(Build.ArtifactStagingDirectory)/${{parameters.projectFileName}}
+          copyFiles: ${{parameters.copyComplianceScannerShared}}
+      - template: /templates/common/task/publish-pipeline-artifact-task.yml@innersourceTemplates    
+        parameters:
+          targetPath: $(Build.ArtifactStagingDirectory)/${{parameters.projectFileName}}

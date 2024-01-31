@@ -1,0 +1,26 @@
+parameters:
+  - name: SlotName
+    type: string
+    default: staging
+  - name: ResourceGroupName
+    type: string
+  - name: FunctionAppName
+    type: string
+  - name: ServiceConnectionName
+    type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: Create slot in '${{ parameters.FunctionAppName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Creating extra deployment slot with name: ${{ parameters.SlotName }}";
+      
+      az functionapp deployment slot create
+      --name ${{ parameters.FunctionAppName }} 
+      --resource-group ${{ parameters.ResourceGroupName }} 
+      --slot ${{ parameters.SlotName }}
+      ;

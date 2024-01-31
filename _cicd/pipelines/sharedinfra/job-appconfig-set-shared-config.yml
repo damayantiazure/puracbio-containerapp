@@ -1,0 +1,32 @@
+parameters:
+  # Job-level parameters
+  - name: JobName
+    default: SetSharedAppConfigurationSettings
+  - name: condition
+    type: string
+    default: true
+  - name: dependsOn
+    type: object
+    default: []
+  - name: AgentPoolName
+  # Common parameters
+  - name: ServiceConnectionName
+  # Specific parameters
+  - name: AppConfigurationStoreName
+
+
+jobs:
+- job: ${{ parameters.JobName }}
+  displayName: "Update Shared Configuration Settings in App Configuration Store: ${{ parameters.AppConfigurationStoreName }}"
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  steps:
+  - template: ../../resources/azure/appconfiguration/task-appconfig-feature-set.yml
+    parameters:
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      AppConfigurationStoreName: ${{ parameters.AppConfigurationStoreName }}
+      FeatureFlagName: ItsmViaKong
+      Description: Flag to change ITSM communication between Legacy Endpoints and new Kong Endpoints

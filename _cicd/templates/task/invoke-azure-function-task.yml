@@ -1,0 +1,41 @@
+parameters:
+  - name: functionAppName
+    type: string
+  - name: functionName
+    type: string
+  - name: route 
+    type: string
+  - name: key 
+    type: string
+    default: ''
+  - name: method 
+    type: string
+  - name: headers 
+    type: string
+    default: ''
+  - name: body 
+    type: string
+    default: ''
+  - name: sleep
+    type: string
+    default: false
+  - name: waitForCompletion
+    type: boolean
+    default: false
+
+steps:
+- ${{ if eq(parameters.sleep, 'true') }}:
+  - task: Delay@1
+    inputs:
+      delayForMinutes: 1
+# The task AzureFunction@1 needs to run in an Agentless job, so the job that uses this template needs to set the pool to 'server'
+# See https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/azure-function?view=azure-devops
+- task: AzureFunction@1
+  displayName: Invoke Azure Function - ${{parameters.functionAppName}} - ${{parameters.functionName}}
+  inputs:
+    function: https://${{parameters.functionAppName}}.azurewebsites.net/api/${{parameters.route}}
+    key: ${{parameters.key}}
+    method: ${{parameters.method}}
+    headers: ${{parameters.headers}}
+    body: ${{parameters.body}}
+    waitForCompletion: ${{parameters.waitForCompletion}}

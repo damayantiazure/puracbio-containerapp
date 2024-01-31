@@ -1,0 +1,98 @@
+trigger:
+- none
+
+pool: Rabo-Windows-Production
+
+parameters:
+- name: partitionKey
+  displayName: Feature name
+  type: string
+  default: PipelineBreakerCompliancy
+  values:
+  - PipelineBreakerCompliancy
+- name: organization
+  displayName: Organization
+  type: string
+  default: raboweb
+  values:
+  - raboweb
+  - raboweb-test
+  - raboweb-brazil
+  - raboweb-dublin
+  - raboweb-na
+  - raboweb-ranz
+  - raboweb-ftbtr 
+- name: projectName
+  displayName: Project name
+  type: string
+  default: ''
+
+stages:
+- stage: TEST
+  displayName: Test
+  condition: eq(variables.runDevStage, true)
+  jobs:
+  - job:
+    displayName: Insert table entity
+    variables:
+    - template: ../sharedvars/dev.yml
+    steps:
+    - template: ../../templates/task/get-project-id-by-name-task.yml
+      parameters:
+        organization: ${{ parameters.organization }}
+        projectName: ${{ parameters.projectName }}
+        token: $(azdoPatDev)
+    - template: ../../templates/task/storage-entity-insert-task.yml
+      parameters:
+        azureSubscription: ${{variables.azureSubscription}}
+        partitionKey: ${{ parameters.partitionKey }}
+        rowKey: $(getProjectId.projectid)
+        projectId: $(getProjectId.projectid)
+        projectName: ${{ parameters.projectName }}
+        organization: ${{ parameters.organization }}
+        connectionString: $(connectionStringDev)
+    
+- stage: PROD
+  displayName: Production
+  condition: eq(variables.runDevStage, false)
+  jobs:
+  - job:
+    displayName: Insert table entity
+    variables:
+    - template: ../sharedvars/prd.yml
+    steps:
+    - template: ../../templates/task/get-project-id-by-name-task.yml
+      parameters:
+        organization: ${{ parameters.organization }}
+        projectName: ${{ parameters.projectName }}
+        token: $(azdoPatPrd)
+    - template: ../../templates/task/storage-entity-insert-task.yml
+      parameters:
+        azureSubscription: ${{variables.azureSubscription}}
+        partitionKey: ${{ parameters.partitionKey }}
+        rowKey: $(getProjectId.projectid)
+        projectId: $(getProjectId.projectid)
+        projectName: ${{ parameters.projectName }}
+        organization: ${{ parameters.organization }}
+        connectionString: $(connectionStringProd)
+
+- stage: REMOVE
+  displayName: Remove
+  condition: eq(variables.RemoveEntity, true)
+  jobs:
+  - job:
+    displayName: Delete table entity
+    variables:
+    - template: ../sharedvars/prd.yml
+    steps:
+    - template: ../../templates/task/get-project-id-by-name-task.yml
+      parameters:
+        organization: ${{ parameters.organization }}
+        projectName: ${{ parameters.projectName }}
+        token: $(azdoPatPrd)
+    - template: ../../templates/task/storage-entity-delete-task.yml
+      parameters:
+        azureSubscription: ${{variables.azureSubscription}}
+        partitionKey: ${{ parameters.partitionKey }}
+        rowKey: $(getProjectId.projectid)
+        connectionString: $(connectionStringProd)

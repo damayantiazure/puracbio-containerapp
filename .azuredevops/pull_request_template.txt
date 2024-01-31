@@ -1,0 +1,8 @@
+## Checklist:
+- [ ] Code satisfies the coding standard as documented in: https://confluence.dev.rabobank.nl/display/MTTAS/Development+Standards+for+Team+Aegis
+- [ ] Code follows clean coding concepts.
+- [ ] Solution should follow the solution as proposed in the PBI. If not, the reason for deviation should be stated in the PBI.
+- [ ] The Acceptance Criteria as stated in the PBI are met.
+- [ ] If nullable reference types are not enabled for the project, code should be marked with #nullable enable/disable compiler directives.
+- [ ] The pull request should contain a description.
+- [ ] If applicable, documentation is updated and reviewed.

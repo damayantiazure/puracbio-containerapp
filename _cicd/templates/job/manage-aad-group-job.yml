@@ -1,0 +1,47 @@
+parameters:
+# Job-level parameters
+- name: JobName
+  default: ManageAadGroup
+- name: AgentPoolName
+  type: string
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+# Specific Parameters
+- name: artifactName
+  type: string
+  default: ManageAadGroup
+- name: pathtoPublish
+  type: string
+- name: groupSubname
+  type: string
+- name: memberObjectIds
+  type: string
+- name: urlResource
+  type: string
+  default: 'https://dsmprdfrontdoor.azurefd.net'
+
+jobs:
+- job: ${{ parameters.JobName }}
+  displayName: Manage AAD Group
+  pool: ${{ parameters.AgentPoolName }}
+  steps:
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: ${{ parameters.artifactName }}'
+    inputs:
+      pathtoPublish: ${{ parameters.pathtoPublish }}
+      artifactName: ${{ parameters.artifactName }}
+  - task: DownloadBuildArtifacts@0
+    displayName: Download pipeline artifact
+    inputs:
+      buildType: current
+      downloadType: single
+      artifactName: ${{ parameters.artifactName }}
+      downloadPath: $(System.ArtifactsDirectory)
+  - template: ../task/aad-group-create-and-add-members-task.yml
+    parameters:
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      artifactName: ${{ parameters.artifactName }}
+      groupSubname: ${{ parameters.groupSubname }}
+      memberObjectIds: ${{ parameters.memberObjectIds }}
+      urlResource: ${{ parameters.urlResource }}

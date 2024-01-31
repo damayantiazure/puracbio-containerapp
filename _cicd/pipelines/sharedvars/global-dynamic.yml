@@ -1,0 +1,15 @@
+parameters:
+- name: functionAppName
+  type: string
+
+variables:
+  # Prerequisites
+  keyVaultDomainName: ${{ parameters.functionAppName }}kv.vault.azure.net
+
+  # Keyvault References
+  azdoPatRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/azdoPat/)^^"
+  clientSecretRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/clientSecret/)^^"
+  cmdbApiKeyRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/cmdbApiKey/)^^"
+  extensionSecretRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/extensionSecret/)^^"
+  tableStorageConnectionStringRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/tableStorageConnectionString/)^^"
+  eventQueueStorageConnectionStringRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultDomainName }}/secrets/eventQueueStorageConnectionString/)^^"

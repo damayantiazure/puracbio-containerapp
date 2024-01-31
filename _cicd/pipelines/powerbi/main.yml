@@ -1,0 +1,56 @@
+trigger:
+  - main
+
+pool: Rabo-Windows-Production
+
+resources:
+  repositories:
+    - repository: innersourceTemplates
+      type: git
+      name: Innersource/AzDo-pipeline-starters
+      ref: refs/heads/master
+
+variables:
+  terraformRootFolder: "$(System.DefaultWorkingDirectory)\\_cicd\\pipelines\\powerbi\\terraform"
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  terraformVersion: "1.6.1"
+
+stages:
+  #######################################################
+  #  BUILD
+  #######################################################
+  - stage: BuildStage
+    displayName: "Build Stage"
+    jobs:
+      - template: templates/jobs/job-environment-plan.yml
+        parameters:
+          EnvironmentNamePrefix: dev
+          terraformVersion: ${{ variables.terraformVersion }}
+
+      - template: templates/jobs/job-environment-plan.yml
+        parameters:
+          EnvironmentNamePrefix: prd
+          terraformVersion: ${{ variables.terraformVersion }}
+
+  #######################################################
+  #  DEV
+  #######################################################
+  - template: templates/stages/stage-deploy-environment.yml
+    parameters:
+      EnvironmentNamePrefix: dev
+      dependsOn: BuildStage
+      EnvironmentCheck: azdo-compliancy-development
+      terraformVersion: ${{ variables.terraformVersion }}
+
+  #######################################################
+  #  PRD
+  #######################################################
+  - template: ../../templates/stage/production-approval-stage.yml
+
+  - template: templates/stages/stage-deploy-environment.yml
+    parameters:
+      EnvironmentNamePrefix: prd
+      condition: $(isMain)
+      dependsOn: ProductionApproval
+      EnvironmentCheck: azdo-production-check
+      terraformVersion: ${{ variables.terraformVersion }}

@@ -1,0 +1,34 @@
+{
+  "id": "66b5a018-2839-41a8-bea0-cab6d30d0c37",
+  "eventType": "ms.vss-release.deployment-completed-event",
+  "publisherId": "rm",
+  "message": {
+    "text": "Deployment of release Release-1 on stage Dev Succeeded.",
+    "html": "Deployment on stage <a href='http://fabfiber.visualstudio.com/Fabrikam-Fiber-Git/_apps/hub/ms.vss-releaseManagement-web.hub-explorer?_a=environment-summary&definitionEnvironmentId=1&definitionId=1'>Dev</a> Succeeded.",
+    "markdown": "Deployment on stage [Dev](http://fabfiber.visualstudio.com/Fabrikam-Fiber-Git/_apps/hub/ms.vss-releaseManagement-web.hub-explorer?_a=environment-summary&definitionEnvironmentId=1&definitionId=1) Succeeded."
+  },
+  "detailedMessage": {
+    "text": "Deployment of release Release-1 on stage Dev Succeeded. Time to deploy: 0.11 minutes.",
+    "html": "Deployment on stage <a href='http://fabfiber.visualstudio.com/Fabrikam-Fiber-Git/_apps/hub/ms.vss-releaseManagement-web.hub-explorer?_a=environment-summary&definitionEnvironmentId=1&definitionId=1'>Dev</a> Succeeded. Time to deploy: 0.11 minutes.",
+    "markdown": "Deployment on stage [Dev](http://fabfiber.visualstudio.com/Fabrikam-Fiber-Git/_apps/hub/ms.vss-releaseManagement-web.hub-explorer?_a=environment-summary&definitionEnvironmentId=1&definitionId=1) Succeeded. Time to deploy: 0.11 minutes."
+  },
+  "resource": {
+    "id": 0,
+    "url": null,
+    "stageName": null,
+    "attemptId": 0
+  },
+  "resourceVersion": "3.0-preview.1",
+  "resourceContainers": {
+    "collection": {
+      "id": "c12d0eb8-e382-443b-9f9c-c52cba5014c2"
+    },
+    "account": {
+      "id": "f844ec47-a9db-4511-8281-8b63f4eaf94e"
+    },
+    "project": {
+      "id": "be9b3917-87e6-42a4-a549-2bc06a7a878f"
+    }
+  },
+  "createdDate": "2021-08-13T14:08:42.7004557Z"
+}

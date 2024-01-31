@@ -1,0 +1,33 @@
+parameters:
+- name: StageEnv
+  type: string
+  default: dev
+  values:
+  - dev
+  - prd
+  
+variables:  
+  # Extension: Build
+- name: rootFolderOrFile
+  value: $(Build.SourcesDirectory)/src/Functions/PipelineBreaker/Decorator
+- name: archiveFile
+  value: $(Build.ArtifactStagingDirectory)/decorator.zip
+
+  # Extension: Publish
+- name: destinationFolder
+  value: $(System.DefaultWorkingDirectory)/decorator
+- name: publisherId
+  value: tas
+
+  # Azure Function
+- name: applicationName
+  value: azdo-compliancy-pipelinebreaker
+- name: useStagingSlot
+  value: true
+- name: projectFileName
+  value: PipelineBreaker
+- name: buildProjectFile
+  value: src/Functions/PipelineBreaker/PipelineBreaker.csproj
+- name: publishProjectFiles
+  value: src/Functions/PipelineBreaker/PipelineBreaker.csproj
+- template: ../../sharedvars/${{parameters.StageEnv}}.yml

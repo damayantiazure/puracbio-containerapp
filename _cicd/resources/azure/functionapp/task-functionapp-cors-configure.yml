@@ -1,0 +1,52 @@
+# Summary:
+# This task configures a Function App Cross-Origin Resource Sharing (CORS).
+# See https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: FunctionAppName
+  type: string
+# Updatable parameters
+- name: EnableCors
+  type: boolean
+  default: true
+- name: CorsAllowedOriginUrls
+  type: object
+  default: []
+        
+steps:
+- task: AzureCLI@2
+  displayName: 'Configure Function App CORS'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Configuring CORS for Function App";
+
+      az functionapp cors credentials 
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --enable ${{ parameters.EnableCors }}
+      ;
+
+      az functionapp cors remove 
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --allowed-origins
+      ;
+
+      az functionapp cors add
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --allowed-origins ${{ join(' ',parameters.CorsAllowedOriginUrls) }}
+      ;
+
+      az functionapp cors show
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      ;

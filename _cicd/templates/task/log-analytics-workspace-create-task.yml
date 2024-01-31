@@ -1,0 +1,45 @@
+parameters:
+  - name: OutputStepName
+    default: LogAnalyticsTaskOutput
+  - name: azureSubscription
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: workspaceName
+    type: string
+  - name: location
+    type: string
+    default: westeurope
+  - name: retentionTime
+    type: number
+    default: 730
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create log analytics workspace'
+  inputs:
+    azureSubscription: ${{parameters.azureSubscription}}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "Deploying log analytics workspace ${{parameters.workspaceName}}"
+      az monitor log-analytics workspace create \
+        --resource-group ${{parameters.resourceGroup}} \
+        --workspace-name ${{parameters.workspaceName}} \
+        --retention-time ${{parameters.retentionTime}} \
+        --location ${{parameters.location}}
+
+- task: AzureCLI@2
+  displayName: Set output var LogAnalyticsWorkspaceId
+  name: ${{ parameters.OutputStepName }} # Required when providing output variables
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      $workspaceId = az monitor log-analytics workspace show
+      --resource-group ${{parameters.resourceGroup}}
+      --workspace-name ${{parameters.workspaceName}}
+      --query id -o tsv;
+
+      Write-Host "##vso[task.setvariable variable=LogAnalyticsWorkspaceId;isOutput=true]$($workspaceId)";

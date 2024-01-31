@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>Rabobank.Compliancy.Infra.AzdoClient</RootNamespace>
+		<AssemblyName>Rabobank.Compliancy.Infra.AzdoClient</AssemblyName>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SonarQubeExclude>true</SonarQubeExclude>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Dynamitey" Version="2.0.10.189" />
+		<PackageReference Include="Flurl.Http" Version="2.4.2" />
+		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.16" />	
+		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.11.3" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+		<PackageReference Include="Polly" Version="7.2.3" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
+		<PackageReference Include="YamlDotNet" Version="13.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\StorageClient\StorageClient.csproj" />
+	</ItemGroup>
+</Project>

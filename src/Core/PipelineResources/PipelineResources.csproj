@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Rabobank.Compliancy.Core.PipelineResources</RootNamespace>
+    <AssemblyName>Rabobank.Compliancy.Core.PipelineResources</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infra\AzdoClient\AzdoClient.csproj" />
+  </ItemGroup>
+
+</Project>

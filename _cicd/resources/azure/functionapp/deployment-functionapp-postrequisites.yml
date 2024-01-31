@@ -1,0 +1,101 @@
+parameters:
+# Job-level parameters
+- name: JobName
+  default: DeployFunctionAppPostrequisites
+- name: condition
+  type: string
+  default: true
+- name: dependsOn
+  type: object
+  default: []
+- name: AgentPoolName
+- name: environment
+# Common parameters
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: FunctionAppName
+- name: Location
+- name: VnetName
+- name: SubnetName
+- name: NsgName
+- name: FunctionAppSubnet
+- name: KeyvaultName
+- name: useStagingSlot
+  type: string
+  default: true
+
+jobs:
+- deployment: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  environment: ${{ parameters.environment }}
+  
+  variables:
+    AdressRangeBase: 10.0.0.0
+    AdressRangeSizeSubnet: 24
+    AdressRangeSizeVnet: 16
+    AzureDevOpsAgentSubnet: /subscriptions/0cea37a3-6bdc-43cb-be5f-e6d390b05a3c/resourceGroups/rg-erconnect-Azdo-prd/providers/Microsoft.Network/virtualNetworks/vnet-erconnect-Azdo-prd-we/subnets/snet-workload-Azdo-prd-we # The subnetId of AzureDevOps agent in West Europe region
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: ../networking/task-network-nsg-create.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName:  ${{ parameters.ResourceGroupName }}
+            NsgName: ${{ parameters.NsgName }}
+            Location: ${{ parameters.Location }}
+        - template: ../networking/task-network-vnet-create.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            VnetName: ${{ parameters.VnetName }}
+            AdressRangeBase: ${{ variables.AdressRangeBase }}
+            AdressRangeSize: ${{ variables.AdressRangeSizeSubnet }}
+        - template: ../networking/task-network-subnet-create.yml
+          parameters:
+            # Common Parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            # First-Time Parameters
+            VnetName: ${{ parameters.VnetName }}
+            SubnetName: ${{ parameters.SubnetName }}
+            AdressRangeBase: ${{ variables.AdressRangeBase }}
+            AdressRangeSize: ${{ variables.AdressRangeSizeSubnet }}
+            # Updatable Parameters
+            NsgName: ${{ parameters.NsgName }}
+            ServiceEndpoints:
+            - Microsoft.KeyVault
+            - Microsoft.Storage
+        - template: task-functionapp-vnet-integration.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            VnetName: ${{ parameters.VnetName }}
+            SubnetName: ${{ parameters.SubnetName }}
+            FunctionAppName: ${{ parameters.FunctionAppName }}
+            useStagingSlot: ${{ parameters.useStagingSlot }}
+        - template: ../keyvault/task-keyvault-create.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            KeyVaultName: ${{ parameters.KeyvaultName }}
+        - template: ../keyvault/task-keyvault-network-rule-subnetId.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            KeyVaultName: ${{ parameters.KeyvaultName }}
+            SubnetIds: 
+            - ${{ variables.AzureDevOpsAgentSubnet }}
+            - ${{ parameters.FunctionAppSubnet }}
+        - template: ../keyvault/task-keyvault-access-policies-functionapp.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            KeyVaultName: ${{ parameters.KeyvaultName }}
+            FunctionAppName: ${{ parameters.FunctionAppName }}

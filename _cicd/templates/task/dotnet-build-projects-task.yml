@@ -1,0 +1,15 @@
+parameters:
+  - name: configuration
+    type: string
+    default: Release
+  - name: projects
+    type: string
+    default: "**/*.sln"
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: "Dotnet Build"
+    inputs:
+      command: build
+      projects: ${{ parameters.projects }}
+      arguments: "--configuration ${{ parameters.configuration }}"

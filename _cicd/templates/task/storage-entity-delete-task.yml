@@ -1,0 +1,28 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: partitionKey
+  type: string
+- name: rowKey
+  type: string
+- name: tableName
+  type: string
+  default: PreviewFeatures
+- name: connectionString
+  type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: Delete entity from Table Storage
+  inputs:
+    azureSubscription: ${{parameters.azureSubscription}}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: >
+     az storage entity delete
+     --partition-key=${{ parameters.partitionKey }} 
+     --row-key=${{ parameters.rowKey }}
+     --table-name ${{ parameters.tableName }}
+     --connection-string $CONNECTIONSTRING
+  env:
+    CONNECTIONSTRING: ${{ parameters.connectionString }}

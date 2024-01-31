@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+    - main
+
+stages:
+- stage: stage1
+  jobs:
+  - deployment: Test Deploy
+    environment: 
+      name: 'testprod'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: Download Artifact from outside project 
+            inputs:
+              project: '106f7e65-65cc-45a1-980f-a90e414ec820' # name or guid
+              definition: 1258 # PipelineID / DefinitionID

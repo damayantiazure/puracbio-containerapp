@@ -1,0 +1,14 @@
+parameters:
+- name: StageEnv
+  type: string
+  default: dev
+  values:
+  - dev
+  - prd
+
+variables:
+- name: applicationName
+  value: azdo-compliancy-rules
+- name: buildProjectFile
+  value: src/Core/Rules/Rules.csproj
+- template: ../../sharedvars/${{parameters.StageEnv}}.yml

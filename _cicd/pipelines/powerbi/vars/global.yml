@@ -1,0 +1,4 @@
+variables:
+  ciName: AZDO-COMPLIANCY
+  sm9ChangeTemplate: TAS ADO Generic Change Template
+  terraformRootFolder: "$(System.DefaultWorkingDirectory)\\_cicd\\pipelines\\powerbi\\terraform"

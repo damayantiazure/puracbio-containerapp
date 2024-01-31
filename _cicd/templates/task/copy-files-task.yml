@@ -1,0 +1,25 @@
+parameters:
+  - name: copyFiles
+    type: boolean
+    default: false
+  - name: sourceFolder
+    type: string
+    default: $(System.DefaultWorkingDirectory)
+  - name: files
+    type: string
+  - name: targetFolder
+    type: string
+    default: $(Build.ArtifactStagingDirectory)
+  - name: flattenFolders
+    type: boolean
+    default: false
+
+steps:
+  - task: CopyFiles@2
+    condition: eq('${{ parameters.copyFiles }}', true)
+    displayName: "Copy Files"
+    inputs:
+      SourceFolder:  ${{parameters.sourceFolder}}
+      Contents:  ${{parameters.files}}
+      TargetFolder:  ${{parameters.targetFolder}}
+      flattenFolders:  ${{parameters.flattenFolders}}

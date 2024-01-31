@@ -1,0 +1,80 @@
+{
+  "logging:WorkspaceId": "bcc2890c-060c-4cb8-b7f7-7cfa111d2a57",
+  "logging:Ingestion:EndPoint": "https://dce-dev-compliancy-data-3byi.westeurope-1.ingest.monitor.azure.com",
+
+  "logging:Ingestion:Clients:0:ModelName": "AuditDeploymentLogDto",
+  "logging:Ingestion:Clients:0:RuleId": "dcr-d72d6159dc464b91917b08799f8c415a",
+  "logging:Ingestion:Clients:0:StreamName": "Custom-audit_deployment_log2_CL",
+
+  "logging:Ingestion:Clients:1:ModelName": "AuditLoggingErrorLogDto",
+  "logging:Ingestion:Clients:1:RuleId": "dcr-61cb748404ad4e2ea93919c2dcea7091",
+  "logging:Ingestion:Clients:1:StreamName": "Custom-audit_logging_error_log2_CL",
+
+  "logging:Ingestion:Clients:2:ModelName": "AuditLoggingHookFailureLogDto",
+  "logging:Ingestion:Clients:2:RuleId": "dcr-ab34c6802fe2438bb9199c5612eb9dde",
+  "logging:Ingestion:Clients:2:StreamName": "Custom-audit_logging_hook_failure_log2_CL",
+
+  "logging:Ingestion:Clients:3:ModelName": "AuditPoisonMessagesLogDto",
+  "logging:Ingestion:Clients:3:RuleId": "dcr-760ca2ef6fc646e18614ac8a46e0377c",
+  "logging:Ingestion:Clients:3:StreamName": "Custom-audit_poison_messages_log2_CL",
+
+  "logging:Ingestion:Clients:4:ModelName": "AuditPullRequestApproversLogDto",
+  "logging:Ingestion:Clients:4:RuleId": "dcr-d9046f771274419ea94ad61844eafe8d",
+  "logging:Ingestion:Clients:4:StreamName": "Custom-audit_pull_request_approvers_log2_CL",
+
+  "logging:Ingestion:Clients:5:ModelName": "ComplianceScannerOnlineErrorLogDto",
+  "logging:Ingestion:Clients:5:RuleId": "dcr-4b579b2823444256ac00f0d6f44b63a0",
+  "logging:Ingestion:Clients:5:StreamName": "Custom-compliance_scanner_online_error_log2_CL",
+
+  "logging:Ingestion:Clients:6:ModelName": "CompliancyCisDto",
+  "logging:Ingestion:Clients:6:RuleId": "dcr-b3bae725209f46f79a1f63cd88aa45de",
+  "logging:Ingestion:Clients:6:StreamName": "Custom-compliancy_cis2_CL",
+
+  "logging:Ingestion:Clients:7:ModelName": "CompliancyItemsDto",
+  "logging:Ingestion:Clients:7:RuleId": "dcr-2012aca74b614d4aa0345da3ca0b320d",
+  "logging:Ingestion:Clients:7:StreamName": "Custom-compliancy_items2_CL",
+
+  "logging:Ingestion:Clients:8:ModelName": "CompliancyPipelinesDto",
+  "logging:Ingestion:Clients:8:RuleId": "dcr-9a1dc4a127664040b14e66d888a68208",
+  "logging:Ingestion:Clients:8:StreamName": "Custom-compliancy_pipelines2_CL",
+
+  "logging:Ingestion:Clients:9:ModelName": "CompliancyPrinciplesDto",
+  "logging:Ingestion:Clients:9:RuleId": "dcr-efd7611356984fe5b20fbe1ad98a9924",
+  "logging:Ingestion:Clients:9:StreamName": "Custom-compliancy_principles2_CL",
+
+  "logging:Ingestion:Clients:10:ModelName": "CompliancyRulesDto",
+  "logging:Ingestion:Clients:10:RuleId": "dcr-05e9c970bc9245d299354d73d26442cb",
+  "logging:Ingestion:Clients:10:StreamName": "Custom-compliancy_rules2_CL",
+
+  "logging:Ingestion:Clients:11:ModelName": "DecoratorErrorLogDto",
+  "logging:Ingestion:Clients:11:RuleId": "dcr-b7ee2310324b4d039649b83832d2146c",
+  "logging:Ingestion:Clients:11:StreamName": "Custom-decorator_error_log2_CL",
+
+  "logging:Ingestion:Clients:12:ModelName": "DeviationsLogDto",
+  "logging:Ingestion:Clients:12:RuleId": "dcr-fc70f3a0d1f948ba9cceff29094c6249",
+  "logging:Ingestion:Clients:12:StreamName": "Custom-deviations_log2_CL",
+
+  "logging:Ingestion:Clients:13:ModelName": "ErrorHandlingLogDto",
+  "logging:Ingestion:Clients:13:RuleId": "dcr-45a52f9176364de6a548ac219ebe94d2",
+  "logging:Ingestion:Clients:13:StreamName": "Custom-error_handling_log2_CL",
+
+  "logging:Ingestion:Clients:14:ModelName": "PipelineBreakerComplianceLogDto",
+  "logging:Ingestion:Clients:14:RuleId": "dcr-96dbf2e290f14502b0e163326d88429c",
+  "logging:Ingestion:Clients:14:StreamName": "Custom-pipeline_breaker_compliance_log2_CL",
+
+  "logging:Ingestion:Clients:15:ModelName": "PipelineBreakerErrorLogDto",
+  "logging:Ingestion:Clients:15:RuleId": "dcr-79ba3452513145108c66dcd8cdd3b290",
+  "logging:Ingestion:Clients:15:StreamName": "Custom-pipeline_breaker_error_log2_CL",
+
+  "logging:Ingestion:Clients:16:ModelName": "PipelineBreakerLogDto",
+  "logging:Ingestion:Clients:16:RuleId": "dcr-697a307887ad43bcba95e5f372cab291",
+  "logging:Ingestion:Clients:16:StreamName": "Custom-pipeline_breaker_log2_CL",
+
+  "logging:Ingestion:Clients:17:ModelName": "Sm9ChangesErrorLogDto",
+  "logging:Ingestion:Clients:17:RuleId": "dcr-bf556322229c4edfae33dc0073b2a9e0",
+  "logging:Ingestion:Clients:17:StreamName": "Custom-sm9_changes_error_log2_CL",
+
+  "logging:Ingestion:Clients:18:ModelName": "ValidateGatesErrorLogDto",
+  "logging:Ingestion:Clients:18:RuleId": "dcr-7704956a527346c8af8a03fdd04dfd1c",
+  "logging:Ingestion:Clients:18:StreamName": "Custom-validate_gates_error_log2_CL"
+}

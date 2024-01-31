@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "1ff2ba7d-1c82-4d5c-a30d-723e90918643",
+		"name": "OpenPermissionCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4412095",
+		"_collection_link": "https://bold-desert-258490.postman.co/workspace/Aegis~98af3563-5ca6-4ce4-9c90-431a5700de99/collection/4412095-1ff2ba7d-1c82-4d5c-a30d-723e90918643?action=share&source=collection_link&creator=4412095"
+	},
+	"item": [
+		{
+			"name": "Build Pipeline YAML Reconcile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/reconcile/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/NobodyCanDeleteBuilds/1343",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"reconcile",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"NobodyCanDeleteBuilds",
+						"1343"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Build Pipeline YAML Open Permissions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/open-permissions/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/Build/1343",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"open-permissions",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"Build",
+						"1343"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Build Pipeline CLASSIC Reconcile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/reconcile/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/NobodyCanDeleteBuilds/1384",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"reconcile",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"NobodyCanDeleteBuilds",
+						"1384"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Build Pipeline CLASSIC Open Permissions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/open-permissions/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/Build/1384",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"open-permissions",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"Build",
+						"1384"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Release Pipeline Reconcile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/reconcile/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/NobodyCanDeleteBuilds/1343",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"reconcile",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"NobodyCanDeleteBuilds",
+						"1343"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Release Pipeline Open Permissions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/open-permissions/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/Release/2",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"open-permissions",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"Release",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitRepo Reconcile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/open-permissions/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/Release/2",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"open-permissions",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"Release",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitRepo Open Permissions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:{{port}}/api/open-permissions/raboweb-test/c82e1266-3edd-4147-90c0-63f4cfd44b7f/Build/1343",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"open-permissions",
+						"raboweb-test",
+						"c82e1266-3edd-4147-90c0-63f4cfd44b7f",
+						"Build",
+						"1343"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "hostname",
+			"value": "localhost"
+		},
+		{
+			"key": "port",
+			"value": "7073"
+		}
+	]
+}

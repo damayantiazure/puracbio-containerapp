@@ -1,0 +1,67 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: functionAppName
+  type: string
+- name: resourceGroupName
+  type: string
+- name: slotName
+  type: string
+  default: ''
+- name: functionExtensionVersion
+  type: string
+  default: ~4
+  values:
+  - ~3
+  - ~4 
+- name: netFrameworkVersion
+  type: string
+  default: v6.0
+  values: 
+  - v4.0
+  - v6.0
+  - v7.0
+
+# The setting "WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS" allows the swapping of *_EXTENSION_VERSION appsetting values
+# For more documentation on this, see https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions?tabs=azure-cli%2Cin-process%2Cv4&pivots=programming-language-csharp#minimum-downtime-upgrade
+
+steps:
+- ${{ if ne(parameters.slotName, '') }}: 
+  - task: AzureCLI@2
+    displayName: Set Function Extension Version to Slot
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true
+      inlineScript: >
+        az functionapp config appsettings set
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --slot ${{ parameters.slotName }}
+        --settings "WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0" "FUNCTIONS_EXTENSION_VERSION=${{ parameters.functionExtensionVersion }}"
+
+        az functionapp config set 
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --slot ${{ parameters.slotName }}
+        --net-framework-version ${{ parameters.netFrameworkVersion }}
+
+- ${{ if eq(parameters.slotName, '') }}:
+  - task: AzureCLI@2
+    displayName: Set Function Extension Version to App
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: "inlineScript"
+      addSpnToEnvironment: true
+      inlineScript: >
+        az functionapp config appsettings set 
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --settings "WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0" "FUNCTIONS_EXTENSION_VERSION=${{ parameters.functionExtensionVersion }}"
+
+        az functionapp config set 
+        --resource-group ${{parameters.resourceGroupName}}
+        --name ${{parameters.functionAppName}}
+        --net-framework-version ${{ parameters.netFrameworkVersion }} 

@@ -1,0 +1,239 @@
+parameters:
+- name: UpdateInfraDev
+  displayName: Should Infra for Dev be Updated?
+  type: boolean
+  default: false
+- name: UpdateSecretsDev
+  displayName: Should Keyvault Secrets in Dev be Updated as well?
+  type: boolean
+  default: false
+  
+trigger:
+- main
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+name: 1.0.$(Rev:r)
+
+variables:
+# Base Name for Azure Function used for naming convention
+- name: FunctionAppBaseName
+  value: auditlogging
+- name: ManagedIdentityAmount
+  value: 3
+# Global/common Variables for whole pipeline
+- template: vars/global.yml
+- template: ../sharedvars/global.yml
+- template: ../sharedvars/variables-conditions.yml
+  parameters:
+    UpdateInfraDev: ${{ parameters.UpdateInfraDev }}
+    UpdateSecretsDev: ${{ parameters.UpdateSecretsDev }}
+# Cross-pipeline used secrets from Library
+- group: AZDO-COMPLIANCY
+
+stages:
+#######################################################
+#  BUILD
+#######################################################
+- template: ../../templates/stage/build-function-stage.yml
+  parameters:
+    pipelineVariables: ../../pipelines/auditlogging/vars/global.yml
+    env: # These are taken from the pipeline variables
+      clientSecret: $(clientSecret)
+      token: $(azdoPatDev)
+    startAzurite: true
+
+#######################################################
+#  DEV
+#######################################################
+- template: ../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraDev
+    displayName: DEV - Infra
+    dependsOn: []
+    condition: eq(variables.DeployInfraToDev, true)
+    environment: ${{ variables.environmentCheckDev }} # from global
+    # Template-specific parameters
+    StageEnv: dev
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsDev
+  displayName: DEV - Secrets
+  dependsOn: InfraDev
+  condition: and(succeeded(), eq(variables.DeploySecretsToDev, true))
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../sharedvars/dev.yml
+  jobs:
+  - template: ../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: ${{ variables.agentPool }}
+      beforeSecretsUpdate:
+      - template: ../../templates/task/storage-account-get-connectionstring-task.yml
+        parameters:
+          azureSubscription: ${{ variables.azureSubscription }}
+          subscription: ${{ variables.subscription }}
+          storageAccountName: ${{ variables.storageAccountName }}
+          resourceGroupName: ${{ variables.resourceGroup }}
+      keyVaultName: ${{ variables.keyVaultName }}
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: azdoPat 
+        value: $azdoPat
+      - name: clientSecret
+        value: $clientSecret
+      - name: eventQueueStorageConnectionString
+        value: $eventQueueStorageConnectionString
+      - name: tableStorageConnectionString
+        value: $tableStorageConnectionString
+      env: # These are taken from the pipeline variables
+        azdoPat: $(azdoPatDev)
+        clientSecret: $(clientSecret)
+        eventQueueStorageConnectionString: $(eventQueueStorageConnectionString)
+        tableStorageConnectionString: $(tableStorageConnectionStringDev)
+
+- stage: DeployDev
+  dependsOn: 
+  - Build
+  - InfraDev
+  - SecretsDev
+  condition:
+    and
+    (
+      in(dependencies.Build.result,'Succeeded','SucceededWithIssues'),
+      in(dependencies.InfraDev.result, 'Succeeded', 'Skipped'),
+      in(dependencies.SecretsDev.result, 'Succeeded', 'Skipped')
+    )
+  displayName: DEV - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  - template: ../sharedvars/dev.yml
+  jobs:
+  - template: ../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheckDev }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+
+- stage: SmokeTestDev
+  displayName: DEV - Smoke Test
+  dependsOn: 
+  - DeployDev  
+  condition: in(dependencies.DeployDev.result,'Succeeded','SucceededWithIssues')
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: dev
+  jobs:
+  - template: ../../templates/job/smoke-test-job.yml
+    parameters:
+      functionAppName: ${{variables.functionAppName}}
+      functions:  
+      - name: diagnostics
+        route: diagnostics
+        method: GET
+
+
+#######################################################
+#  PROD
+#######################################################
+- template: ../../templates/stage/production-approval-stage.yml
+
+- template: ../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: InfraPrd
+    displayName: PROD - Infra
+    dependsOn: ProductionApproval
+    condition: succeeded()
+    environment: ${{ variables.environmentCheck }} # from global
+    # Template-specific parameters
+    StageEnv: prd
+    FunctionAppNameBase: ${{ variables.FunctionAppBaseName }}
+    CountOfIdentities: ${{ variables.ManagedIdentityAmount }}
+
+- stage: SecretsPrd
+  displayName: PROD - Secrets
+  dependsOn: InfraPrd
+  condition: succeeded()
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../sharedvars/prd.yml
+  jobs:
+  - template: ../../templates/job/secrets-job.yml
+    parameters:
+      agentPool: ${{ variables.agentPool }}
+      beforeSecretsUpdate:
+      - template: ../../templates/task/storage-account-get-connectionstring-task.yml
+        parameters:
+          azureSubscription: ${{variables.azureSubscription}}
+          subscription: ${{variables.subscription}}
+          storageAccountName: ${{ variables.storageAccountName }}
+          resourceGroupName: ${{ variables.resourceGroup }}
+      keyVaultName: ${{ variables.keyVaultName }}
+      azureSubscription: ${{variables.azureSubscription}}
+      secrets: 
+      - name: azdoPat 
+        value: $azdoPat
+      - name: clientSecret
+        value: $clientSecret
+      - name: eventQueueStorageConnectionString
+        value: $eventQueueStorageConnectionString
+      - name: tableStorageConnectionString
+        value: $tableStorageConnectionString
+      env: # These are taken from the pipeline variables
+        azdoPat: $(azdoPatPrd)
+        clientSecret: $(clientSecret)
+        eventQueueStorageConnectionString: $(eventQueueStorageConnectionString)
+        tableStorageConnectionString: $(tableStorageConnectionStringPrd)
+      environment: ${{variables.environmentCheck}}
+
+- stage: DeployProduction
+  displayName: PROD - Function app
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  - template: ../sharedvars/prd.yml
+  jobs:
+  - template: ../../templates/job/deployment-functionapp-app.yml
+    parameters:
+      AgentPool: ${{ variables.agentPool }}
+      environment: ${{ variables.environmentCheck }}
+      FunctionAppName: ${{ variables.functionAppName }}
+      ResourceGroupName: ${{ variables.resourceGroup }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      AppSettings: ${{ variables.AppSettings }}
+      ClosingSteps: 
+      - template: /templates/common/task/close-change-task.yml@innersourceTemplates
+
+- stage: SmokeTestPrd
+  displayName: PROD - Smoke Test
+  variables:
+  - template: vars/global.yml
+    parameters:
+      StageEnv: prd
+  jobs:
+  - template: ../../templates/job/smoke-test-job.yml
+    parameters:
+      functionAppName: ${{variables.functionAppName}}
+      functions:  
+      - name: diagnostics 
+        route: diagnostics
+        method: GET

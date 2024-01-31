@@ -1,0 +1,67 @@
+parameters:
+  # Job-level parameters
+  - name: JobName
+    default: DeployAppConfigStore
+  - name: condition
+    type: string
+    default: true
+  - name: dependsOn
+    type: object
+    default: []
+  - name: AgentPoolName
+  - name: variables
+    type: object
+    default: []
+  # Common parameters
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  - name: Location
+    default: westeurope
+  # Specific parameters
+  - name: AppConfigurationStoreName  
+    ## For the Identities, ObjectIds are preferred, but email-addresses and displayNames should work as well
+  - name: ConfigReaderIdentities
+    type: object
+    default: []
+  - name: ConfigOwnerIdentities
+    type: object
+    default: []
+
+jobs:
+- job: ${{ parameters.JobName }}
+  displayName: "Create or Update and Configure Azure App Configuration Store: ${{ parameters.AppConfigurationStoreName }}"
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  variables:
+  - ${{ parameters.variables }}
+
+  steps:
+  - template: ../common/task-create-resourcegroup.yml
+    parameters:
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      ResourceGroupName: ${{ parameters.ResourceGroupName }}
+      Location: ${{ parameters.Location }}
+  - template: task-appconfig-create.yml
+    parameters:
+      StepName: CreateAppConfigurationStore
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      ResourceGroupName: ${{ parameters.ResourceGroupName }}
+      Location: ${{ parameters.Location }}
+      AppConfigurationStoreName: ${{ parameters.AppConfigurationStoreName }}
+  - ${{ each Identity in parameters.ConfigReaderIdentities }}:
+    - template: task-appconfig-role-assignment.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        AppConfigurationResourceId: $(CreateAppConfigurationStore.ResourceId)
+        RoleName: App Configuration Data Reader
+        Assignee: ${{ Identity }} 
+  - ${{ each Identity in parameters.ConfigOwnerIdentities }}:
+    - template: task-appconfig-role-assignment.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        AppConfigurationResourceId: $(CreateAppConfigurationStore.ResourceId)
+        RoleName: App Configuration Data Owner
+        Assignee: ${{ Identity }} 

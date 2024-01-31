@@ -1,0 +1,93 @@
+parameters:
+- name: agentPool
+  type: string
+  default: Rabo-Windows-Production
+- name: environment
+  type: string
+- name: beforePublish
+  type: stepList
+  default: []
+- name: artifact
+  type: string
+  default: Package
+- name: archiveFilePatterns
+  type: string
+  default: $(Pipeline.Workspace)/Package/*.zip
+- name: destinationFolder
+  type: string
+- name: filePattern
+  type: string
+  default: "*.js"
+- name: tokenRegex
+  type: string
+  default: __##(\w+)##__
+- name: secretTokens
+  type: string
+- name: cleanDestinationFolder
+  type: boolean
+  default: true
+- name: connectedServiceName
+  type: string
+  default: TAS Azure DevOps Marketplace
+- name: publisherId
+  type: string
+  default: tas
+- name: extensionId
+  type: string
+- name: extensionName
+  type: string
+- name: extensionVersion
+  type: string
+  default: 1.0.$(Build.BuildId)
+- name: shareWith
+  type: string
+- name: afterPublish
+  type: stepList
+  default: []
+- name: sourcePath
+  type: object
+  default: []
+
+jobs:
+- deployment: PackageAndPublishAzureDevOpsExtension
+  displayName: Package and publish an Azure DevOps extension
+  pool: ${{parameters.agentPool}}
+  environment: ${{parameters.environment}}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - ${{parameters.beforePublish}}
+        - download: current
+          artifact: ${{parameters.artifact}}
+        - task: ExtractFiles@1
+          displayName: Extract files
+          inputs:
+            archiveFilePatterns: ${{parameters.archiveFilePatterns}}
+            destinationFolder: ${{parameters.destinationFolder}}
+            cleanDestinationFolder: ${{parameters.cleanDestinationFolder}}
+        - ${{ each value in parameters.sourcePath }}:
+            - template: /_cicd/templates/task/replace-tokens-task.yml
+              parameters:
+                displayName: ${{parameters.filePattern}}
+                sourcePath: ${{value}}
+                filePattern: ${{parameters.filePattern}}
+                tokenRegex: ${{parameters.tokenRegex}}
+                secretTokens: ${{parameters.secretTokens}}
+        - task: TfxInstaller@3
+          displayName: Install tfx-cli
+          inputs:
+            version: v0.7.x
+        - task: PublishAzureDevOpsExtension@3
+          displayName: Publish extension
+          inputs:
+            connectedServiceName: ${{parameters.connectedServiceName}}
+            rootFolder: ${{parameters.destinationFolder}}
+            publisherId: ${{parameters.publisherId}}
+            extensionId: ${{parameters.extensionId}}
+            extensionName: ${{parameters.extensionName}}
+            extensionVersion: ${{parameters.extensionVersion}}
+            extensionVisibility: private
+            extensionPricing: free
+            shareWith: ${{parameters.shareWith}}
+        - ${{parameters.afterPublish}}

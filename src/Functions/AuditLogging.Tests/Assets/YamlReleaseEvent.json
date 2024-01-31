@@ -1,0 +1,44 @@
+{
+  "id": "4d5e9cef-ee75-4c42-8f58-e216a0efbf6e",
+  "eventType": "ms.vss-pipelines.stage-state-changed-event",
+  "publisherId": "pipelines",
+  "message": {
+    "text": "Run 20200421.4 stage Production succeeded.",
+    "html": "Run 20200421.4 stage <a href=\"https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/results?buildId=33102\">Production</a> succeeded.",
+    "markdown": "Run 20200421.4 stage [Production](https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/results?buildId=33102) succeeded."
+  },
+  "detailedMessage": {
+    "text": "Run 20200421.4 stage Production succeeded.",
+    "html": "Run 20200421.4 stage <a href=\"https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/results?buildId=33102\">Production</a> succeeded.",
+    "markdown": "Run 20200421.4 stage [Production](https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/results?buildId=33102) succeeded."
+  },
+  "resource": {
+    "stage": {
+      "_links": {
+        "web": { "href": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/results?buildId=33102" },
+        "pipeline.web": { "href": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_build/definition?definitionId=312" }
+      },
+      "id": "9fb31afb-34d7-5044-b937-b629e0824357",
+      "name": "Production",
+      "displayName": "Production",
+      "state": "completed",
+      "result": "succeeded"
+    },
+    "run": {
+      "id": 33102,
+      "name": "20200421.4"
+    },
+    "pipeline": {
+      "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/pipelines/312?revision=1",
+      "id": 312,
+      "revision": 1,
+      "name": "MultiStageExample CI",
+      "folder": "\\MultiStageExample"
+    },
+    "runId": 33102,
+    "stageName": "Production",
+    "runUrl": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/pipelines/312/runs/33102"
+  },
+  "resourceVersion": "5.1-preview.1",
+  "createdDate": "2020-04-21T12:59:06.2929229Z"
+}

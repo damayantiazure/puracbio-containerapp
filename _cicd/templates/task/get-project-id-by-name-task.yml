@@ -1,0 +1,18 @@
+parameters:
+- name: organization
+  type: string
+- name: projectName
+  type: string
+- name: token
+  type: string
+
+steps:
+- pwsh: |
+    $project = az devops project show --project ${{ parameters.projectName }} --organization https://dev.azure.com/${{ parameters.organization }} | ConvertFrom-Json
+
+    $projectid=$project.id
+    Write-Output "##vso[task.setvariable variable=projectID;isOutput=true;isreadonly=true]$projectid"
+  env:
+    AZURE_DEVOPS_EXT_PAT: ${{ parameters.token }}
+  name: getProjectId
+  displayName: 'Get projectId by name'

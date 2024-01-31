@@ -1,0 +1,37 @@
+parameters:
+  - name: OutputStepName
+    default: ResourceGroupCreateTaskOutput
+  - name: azureSubscription
+    type: string
+  - name: location
+    type: string
+    default: "westeurope"
+  - name: resourceGroup
+    type: string
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update a Resource Group'
+  inputs:
+    azureSubscription: ${{parameters.azureSubscription}}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "# Create resource group"
+      az group create \
+        --name ${{parameters.resourceGroup}} \
+        --location ${{parameters.location}}
+
+- task: AzureCLI@2
+  displayName: Set output var sharedResourceGroupId
+  name: ${{ parameters.OutputStepName }} # Required when providing output variables
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      $resourceGroupId = az group show
+      --name ${{parameters.resourceGroup}}
+      --query id -o tsv;
+
+      Write-Host "##vso[task.setvariable variable=sharedResourceGroupId;isOutput=true]$($resourceGroupId)";

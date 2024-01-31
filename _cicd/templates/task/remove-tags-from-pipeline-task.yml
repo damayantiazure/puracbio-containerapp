@@ -1,0 +1,58 @@
+parameters:
+- name: displayName
+  type: string
+- name: azdoPat
+  type: string
+- name: organization
+  type: string
+- name: projectId
+  type: string
+- name: buildId
+  type: number
+- name: releaseId
+  type: number
+
+steps:
+  - task: PowerShell@2
+    displayName: Set token variable
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Can be a comma seperated list of PATs
+        $pat = "${{parameters.azdoPat}}".Split(",")[0]
+        Write-Host "##vso[task.setvariable variable=azdoPatVar;issecret=true]$pat"
+  - task: PowerShell@2
+    displayName: ${{ parameters.displayName }}
+    inputs:
+      targetType: 'inline'
+      script: |
+        $azureDevOpsAuthenicationHeader = @{Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$env:ENV_AZDOPAT")) }
+        # Get build tags
+        $baseurl = 'https://dev.azure.com/${{ parameters.organization }}/${{ parameters.projectId }}'
+        $uri = $baseurl + '/_apis/build/builds/${{ parameters.buildId }}/tags?api-version=7.0'        
+        $result = Invoke-RestMethod -Uri $uri -Method Get -Headers $azureDevOpsAuthenicationHeader
+        Write-Host 'Remove build tags'
+        
+        # Remove build tags
+        foreach ($tag in $result.value)
+        {            
+          $uri = $baseurl + '/_apis/build/builds/${{ parameters.buildId }}/tags/' + $tag + '?api-version=7.0'
+          Write-Host "Remove tag: $tag"
+          Invoke-RestMethod -Uri $uri -Method Delete -Headers $azureDevOpsAuthenicationHeader
+        }
+
+        # Get release tags
+        $baseurl = 'https://vsrm.dev.azure.com/${{ parameters.organization }}/${{ parameters.projectId }}'
+        $uri = $baseurl + '/_apis/release/releases/${{ parameters.releaseId }}/tags?api-version=7.0'        
+        $result = Invoke-RestMethod -Uri $uri -Method Get -Headers $azureDevOpsAuthenicationHeader
+        Write-Host 'Remove release tags'
+
+        # Remove release tags
+        foreach ($tag in $result.value)
+        {
+          $uri = $baseurl + '/_apis/release/releases/${{ parameters.releaseId }}/tags/' + $tag + '?api-version=7.0'          
+          Write-Host "Remove tag: $tag"
+          Invoke-RestMethod -Uri $uri -Method Delete -Headers $azureDevOpsAuthenicationHeader
+        }
+    env:      
+      ENV_AZDOPAT: $(azdoPatVar)

@@ -1,0 +1,22 @@
+parameters:
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: terraformVersion
+    type: string
+
+jobs:
+  - job: plan_${{ parameters.EnvironmentNamePrefix }}
+    displayName: "Generate terraform plan for ${{ parameters.EnvironmentNamePrefix }}"
+    variables:
+      - template: ../../vars/${{ parameters.EnvironmentNamePrefix }}.yml
+    steps:
+      - template: ../tasks/terraform-plan-task.yml
+        parameters:
+          EnvironmentNamePrefix: ${{ parameters.EnvironmentNamePrefix }}
+          AzureServiceConnectionName: ${{ variables.AzureServiceConnectionName }}
+          BackendResourceGroupName: ${{ variables.BackendResourceGroupName }}
+          BackendStorageAccountName: ${{ variables.BackendStorageAccountName }}
+          BackendContainerName: ${{ variables.BackendContainerName }}
+          terraformRootFolder: $(terraformRootFolder)
+          artifactName: "${{ parameters.EnvironmentNamePrefix }}-tfplan"
+          terraformVersion: ${{ parameters.terraformVersion }}

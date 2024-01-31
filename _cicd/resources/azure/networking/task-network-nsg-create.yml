@@ -1,0 +1,26 @@
+parameters:
+  - name: ServiceConnectionName
+    type: string
+  - name: ResourceGroupName
+    type: string
+  - name: NsgName
+    type: string
+  - name: Location
+    type: string
+    default: westeurope
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create Network Security Group'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Creating the network security group";
+
+      az network nsg create
+      --name  ${{ parameters.NsgName }}
+      --resource-group  ${{ parameters.ResourceGroupName }}
+      --location  ${{ parameters.Location }}
+      ;

@@ -1,0 +1,11 @@
+{
+  "recordtype": "insert",
+  "projectid": "106f7e65-65cc-45a1-980f-a90e414ec820",
+  "rulename": "buildpipelinehascredscantask",
+  "itemid": "1",
+  "itemprojectid": "106f7e65-65cc-45a1-980f-a90e414ec820",
+  "ciidentifier": "ci1234567",
+  "comment": "niet van toepassing",
+  "reason": "rulenotapplicable",
+  "reasonnotapplicable": "infraasserviceresource"
+}

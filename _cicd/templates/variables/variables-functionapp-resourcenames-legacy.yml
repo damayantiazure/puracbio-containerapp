@@ -1,0 +1,32 @@
+# This template creates the standardized resource names that come with a function app infra deployment
+# This version uses legacy (non-Microsoft) naming standards for backwards compatibility
+
+parameters:
+- name: FunctionAppNameBase
+- name: StageEnv
+  values:
+  - dev
+  - tst
+  - prd
+- name: SubscriptionId
+- name: ServiceConnectionName
+
+variables:
+- name: ServiceConnectionName
+  value: ${{ parameters.ServiceConnectionName }}
+- name: FunctionAppName
+  value: ${{ parameters.FunctionAppNameBase }}${{ parameters.StageEnv }}
+- name: ResourceGroupName
+  value: ${{ replace(parameters.ServiceConnectionName, ' (SPN)', '') }}-${{ variables.FunctionAppName }}
+- name: StorageAccountName
+  value: ${{ variables.FunctionAppName }}sa
+- name: NsgName
+  value: nsg-${{ variables.FunctionAppName }}
+- name: VnetName
+  value: vnet-${{ variables.FunctionAppName }}
+- name: SubnetName
+  value: subnet-${{ variables.FunctionAppName }}
+- name: KeyvaultName
+  value: ${{ variables.FunctionAppName }}kv
+- name: FunctionAppSubnet
+  value: /subscriptions/${{ parameters.SubscriptionId }}/resourceGroups/${{ variables.ResourceGroupName }}/providers/Microsoft.Network/virtualNetworks/vnet-${{ variables.FunctionAppName }}/subnets/${{ variables.SubnetName }}

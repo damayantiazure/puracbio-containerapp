@@ -1,0 +1,21 @@
+variables:
+  azureSubscription: reg-dev-eu-devaut (SPN)
+  logAnalyticsWorkspaceName: AzureDevOpsLogsDev
+  resourceGroupName: reg-dev-eu-devaut-sharedcompl
+  storageAccount: sharedcompldevsa
+  terraformResourceGroupName: reg-dev-eu-devaut-tfstate-rg  
+  terraformStorageAccount: tfbackendstatedevsa
+  terraformContainerName: tfstatedev
+  environment: dev
+  # This group is used for EDL
+  groupSubname: azdo-compliancy-dev
+  # these object ids are the managed identities of the different functionapps and are added to the above group
+  memberObjectIds: >-
+    10347c1a-707e-4ab7-844d-ae7e66636077,e835c909-8653-496a-be18-091637f35084,4c6bb2cf-d1e4-4dc0-a4ab-ea04a4542874,
+    f8f0b393-57fd-42d4-b506-3908a6c6c978,9f12fb2b-56cd-492d-ae90-7868a352e156,47709765-5db1-4fe4-afa4-40ba76e55478,
+    f93d6b69-1083-4395-930f-8ae230a0cf4a
+    
+  # memberObjectIds from functionApps: 
+  # complscannerbatchdev, complscanneronlinedev, auditloggingdev, 
+  # validategatesdev, sm9changesv2dev, pipelinebreakerv2dev, 
+  # monitordashboarddev

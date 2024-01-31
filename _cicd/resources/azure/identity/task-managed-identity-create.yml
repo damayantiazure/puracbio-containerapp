@@ -1,0 +1,51 @@
+parameters:
+# Task-level parameters
+- name: StepName
+  default: CreateManagedIdentity 
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+# First-time parameters
+- name: Location
+  type: string
+  default: westeurope
+- name: ManagedIdentityName
+  type: string
+
+  
+steps:
+- task: AzureCLI@2
+  name: ${{ parameters.StepName }} # Required when providing output variables
+  displayName: 'Create or Update a Managed Identity'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Create Managed Identity with name ${{ parameters.ManagedIdentityName }}";
+
+      $identity = az identity create
+      --name ${{ parameters.ManagedIdentityName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --location ${{ parameters.Location }}
+      ;
+
+      $identity;
+
+      Write-Host "Listing current Managed Identities for Resource Group ${{ parameters.ResourceGroupName }}";
+
+      az identity list --resource-group ${{ parameters.ResourceGroupName }};
+
+      Write-Host "##vso[task.setvariable variable=identity;isOutput=true]$identity";
+
+      $objectId = ($identity | ConvertFrom-Json).principalId;
+      $resourceId = ($identity | ConvertFrom-Json).id;
+      $clientId = ($identity | ConvertFrom-Json).clientId;
+
+      Write-Host "##vso[task.setvariable variable=objectId;isOutput=true]$objectId";
+      Write-Host "##vso[task.setvariable variable=ResourceId;isOutput=true]$resourceId";
+      Write-Host "##vso[task.setvariable variable=ClientId;isOutput=true]$clientId";
+
+    # This script is idempotent and will simply return the existing managed identity if it already exists

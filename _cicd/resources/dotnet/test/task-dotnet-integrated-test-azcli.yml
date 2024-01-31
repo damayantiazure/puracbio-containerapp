@@ -1,0 +1,46 @@
+parameters:
+- name: ServiceConnectionName
+  type: string
+- name: Configuration
+  type: string
+  default: Release
+- name: env
+  type: object
+  default:
+    dummy: "dummy"
+- name: Projects
+  type: object
+  default: 
+    - "**/*.sln"
+- name: CollectCoverage
+  type: boolean
+  default: false
+# includes projects with the naming convention IntegrationTest or Test.Integration
+- name: Filter
+  type: object
+  default: FullyQualifiedName~Tests.Integration|FullyQualifiedName~IntegrationTests 
+
+steps:
+- task: AzureCLI@2
+  displayName: Dotnet Test (AzureCLI)
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: |
+      $collectCoverage = [System.Convert]::ToBoolean("${{ parameters.collectCoverage }}");
+      $projects = "${{ join(';',parameters.projects) }}";
+      $paths = $projects.Split(";", [System.StringSplitOptions]::RemoveEmptyEntries);
+      $paths | foreach {
+        $resolvedPaths = Get-ChildItem $_ -Recurse;
+        Write-Host "Found the following matching files";
+        Write-Host $resolvedPaths.FullName;
+        $resolvedPaths | foreach {
+          if($collectCoverage) {
+            dotnet test $_.FullName --configuration ${{ parameters.configuration }} --filter "${{ parameters.filter }}" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover;
+          } else {
+            dotnet test $_.FullName --configuration ${{ parameters.configuration }} --filter "${{ parameters.filter }}";
+          }
+        }
+      };
+  env: ${{ parameters.env }}

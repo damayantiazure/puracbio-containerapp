@@ -1,0 +1,38 @@
+variables:
+  agentPool: Rabo-Linux-Production
+  environmentApproval: azdo-production-approval
+  environmentCheck: azdo-production-check
+  environmentCheckDev: azdo-compliancy-development
+   
+  # Build
+  fortifyApplicationName: $(applicationName)
+  fortifyServiceEndPoint: Fortify SSC TAS
+  skipFortifyBuildBreaker: true
+  publishFortifyScanResults: false
+  nexusIQApplicationId: $(applicationName)
+  nexusIQServiceEndPoint: Nexus IQ - Production
+  sonarQubeEndpoint: SonarQube Production On Prem - with token
+  sonarQubeProjectKey: $(applicationName)
+  sonarQubeProjectName: $(applicationName)
+
+  # Deployment
+  sm9ChangeTemplate: TAS ADO Generic Change Template
+  ciName: AZDO-COMPLIANCY
+  adminAADGroup: 9c9cf646-e559-49b4-9f05-eba4a57f7193
+  prewarmedInstances: 2
+  keyVaultName: $(functionAppName)kv
+  vstsUrl: https://dev.azure.com/$(organization)
+  tenantId: 6e93a626-8aca-4dc1-9191-ce291b4b75a1
+  clientId: 99cdc9f6-c82a-4762-aabe-e30007071ebf
+  cmdbEndpoint: "https://distributie-azure-api.rabobank.nl/itsmex/sm/"
+  azdoPatRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultName }}.vault.azure.net/secrets/azdoPat/)^^"
+  clientSecretRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultName }}.vault.azure.net/secrets/clientSecret/)^^"
+  tableStorageConnectionStringRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultName }}.vault.azure.net/secrets/tableStorageConnectionString/)^^"
+  extensionSecretRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultName }}.vault.azure.net/secrets/extensionSecret/)^^"
+  cmdbApiKeyRef: "@Microsoft.KeyVault(SecretUri=https://${{ variables.keyVaultName }}.vault.azure.net/secrets/cmdbApiKey/)^^"
+  azdoFeed: ea1adc59-f67e-40d5-8539-4c897a894647
+
+  # Conditions
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  deployDevInfra: $[or(eq(variables.isMain, true), eq(variables['UpdateDevInfra'], 'true'))]
+  deployDevSecrets: $[or(eq(variables.isMain, true), eq(variables['UpdateDevInfra'], 'true'), eq(variables['UpdateDevSecrets'], 'true'))]

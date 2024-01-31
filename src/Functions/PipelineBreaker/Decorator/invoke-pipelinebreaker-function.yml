@@ -1,0 +1,86 @@
+steps:
+- task: Bash@3
+  target: host
+  inputs:
+    targetType: inline
+    script: |
+        hostType="$(System.HostType)"
+
+        # If we are in a build pipeline (yaml) we set the runId to the
+        # buildId, otherwise (classic release) we set the releaseId to
+        # the runId
+        if [ $hostType = "build" ]; then
+            runId="$(Build.BuildId)"
+            stageId="$(System.StageName)"
+        else
+            runId="$(Release.ReleaseId)"
+            stageId="$(Release.DefinitionEnvironmentId)"
+        fi
+
+        # Split the CollectionUri on a slash to get the organization
+        # Sometimes the organization is postfixed with .visualstudio.com
+        # and therefore we also need to split on a dot and get the first part
+        IFS='/' read -ra uriParts <<< "$(System.CollectionUri)"
+        IFS='.' read -ra organization <<< "${uriParts[3]}"
+
+        curlCommand="curl --oauth2-bearer "$(System.AccessToken)" -s "https://__##PIPELINEBREAKER_FUNCTIONAPPNAME##__.azurewebsites.net/api/pipeline-compliant/$organization/$(System.TeamProjectId)/$runId/$stageId/$(System.HostType)""
+        echo "Executing $curlCommand"
+        response=$($curlCommand)
+        
+        # Determine what to output depending on the starting characters
+        # of the returned message from the functionapp.
+        if [ "${response:0:7}" = "WARNING" ]; then
+            echo "##vso[task.logissue type=warning]$response"
+            echo "##vso[task.complete result=SucceededWithIssues;]"
+        elif [ "${response:0:5}" = "ERROR" ]; then
+            echo "##vso[task.logissue type=error]$response"
+            echo "##vso[task.complete result=Failed;]"
+        else 
+            echo "$response"
+        fi
+            
+  condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+  displayName: 'Pre-job: check pipeline registration and compliancy Linux or Darwin OS agent'
+
+- task: CmdLine@2
+  target: host
+  inputs:
+    script: |
+        @echo off
+        Setlocal EnableDelayedExpansion
+
+        rem If we are in a build pipeline (yaml) we set the runId to the
+        rem buildId, otherwise (classic release) we set the releaseId to
+        rem the runId
+        if $(System.HostType) == build (
+            set runId=$(Build.BuildId)&set stageId=$(System.StageName)
+        ) else (
+            set runId=$(Release.ReleaseId)&set stageId=$(Release.DefinitionEnvironmentId)
+        )
+
+        rem Split the CollectionUri on a slash to get the organization
+        rem Sometimes the organization is postfixed with .visualstudio.com
+        rem and therefore we also need to split on a dot and get the first part
+        set url=$(System.CollectionUri)
+        set organization=
+        for /F "tokens=1,2,3,4 delims=/" %%G in ("%url%") do (set organization=!organization!%%I)
+        for /F "tokens=1 delims=." %%G in ("%organization%") do (set organization=%%G)
+
+        set curlCommand=curl --oauth2-bearer "$(System.AccessToken)" -s https://__##PIPELINEBREAKER_FUNCTIONAPPNAME##__.azurewebsites.net/api/pipeline-compliant/%organization%/$(System.TeamProjectId)/%runId%/%stageId%/$(System.HostType)
+        echo Executing %curlCommand%
+
+        set response=
+        for /F "tokens=*" %%G in ('%curlCommand%') do (set response=!response!%%G)
+        
+        rem Determine what to output depending on the starting characters of
+        rem the returned message from the functionapp.
+        if "%response:~0,7%" == "WARNING" (
+            echo "##vso[task.logissue type=warning]%response%"
+            echo "##vso[task.complete result=SucceededWithIssues;]"
+        ) else ( if "%response:~0,5%" == "ERROR" (
+            echo "##vso[task.logissue type=error]%response%"
+            echo "##vso[task.complete result=Failed;]" ) else (echo "%response%")
+        )
+
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: 'Pre-job: check pipeline registration and compliancy Windows_NT OS agent'

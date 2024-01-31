@@ -1,0 +1,21 @@
+parameters:
+  - name: ServiceConnectionName
+  - name: StorageAccountName
+    
+steps:
+- task: AzureCLI@2
+  displayName: 'Configure Storage account Logging'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+
+    inlineScript: >-
+      Write-Host "Configuring access logging on the Storage Account";
+      
+      az storage logging update
+      --account-name '${{ parameters.StorageAccountName }}'
+      --services b
+      --log rwd
+      --retention 7
+      ;

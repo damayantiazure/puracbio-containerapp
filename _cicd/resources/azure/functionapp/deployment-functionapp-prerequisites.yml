@@ -1,0 +1,68 @@
+parameters:
+# Job-level parameters
+- name: JobName
+  default: DeployFunctionAppPrerequisites
+- name: condition
+  type: string
+  default: true
+- name: dependsOn
+  type: object
+  default: []
+- name: AgentPoolName
+- name: environment
+# Common parameters
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: Location
+  default: westeurope
+# Storage Account-specific parameters
+- name: StorageAccountName
+- name: StorageAccountSku
+  default: Standard_LRS
+- name: StorageAccountDefaultAction
+  default: Deny
+- name: StorageAccountTags
+  default: ""
+
+jobs:
+- deployment: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  environment: ${{ parameters.environment }}
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        # Resource Group
+        - template: ..\common\task-create-resourcegroup.yml
+          parameters:
+            # Common parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            # First-time parameters
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            Location: ${{ parameters.Location }}
+
+        # Storage Account
+        - template: ..\storageaccount\task-storageaccount-create.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            StorageAccountName: ${{ parameters.StorageAccountName }}
+            Location: ${{ parameters.Location }}
+            Sku: ${{ parameters.StorageAccountSku }}
+            DefaultAction: ${{ parameters.StorageAccountDefaultAction }}
+            Tags: ${{ parameters.StorageAccountTags }}
+        - template: ..\storageaccount\task-storage-logging-configure.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            StorageAccountName: ${{ parameters.StorageAccountName }}
+        - template: ..\storageaccount\task-storage-atp-configure.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            StorageAccountName: ${{ parameters.StorageAccountName }}
+      

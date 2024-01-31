@@ -1,0 +1,40 @@
+parameters:
+  - name: EnvironmentCheck
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: dependsOn
+    type: string
+  - name: condition
+    type: string
+    default: "true"
+  - name: terraformVersion
+    type: string
+
+stages:
+  - stage: ${{ parameters.EnvironmentNamePrefix }}_stage
+    displayName: "${{ parameters.EnvironmentNamePrefix }} stage"
+    condition: and(succeeded(), '${{ parameters.condition }}')
+    dependsOn: ${{ parameters.dependsOn }}
+    variables:
+      - template: ../../vars/${{ parameters.EnvironmentNamePrefix }}.yml
+    jobs:
+      - deployment: Deploy
+        displayName: "Deploy to ${{ parameters.EnvironmentNamePrefix }} environment"
+        environment: ${{ parameters.EnvironmentCheck }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../tasks/terraform-apply-task.yml
+                  parameters:
+                    EnvironmentNamePrefix: "${{ parameters.EnvironmentNamePrefix }}"
+                    AzureServiceConnectionName: "${{ variables.AzureServiceConnectionName }}"
+                    BackendResourceGroupName: "${{ variables.BackendResourceGroupName }}"
+                    BackendStorageAccountName: "${{ variables.BackendStorageAccountName }}"
+                    BackendContainerName: "${{ variables.BackendContainerName }}"
+                    artifactName: "${{ parameters.EnvironmentNamePrefix }}-tfplan"
+                    terraformVersion: ${{ parameters.terraformVersion }}
+
+                - ${{ if eq(parameters.EnvironmentNamePrefix, 'prd') }}:
+                    - template: templates/common/task/close-change-task.yml@innersourceTemplates

@@ -1,0 +1,21 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: subscription
+  type: string
+- name: storageAccountName
+  type: string
+- name: resourceGroupName 
+  type: string
+    
+steps:
+- task: AzureCLI@2
+  displayName: Get connectionstring
+  inputs:
+    azureSubscription: ${{parameters.azureSubscription}}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      #!/bin/bash
+      CONNECTIONSTRING=$(az storage account show-connection-string --name ${{parameters.storageAccountName}} --resource-group ${{parameters.resourceGroupName}} --subscription ${{parameters.subscription}} --query connectionString --output tsv)
+      echo "##vso[task.setvariable variable=eventQueueStorageConnectionString;issecret=true]${CONNECTIONSTRING}"

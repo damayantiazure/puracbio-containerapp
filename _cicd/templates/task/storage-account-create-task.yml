@@ -1,0 +1,55 @@
+parameters:
+  - name: azureSubscription
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: storageAccountName
+    type: string
+  - name: location
+    type: string
+    default: westeurope
+  - name: sku
+    type: string
+    default: Standard_LRS
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create Storage account'
+  inputs:
+    azureSubscription: ${{parameters.azureSubscription}}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "Deploying Storage Account ${{parameters.storageAccountName}}"
+      az storage account create \
+        --resource-group ${{parameters.resourceGroup}} \
+        --location '${{parameters.location}}' \
+        --name '${{parameters.storageAccountName}}' \
+        --https-only \
+        --kind StorageV2 \
+        --sku ${{parameters.sku}} \
+        --query id \
+        --default-action Allow \
+        --allow-blob-public-access false \
+        --allow-cross-tenant-replication false \
+        --min-tls-version TLS1_2 \
+        --bypass None \
+        --tags "AcceptedException_storage-H-004"
+        
+      # Tag the storage account as compliant b/c the allow azure access config is allowed as long
+      # as we don't use the storage account for anything else
+      
+      # Configure access logging
+      echo "Configuring access logging on the Storage Account"
+      az storage logging update \
+        --account-name '${{parameters.storageAccountName}}' \
+        --services b \
+        --log rwd \
+        --retention 7
+
+      # Enable Advanced Threat Protection on the Storage Account
+      echo "Enabling Advanced Threat Protection on the Storage Account"
+      az rest \
+        --method put \
+        --uri 'https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/${{parameters.resourceGroup}}/providers/Microsoft.Storage/storageAccounts/${{parameters.storageAccountName}}/providers/Microsoft.Security/advancedThreatProtectionSettings/current?api-version=2017-08-01-preview' \
+        --body '{ "properties": { "isEnabled": true } }'

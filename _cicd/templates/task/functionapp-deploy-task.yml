@@ -1,0 +1,38 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: functionAppName
+  type: string
+- name: resourceGroupName
+  type: string
+- name: artifactName
+  type: string
+  default: drop
+- name: useStagingSlot
+  type: string
+  default: true
+- name: slotName
+  type: string
+  default: staging
+
+steps:
+- download: current
+  artifact: ${{parameters.artifactName}}
+- ${{ if ne(parameters.useStagingSlot, true) }}:
+  - task: AzureFunctionApp@1
+    displayName: "Deploy Azure Function"
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      appName: ${{parameters.functionAppName}}
+      package: "$(Pipeline.Workspace)/${{parameters.artifactName}}"
+      resourceGroupName: ${{parameters.resourceGroupName}}
+- ${{ if eq(parameters.useStagingSlot, true) }}:
+  - task: AzureFunctionApp@1
+    displayName: "Deploy Azure Function"
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      appName: ${{parameters.functionAppName}}
+      package: "$(Pipeline.Workspace)/${{parameters.artifactName}}"
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      deployToSlotOrASE: true
+      slotName: ${{parameters.slotName}}

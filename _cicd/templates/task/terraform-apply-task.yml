@@ -1,0 +1,49 @@
+parameters:
+  - name: AzureServiceConnectionName
+    type: string
+  - name: BackendResourceGroupName
+    type: string
+  - name: BackendStorageAccountName
+    type: string
+  - name: BackendContainerName
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: artifactName
+    type: string
+  - name: Destroy
+    type: boolean
+    default: false
+
+
+steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: "current"
+      artifactName: "${{ parameters.artifactName }}"
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+    displayName: Install latest terraform version
+    inputs:
+      terraformVersion: "latest"
+
+  - ${{ if ne(parameters.Destroy, true) }}:
+    - task: TerraformTaskV4@4
+      displayName: Terraform apply
+      inputs:
+        provider: "azurerm"
+        command: apply
+        environmentServiceNameAzureRM: ${{ parameters.AzureServiceConnectionName }}
+        workingDirectory: $(Build.ArtifactStagingDirectory)
+        commandOptions: "-auto-approve ${{ parameters.EnvironmentNamePrefix }}.plan"
+
+  - ${{ if eq(parameters.Destroy, true) }}:
+    - task: TerraformTaskV4@4
+      displayName: Terraform apply with destroy
+      inputs:
+        provider: "azurerm"
+        command: apply
+        environmentServiceNameAzureRM: ${{ parameters.AzureServiceConnectionName }}
+        workingDirectory: $(Build.ArtifactStagingDirectory)
+        commandOptions: "-destroy -auto-approve ${{ parameters.EnvironmentNamePrefix }}.plan"

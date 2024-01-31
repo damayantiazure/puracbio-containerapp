@@ -1,0 +1,43 @@
+name: $(version).$(Rev:r)
+trigger:
+  enabled: false
+variables:
+- name: version
+  value: 1.0
+- name: appName
+  value: 'example-application'
+resources:
+  repositories:
+  - repository: pipelines
+    type: git
+    name: exampleProject/pipelines
+
+stages:
+- stage: build
+  jobs:
+  - job: Build
+    displayName: Build application
+    timeoutInMinutes: 600
+    pool:
+      name: Rabo-Linux-Production
+    steps:
+    - task: XplatGenerateReleaseNotes@3
+      displayName: 'Generate build notes'
+      inputs:
+        outputfile: '$(Build.ArtifactStagingDirectory)/build_notes.md'
+        templateLocation: 'InLine'
+        inlinetemplate: ""
+- stage: deployment
+  jobs:
+  - job: Deployment
+    displayName: Build application
+    timeoutInMinutes: 600
+    pool:
+      name: Rabo-Linux-Production
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Hello world'
+

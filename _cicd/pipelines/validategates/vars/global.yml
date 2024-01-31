@@ -1,0 +1,48 @@
+parameters:
+- name: StageEnv
+  type: string
+  default: dev
+  values:
+  - dev
+  - prd
+
+variables:
+# Dynamic Variables
+- name: functionAppName
+  value: validategates${{ parameters.StageEnv }}
+
+- name: applicationName
+  value: azdo-compliancy-validategates
+- name: projectFileName
+  value: ValidateGates
+- name: buildProjectFile
+  value: src/Functions/ValidateGates/ValidateGates.csproj
+- name: publishProjectFiles
+  value: src/Functions/ValidateGates/ValidateGates.csproj
+
+# Global Variables >> Inlude these to create AppSettings. Requires some of the previously set Dynamic and Static variables
+- template: ../../sharedvars/global.yml
+- template: ../../sharedvars/${{ parameters.StageEnv }}.yml
+- template: ../../sharedvars/global-dynamic.yml
+  parameters:
+    functionAppName: ${{ variables.functionAppName }}
+- template: ../../sharedvars/variables-appsettings.yml
+  parameters:
+    StageEnv: ${{ parameters.StageEnv }}
+
+# App Variables >> Requires the Global Variables
+- name: AppSettings
+  # use folded + strip indicators to avoid accidental newlines
+  value: >-
+    ${{ variables.CommonAppSettings }}
+    "WEBSITE_TIME_ZONE=W. Europe Standard Time" 
+    "WEBSITE_RUN_FROM_PACKAGE=1"
+    "AZURE_FUNCTIONS_ENVIRONMENT=""${{ variables.AzureFunctionsEnvironment }}"""
+    "azdoPat=""$(azdoPatRef)"""
+    "version=$(Build.BuildNumber)"
+    "tenantId=""${{variables.tenantId}}"""
+    "clientId=""${{variables.clientId}}"""
+    "clientSecret=""${{variables.clientSecretRef}}"""
+    "validateGatesHubName=validateGatesHub"
+    "extensionName=""${{variables.extensionName}}"""
+    "tableStorageConnectionString=""${{variables.tableStorageConnectionStringRef}}"""

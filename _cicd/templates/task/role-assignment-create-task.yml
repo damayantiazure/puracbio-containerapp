@@ -1,0 +1,30 @@
+parameters:
+  - name: azureSubscription
+    type: string
+  - name: role
+    type: string
+    default: contributor
+  - name: groups
+    type: object
+  - name: resourceGroup
+    type: string
+  - name: scope
+    type: string
+    default: ""
+  
+steps:
+- ${{ each group in parameters.groups }}:
+  - task: AzureCLI@2
+    displayName: 'Create or Update a Role Assignment'
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        echo "# Creating role assignment"
+        SUBSCRIPTION=$(az account show --query id --output tsv)
+
+        az role assignment create \
+          --role "${{parameters.role}}" \
+          --assignee ${{group}} \
+          --scope "/subscriptions/$SUBSCRIPTION/resourceGroups/${{parameters.resourceGroup}}${{parameters.scope}}"

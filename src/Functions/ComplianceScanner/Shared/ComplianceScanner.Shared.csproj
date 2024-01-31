@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Rabobank.Compliancy.Functions.ComplianceScanner.Shared</RootNamespace>
+    <AssemblyName>Rabobank.Compliancy.Functions.ComplianceScanner.Shared</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.11.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\InputValidation\InputValidation.csproj" />
+    <ProjectReference Include="..\..\..\Core\PipelineResources\PipelineResources.csproj" />
+    <ProjectReference Include="..\..\..\Infra\AzdoClient\AzdoClient.csproj" />
+    <ProjectReference Include="..\..\..\Infra\StorageClient\StorageClient.csproj" />
+    <ProjectReference Include="..\..\..\Core\Rules\Rules.csproj" />
+    <ProjectReference Include="..\..\..\Rabobank.Compliancy.Application\Rabobank.Compliancy.Application.csproj" />
+  </ItemGroup>
+
+</Project>

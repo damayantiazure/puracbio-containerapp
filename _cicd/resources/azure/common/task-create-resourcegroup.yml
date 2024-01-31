@@ -1,0 +1,26 @@
+parameters:
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+# First-time parameters
+- name: Location
+  type: string
+  default: westeurope
+- name: ResourceGroupName
+  type: string
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update a Resource Group'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Create resource group";
+
+      az group create
+      --name ${{ parameters.ResourceGroupName }}
+      --location ${{ parameters.Location }}
+      ;
+    # This script is idempotent and will simply return the existing resource group if it already exists

@@ -1,0 +1,46 @@
+parameters:
+- name: agentPool
+  type: string
+  default: Rabo-Windows-Production
+- name: rootFolderOrFile
+  type: string
+- name: includeRootFolder
+  type: boolean
+  default: false
+- name: archiveType
+  type: string
+  default: zip
+- name: archiveFile
+  type: string
+- name: replaceExistingArchive
+  type: boolean
+  default: true
+- name: PathtoPublish
+  type: string
+  default: $(Build.ArtifactStagingDirectory)
+- name: ArtifactName
+  type: string
+  default: Package
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - template: templates/common/job/credscan-job.yml@innersourceTemplates
+  - job: PublishArtifact
+    displayName: Publish artifact
+    pool: ${{parameters.agentPool}}
+    steps:
+    - task: ArchiveFiles@2
+      displayName: Archive files
+      inputs:
+        rootFolderOrFile: ${{parameters.rootFolderOrFile}}
+        includeRootFolder: ${{parameters.includeRootFolder}}
+        archiveType: ${{parameters.archiveType}}
+        archiveFile: ${{parameters.archiveFile}}
+        replaceExistingArchive: ${{parameters.replaceExistingArchive}}
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: ${{parameters.ArtifactName}}'
+      inputs:
+        PathtoPublish: ${{parameters.PathtoPublish}}
+        ArtifactName: ${{parameters.ArtifactName}}

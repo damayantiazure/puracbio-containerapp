@@ -1,0 +1,33 @@
+# Documentation: https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az-role-assignment-create
+
+parameters:
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+# First-time parameters
+- name: RoleName
+  default: App Configuration Data Reader
+  values:
+  - App Configuration Data Reader
+  - App Configuration Data Owner
+- name: AppConfigurationResourceId
+  type: string
+- name: Assignee
+  type: string
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create Role Assignment for App Configuration'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Output "Creating Role Assignment for App Configuration"
+
+      az role assignment create 
+      --role "${{ parameters.RoleName }}" 
+      --assignee ${{ parameters.Assignee }} 
+      --scope ${{ parameters.AppConfigurationResourceId }}
+      ;
+    addSpnToEnvironment: true

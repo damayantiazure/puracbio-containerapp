@@ -1,0 +1,35 @@
+parameters:
+- name: TaskName
+  type: string
+  default: GetFunctionAppKey
+- name: ServiceConnectionName
+  type: string
+- name: resourceGroup
+  type: string
+- name: functionAppName
+  type: string
+- name: functionKeyName
+  type: string
+  default: default
+# This parameter decides if the set variable is accessible outside of the current job. See https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#use-outputs-in-a-different-stage
+- name: VarOutput
+  type: boolean
+  default: false
+  
+# This will retrieve the specified functionapp appkeys (default app key = "default") and write it to a secret output variable
+# The variable can then be referenced in future tasks using the following syntax: $(${{ parameters.TaskName }}.AppKey), e.g. as a default: $(GetFunctionAppKey.AppKey)
+# N.B The TaskName only needs to be overwritten in case this task is called multiple times in 1 job
+steps:
+- task: AzureCLI@2
+  name: ${{ parameters.TaskName }}
+  displayName: 'Get ${{ parameters.functionAppName }} App Key: ${{ parameters.functionKeyName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: |
+      $keys = az functionapp keys list --resource-group ${{ parameters.resourceGroup }} --name ${{ parameters.functionAppName }};
+      $keys = $keys | ConvertFrom-Json;
+      $appkey = $keys.functionKeys.${{ parameters.functionKeyName }};
+      Write-Host "##vso[task.setvariable variable=AppKey;issecret=true;isoutput=${{ parameters.VarOutput }}]$appkey"
+

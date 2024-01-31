@@ -1,0 +1,134 @@
+parameters:
+# Job-level parameters
+- name: JobName
+  default: DeployFunctionAppInfra
+- name: condition
+  type: string
+  default: true
+- name: dependsOn
+  type: object
+  default: []
+- name: AgentPoolName
+- name: environment
+# Common parameters
+- name: ServiceConnectionName
+- name: ResourceGroupName
+# First Time Parameters
+- name: FunctionAppName
+- name: StorageAccountName
+  type: string
+- name: OsType
+  type: string
+  values: 
+    - Linux
+    - Windows
+  default: Windows
+- name: Location
+  default: westeurope
+# Specific, Optional and updatable parameters
+- name: FunctionAppPlanName
+  default: ''
+- name: UseStagingSlot
+  type: boolean
+  default: true
+- name: SlotName
+  type: string
+  default: staging
+- name: Sku
+  type: string
+  default: EP1
+  values:
+    - EP1
+    - EP2
+    - EP3
+- name: MaxBurst
+  type: number
+  default: 10
+- name: PrewarmedInstances
+  type: number
+  default: 0
+- name: CorsAllowedOriginUrls
+  type: object
+  default: []
+
+jobs:
+- deployment: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  environment: ${{ parameters.environment }}
+
+  variables:
+    ${{ if eq(parameters.FunctionAppPlanName, '') }}:
+      FunctionAppPlanName: ${{ parameters.FunctionAppName }}plan
+    ${{ else }}:
+      FunctionAppPlanName: ${{ parameters.FunctionAppPlanName }}
+            
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: task-functionapp-plan-create.yml
+          parameters:
+            # Common parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            # First-time parameters
+            FunctionAppPlanName: ${{ variables.FunctionAppPlanName }}
+            Location: ${{ parameters.Location }}
+            OsType: ${{ parameters.OsType }}
+            # Updatable parameters
+            Sku: ${{ parameters.Sku }}
+            MaxBurst: ${{ parameters.MaxBurst }}
+        - template: task-functionapp-create.yml
+          parameters:
+            # Common parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            # First-time parameters
+            FunctionAppName: ${{ parameters.FunctionAppName }}
+            StorageAccountName: ${{ parameters.StorageAccountName }}
+            OsType: ${{ parameters.OsType }}
+            # Updatable parameters
+            FunctionAppPlanName: ${{ variables.FunctionAppPlanName }}
+            Runtime: dotnet
+        - ${{ if eq(parameters.UseStagingSlot, true) }}:
+          - template: task-functionapp-slot-create.yml
+            parameters:
+              ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+              ResourceGroupName: ${{ parameters.ResourceGroupName }}
+              FunctionAppName:  ${{ parameters.FunctionAppName }}
+              SlotName: ${{ parameters.SlotName }}
+        - ${{ if eq(parameters.UseStagingSlot, false) }}:
+          - template: task-functionapp-slot-delete.yml
+            parameters:
+              ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+              ResourceGroupName: ${{ parameters.ResourceGroupName }}
+              FunctionAppName:  ${{ parameters.FunctionAppName }}
+              SlotName: ${{ parameters.SlotName }}
+        - template: task-functionapp-configure.yml
+          parameters:
+            # Common parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            FunctionAppName:  ${{ parameters.FunctionAppName }}
+            # Updatable parameters
+            PrewarmedInstances: ${{ parameters.PrewarmedInstances }}
+        - template: ..\webapp\task-webapp-log-configure.yml
+          parameters:
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            WebAppName:  ${{ parameters.FunctionAppName }}
+        - template: task-functionapp-cors-configure.yml
+          parameters:
+            # Common parameters
+            ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+            ResourceGroupName: ${{ parameters.ResourceGroupName }}
+            FunctionAppName:  ${{ parameters.FunctionAppName }}
+            # Updatable parameters
+            CorsAllowedOriginUrls: ${{ parameters.CorsAllowedOriginUrls }}
+
+      

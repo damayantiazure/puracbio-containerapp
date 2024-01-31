@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>net6.0</TargetFramework>
+		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
+		<AssemblyName>Rabobank.Compliancy.Functions.PipelineBreaker</AssemblyName>
+		<RootNamespace>Rabobank.Compliancy.Functions.PipelineBreaker</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Rabobank.Compliancy.Functions.PipelineBreaker.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\..\Shared Settings\Logs\logsettings.development.json" Link="logsettings.development.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\..\Shared Settings\Logs\logsettings.production.json" Link="logsettings.production.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SonarQubeSetting Include="sonar.exclusions">
+			<Value>**/*.yml</Value>
+		</SonarQubeSetting>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+		<None Update="logsettings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\InputValidation\InputValidation.csproj" />
+		<ProjectReference Include="..\..\Core\PipelineResources\PipelineResources.csproj" />
+		<ProjectReference Include="..\..\Core\Rules\Rules.csproj" />
+		<ProjectReference Include="..\..\Infra\AzdoClient\AzdoClient.csproj" />
+		<ProjectReference Include="..\..\Infra\StorageClient\StorageClient.csproj" />
+		<ProjectReference Include="..\..\Rabobank.Compliancy.Clients\Rabobank.Compliancy.Clients.AzureDevopsClient\Rabobank.Compliancy.Clients.AzureDevopsClient.csproj" />
+		<ProjectReference Include="..\..\Rabobank.Compliancy.Domain\Rabobank.Compliancy.Domain.csproj" />
+		<ProjectReference Include="..\..\Rabobank.Compliancy.Infrastructure\Rabobank.Compliancy.Infrastructure.csproj" />
+		<ProjectReference Include="..\ComplianceScanner\Shared\ComplianceScanner.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

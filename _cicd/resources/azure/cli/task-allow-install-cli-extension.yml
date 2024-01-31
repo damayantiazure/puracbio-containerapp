@@ -1,0 +1,11 @@
+parameters:
+- name: ServiceConnectionName
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Allow installation of any required CLI extension without prompt'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: az config set extension.use_dynamic_install=yes_without_prompt

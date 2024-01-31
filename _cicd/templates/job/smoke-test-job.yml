@@ -1,0 +1,29 @@
+parameters:
+- name: dependsOn
+  type: object
+  default: []
+- name: functionAppName
+  type: string
+- name: functions
+  type: object
+
+jobs:
+- job: SmokeTest
+  displayName: Invoke Azure Functions
+  dependsOn: ${{ parameters.dependsOn }}
+  # As this job runs AzureFunction@1 tasks that need to run as an Agentless Job, the pool is fixed to 'server'
+  pool: server
+  steps:
+  - ${{ each function in parameters.functions }}:
+    - template: ../task/invoke-azure-function-task.yml
+      parameters:
+        functionAppName: ${{parameters.functionAppName}}
+        functionName: ${{function.name}}
+        route: ${{function.route}}
+        key: ${{function.key}}
+        method: ${{function.method}}
+        headers: ${{function.headers}}
+        body: ${{function.body}}
+        sleep: ${{function.sleep}}
+        ${{ if function.waitForCompletion }}:
+          waitForCompletion: ${{ function.waitForCompletion }}        

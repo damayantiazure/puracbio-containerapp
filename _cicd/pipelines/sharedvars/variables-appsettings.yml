@@ -1,0 +1,28 @@
+parameters:
+- name: StageEnv
+  type: string
+  default: dev
+  values:
+  - dev
+  - ite
+  - prd
+
+variables:
+# Varies per StageEnv
+- name: configurationStoreEndpoint
+  value: https://configstore-azdo-compliancy-${{ parameters.StageEnv }}.azconfig.io
+
+# Varies between prod and non-prod
+- ${{ if eq(parameters.StageEnv, 'prd') }}:
+  - template: prd.yml
+- ${{ else }}:
+  - template: dev.yml
+
+
+- name: CommonAppSettings
+  value: >-
+    "itsmEndpointKong=""${{ variables.itsmEndpointKong }}"""
+    "itsmApiResourceKong=""${{ variables.itsmApiResourceKong }}"""
+    "globalManagedIdentityClientId=""${{ variables.globalManagedIdentityClientId }}"""
+    "configurationStoreEndpoints=""${{ variables.configurationStoreEndpoint }}"""
+    

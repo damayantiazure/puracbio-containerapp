@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Rabobank.Compliancy.Infra.StorageClient</RootNamespace>
+    <AssemblyName>Rabobank.Compliancy.Infra.StorageClient</AssemblyName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.8.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.5" />
+    <PackageReference Include="Tablestorage.Abstractions" Version="3.3.7" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Rabobank.Compliancy.Clients\Rabobank.Compliancy.Clients.AzureDataTablesClient\Rabobank.Compliancy.Clients.AzureDataTablesClient.csproj" />
+    <ProjectReference Include="..\..\Rabobank.Compliancy.Domain\Rabobank.Compliancy.Domain.csproj" />
+    <ProjectReference Include="..\Sm9Client\Sm9Client.csproj" />
+  </ItemGroup>
+
+</Project>

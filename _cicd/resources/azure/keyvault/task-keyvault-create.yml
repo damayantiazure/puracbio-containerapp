@@ -1,0 +1,39 @@
+parameters:
+  - name: ServiceConnectionName
+    type: string
+  - name: ResourceGroupName
+    type: string
+  - name: KeyVaultName
+    type: string
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update Key Vault'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+        Write-Host "# Check if Key Vault with name '${{ parameters.KeyVaultName }}' exists";
+
+        $result = az keyvault list 
+        --resource-group ${{ parameters.ResourceGroupName }} 
+        --query "[?name=='${{ parameters.KeyVaultName }}'].[name]" 
+        -o tsv;
+
+        if ($result -ne "${{ parameters.KeyVaultName }}")
+        {
+        Write-Host "# Create Key Vault ${{ parameters.KeyVaultName }}";
+
+        az keyvault create
+        --resource-group ${{ parameters.ResourceGroupName }}
+        --name ${{ parameters.KeyVaultName }}
+        ;
+        }
+
+        Write-Host "# Deny access from all networks (by default)";
+
+        az keyvault update
+        --resource-group ${{ parameters.ResourceGroupName }}
+        --name ${{ parameters.KeyVaultName }}
+        --default-action Deny

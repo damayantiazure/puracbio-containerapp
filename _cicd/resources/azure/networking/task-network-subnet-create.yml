@@ -1,0 +1,63 @@
+parameters:
+  # Common Parameters
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  # First-time Parameters
+  - name: VnetName
+  - name: SubnetName
+  - name: AdressRangeSize
+    type: number
+    default: 24
+  - name: AdressRangeBase
+    default: 10.0.0.0
+  # Updatable Parameters
+  - name: NsgName
+  - name: ServiceEndpoints
+    type: object
+    default:
+    - Microsoft.KeyVault
+    - Microsoft.Storage
+
+# Note: At this moment in time, the Adrress Range and Prefix cannot be updated once a Subnet is in use. As such, this is currently not possible 
+# Resources would need to be disconnected first, the method being different per connected resources
+# In case it is desirable to do so a second vnet should be created with the desired address range and resources moved there afterwards
+
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update Subnets with endpoints'
+  inputs:
+    azureSubscription: ${{parameters.ServiceConnectionName}}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-      
+        Write-Host "Verifying if Subnet with name '${{ parameters.SubnetName }}' exists";
+
+        Write-Host "address-prefixes '${{ parameters.AdressRangeBase }}/${{ parameters.AdressRangeSize }}'";
+
+        $result = az network vnet subnet list 
+        --resource-group ${{ parameters.ResourceGroupName }}
+        --vnet-name ${{ parameters.VnetName }}
+        --query "[?name=='${{ parameters.SubnetName }}'].[name]" 
+        -o tsv;
+      
+        if ($result -ne "${{ parameters.SubnetName }}")
+        {
+        Write-Host "Creating new Subnet";
+
+        az network vnet subnet create
+        --name '${{ parameters.SubnetName }}'
+        --resource-group '${{ parameters.ResourceGroupName }}'
+        --vnet-name '${{ parameters.VnetName }}'
+        --address-prefixes '${{ parameters.AdressRangeBase }}/${{ parameters.AdressRangeSize }}'
+        }
+      
+        Write-Host "Updating subnet with Network Security Group and Service Endpoints";
+
+        az network vnet subnet update
+        --name '${{ parameters.SubnetName }}'
+        --resource-group '${{ parameters.ResourceGroupName }}'
+        --vnet-name '${{ parameters.VnetName }}'
+        --network-security-group '${{ parameters.NsgName }}'
+        --service-endpoints ${{ join(' ',parameters.ServiceEndpoints) }}
+        ;

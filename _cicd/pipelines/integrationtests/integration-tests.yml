@@ -1,0 +1,27 @@
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+variables:
+- group: AZDO-COMPLIANCY # Contains Cross-pipeline used secrets
+- template: variables-integration-tests.yml
+
+stages:
+- template: ../../templates/stage/stage-integration-testing.yml
+  parameters:
+    AgentPoolName: Rabo-Windows-Production
+    ServiceConnectionName: reg-dev-eu-devaut (SPN) # Used to autenticate for the Integration Tests
+    EnvironmentVariables:
+      token: $(azdoPatDev)
+      azdoPat: $(azdoPatDev)
+      clientSecret: $(clientSecretDev)
+      AzureWebJobsStorage: $(AzureWebJobsStorage)
+      tableStorageConnectionstring: $(tableStorageConnectionstring)
+      
+  

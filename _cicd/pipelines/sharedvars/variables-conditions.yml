@@ -1,0 +1,13 @@
+parameters:
+- name: UpdateInfraDev
+  type: boolean
+  default: false
+- name: UpdateSecretsDev
+  type: boolean
+  default: false
+
+variables:
+  BranchIsMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  IsPrIntoMain: $[and(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['System.PullRequest.TargetBranch'], 'refs/heads/main'))]
+  DeployInfraToDev: $[or(eq(variables.BranchIsMain, true), eq(${{ parameters.UpdateInfraDev }}, true))]
+  DeploySecretsToDev: $[or(eq(variables.BranchIsMain, true), eq(${{ parameters.UpdateSecretsDev }}, true))]

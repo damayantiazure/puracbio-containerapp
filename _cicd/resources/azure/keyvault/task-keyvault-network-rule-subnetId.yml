@@ -1,0 +1,25 @@
+parameters:
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: KeyVaultName
+- name: SubnetIds
+  type: object
+  default: []
+
+
+steps:
+- ${{ each SubnetId in parameters.SubnetIds }}:
+  - task: AzureCLI@2
+    displayName: 'KeyVault - give access to subnetId'
+    inputs:
+      azureSubscription: ${{ parameters.ServiceConnectionName }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: >-
+        Write-Host "Add connection to subnet: '${{ SubnetId }}'";
+
+        az keyvault network-rule add
+        --resource-group ${{ parameters.ResourceGroupName }}
+        --name ${{ parameters.KeyVaultName }}
+        --subnet '${{ SubnetId }}'
+        ;

@@ -1,0 +1,25 @@
+parameters:
+- name: pipelineVariables
+  type: string
+
+stages:
+- stage: PublishNuget
+  displayName: Publish Nuget
+  variables:
+  - template: ${{parameters.pipelineVariables}}
+  - template: ../../pipelines/sharedvars/global.yml
+  jobs:
+  - job: PublishNuget
+    displayName: Publish Nuget
+    pool: ${{variables.agentPool}}
+    steps:
+    - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+    - template: ../../templates/task/dotnet-build-projects-task.yml
+      parameters:
+        projects: ${{variables.buildProjectFile}}
+    - template: ../../templates/task/dotnet-pack-task.yml
+      parameters:
+        projects: ${{variables.buildProjectFile}}
+    - template: /templates/netcore/task/dotnet-push-task.yml@innersourceTemplates
+      parameters:
+        vstsFeed: ${{variables.azdoFeed}}  

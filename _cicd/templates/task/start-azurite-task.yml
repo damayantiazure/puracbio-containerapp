@@ -1,0 +1,13 @@
+parameters:
+  - name: startAzurite
+    type: boolean
+    default: false
+
+steps:
+  - task: CmdLine@2
+    condition: ${{ parameters.startAzurite }}
+    displayName: Install and Start Azurite
+    inputs:
+      script: |
+        call npm install -g azurite
+        start /b azurite --blobPort 10006 --queuePort 10007 --tablePort 10008

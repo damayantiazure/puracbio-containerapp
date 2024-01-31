@@ -1,0 +1,74 @@
+parameters:
+  - name: AzureServiceConnectionName
+    type: string
+  - name: BackendResourceGroupName
+    type: string
+  - name: BackendStorageAccountName
+    type: string
+  - name: BackendContainerName
+    type: string
+  - name: BackendStateKey
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: terraformRootFolder
+    type: string
+  - name: artifactName
+    type: string
+  - name: TerraformVarPath
+    type: string
+  - name: azureDataAzdoCompliancyGroupId
+    type: string
+  - name: workspaceId
+    type: string
+  - name: logAnalyticsResourceGroupId
+    type: string
+  - name: Destroy
+    type: boolean
+    default: false
+
+steps:
+  - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+    displayName: Install latest terraform version
+    inputs:
+      terraformVersion: "latest"
+
+  - task: TerraformTaskV4@4
+    displayName: Terraform init
+    inputs:
+      command: init
+      backendServiceArm: ${{ parameters.AzureServiceConnectionName }}
+      backendAzureRmResourceGroupName: ${{ parameters.BackendResourceGroupName }}
+      backendAzureRmStorageAccountName: ${{ parameters.BackendStorageAccountName }}
+      backendAzureRmContainerName: ${{ parameters.BackendContainerName }}
+      backendAzureRmKey: ${{ parameters.BackendStateKey }}
+      workingDirectory: "${{ parameters.terraformRootFolder }}"
+
+  - task: TerraformTaskV4@4
+    displayName: Terraform validate
+    inputs:
+      command: validate
+      workingDirectory: "${{ parameters.terraformRootFolder }}"
+
+  - ${{ if ne(parameters.Destroy, true) }}:
+    - task: TerraformTaskV4@4
+      displayName: Terraform plan
+      inputs:
+        command: plan
+        environmentServiceNameAzureRM: ${{ parameters.AzureServiceConnectionName }}
+        workingDirectory: "${{ parameters.terraformRootFolder }}"
+        commandOptions: "-out=${{ parameters.EnvironmentNamePrefix }}.plan -var-file=${{ parameters.TerraformVarPath }}/${{ parameters.EnvironmentNamePrefix }}.tfvars -var azureDataAzdoCompliancyGroupId=${{ parameters.azureDataAzdoCompliancyGroupId }} -var workspaceId=${{ parameters.workspaceId }} -var logAnalyticsResourceGroupId=${{ parameters.logAnalyticsResourceGroupId }}"
+  
+  - ${{ if eq(parameters.Destroy, true) }}:
+    - task: TerraformTaskV4@4
+      displayName: Terraform plan with destroy
+      inputs:
+        command: plan
+        environmentServiceNameAzureRM: ${{ parameters.AzureServiceConnectionName }}
+        workingDirectory: "${{ parameters.terraformRootFolder }}"
+        commandOptions: "-out=${{ parameters.EnvironmentNamePrefix }}.plan -destroy -var-file=${{ parameters.TerraformVarPath }}/${{ parameters.EnvironmentNamePrefix }}.tfvars -var azureDataAzdoCompliancyGroupId=${{ parameters.azureDataAzdoCompliancyGroupId }} -var workspaceId=${{ parameters.workspaceId }} -var logAnalyticsResourceGroupId=${{ parameters.logAnalyticsResourceGroupId }}"
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: "${{ parameters.terraformRootFolder }}"
+      artifact: "${{ parameters.artifactName }}"

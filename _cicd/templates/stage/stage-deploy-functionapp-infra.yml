@@ -1,0 +1,164 @@
+parameters:
+# Stage-level parameters
+- name: StageId 
+- name: displayName
+  default: ""
+- name: dependsOn
+  type: object
+- name: condition
+  default: succeeded()
+- name: AgentPoolName
+  default: Rabo-Linux-Production
+- name: VariableTemplates
+  type: object
+  default: []
+- name: environment
+
+# Template-specfific parameters
+- name: Location
+  default: westeurope
+  values:
+    - westeurope
+    - northeurope
+- name: FunctionAppNameBase
+- name: StageEnv
+  values:
+  - dev
+  - tst
+  - prd
+# Function App Plan parameters
+- name: Sku
+  type: string
+  default: EP1
+  values:
+    - EP1
+    - EP2
+    - EP3
+- name: MaxBurst
+  type: number
+  default: 10
+# Function App parameters
+- name: useStagingSlot
+  type: boolean
+  default: true
+- name: PrewarmedInstances
+  type: number
+  default: 2
+# Managed Identity Parameters
+- name: CountOfIdentities
+  type: number
+  default: 1
+
+stages:
+- stage: ${{ parameters.StageId }}
+  displayName: ${{ coalesce(parameters.displayName, 'Deploying FunctionApp infrastructure for stage with ID "${{ parameters.StageId }}"') }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+
+  variables:
+  # Get Common Variables that alter between Prod and Non-Prod
+  - ${{ if eq(parameters.StageEnv, 'prd') }}:
+    - template: ../../pipelines/sharedvars/variables-deployment-prod.yml
+  - ${{ if ne(parameters.StageEnv, 'prd') }}:
+    - template: ../../pipelines/sharedvars/variables-deployment-nonprod.yml
+  # Set up dynamic Variables
+  - template: ../variables/variables-functionapp-resourcenames-legacy.yml
+    parameters:
+      StageEnv: ${{ parameters.StageEnv }}
+      FunctionAppNameBase: ${{ parameters.FunctionAppNameBase }}
+      SubscriptionId: ${{ variables.SubscriptionId }}
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }}
+  # Add additional variables for inserted jobs or to overrule standard values
+  - ${{ parameters.VariableTemplates }}
+
+  jobs:
+  - template: ../../resources/azure/functionapp/deployment-functionapp-prerequisites.yml
+    parameters:
+      # Job-level parameters
+      AgentPoolName: ${{ parameters.AgentPoolName }}
+      environment: ${{ parameters.environment }}
+      # Common parameters
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }} 
+      ResourceGroupName: ${{ variables.ResourceGroupName }} 
+      Location: ${{ parameters.Location }}
+      # Specific
+      StorageAccountName: ${{ variables.StorageAccountName }}
+      StorageAccountDefaultAction: Allow
+      StorageAccountTags: "AcceptedException_storage-H-004"
+
+  - template: ../../resources/azure/functionapp/deployment-functionapp-create-and-configure.yml
+    parameters:
+      # Job-level parameters
+      dependsOn: DeployFunctionAppPrerequisites
+      condition: succeeded()
+      AgentPoolName: ${{ parameters.AgentPoolName }}
+      environment: ${{ parameters.environment }}
+      # Common parameters
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }} 
+      ResourceGroupName: ${{ variables.ResourceGroupName }} 
+      # First Time Parameters
+      FunctionAppName: ${{ variables.FunctionAppName }}
+      StorageAccountName: ${{ variables.StorageAccountName }} 
+      Location: ${{ parameters.Location }}
+      # Updatable parameters
+      Sku: ${{ parameters.Sku }}
+      MaxBurst: ${{ parameters.MaxBurst }}
+      PrewarmedInstances: ${{ parameters.PrewarmedInstances }}
+      CorsAllowedOriginUrls: 
+        - "https://tas.gallery.vsassets.io"
+        - "https://tas.gallerycdn.vsassets.io"
+      useStagingSlot: ${{ parameters.useStagingSlot }}
+
+  - template: ../../resources/azure/identity/job-managed-identity-create.yml
+    parameters:
+      JobName: CreateManagedIdentity
+      AgentPoolName: ${{ parameters.AgentPoolName }}
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }}
+      ResourceGroupName: ${{ variables.ResourceGroupName }}
+      ManagedIdentityName: mi-azdo-compliancy-${{ variables.FunctionAppName }}
+      CountOfIdentities: ${{ parameters.CountOfIdentities }}
+
+  - template: ../../resources/azure/functionapp/job-functionapp-assign-managed-identities.yml
+    parameters:
+      # Job-level parameters
+      dependsOn: 
+      - DeployFunctionAppInfra
+      - CreateManagedIdentity 
+      condition: succeeded()
+      AgentPoolName: ${{ parameters.AgentPoolName }}
+      variables:
+      - name: SpaceSeparatedMIResourceIds
+        ${{ if eq(parameters.CountOfIdentities, 1)}}:
+          value: $[ dependencies.CreateManagedIdentity.outputs['CreateManagedIdentity.ResourceId'] ]
+        ${{ if gt(parameters.CountOfIdentities, 1)}}:
+          value: $[ dependencies.CreateManagedIdentity.outputs['CreateMultipleManagedIdentities.SpaceSeparatedResourceIds'] ]
+        ${{ if lt(parameters.CountOfIdentities, 1)}}:
+          value: ''
+      # Common parameters
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }} 
+      ResourceGroupName: ${{ variables.ResourceGroupName }} 
+      FunctionAppName: ${{ variables.FunctionAppName }}
+      # Specific parameters
+      UserAssignedManagedIdentityResourceIds:
+      - ${{ variables.GlobalManagedIdentityResourceId }}
+      - $(SpaceSeparatedMIResourceIds)
+
+  - template: ../../resources/azure/functionapp/deployment-functionapp-postrequisites.yml
+    parameters:
+      # Job-level parameters
+      dependsOn: DeployFunctionAppInfra 
+      condition: succeeded()
+      AgentPoolName: ${{ parameters.AgentPoolName }}
+      environment: ${{ parameters.environment }}
+      # Common parameters
+      ServiceConnectionName: ${{ variables.ServiceConnectionName }} 
+      ResourceGroupName: ${{ variables.ResourceGroupName }} 
+      FunctionAppName: ${{ variables.FunctionAppName }}
+      # Specific parameters
+      Location: ${{ parameters.Location }}
+      VnetName: ${{ variables.VnetName }}
+      SubnetName: ${{ variables.SubnetName }}
+      NsgName: ${{ variables.NsgName }}
+      FunctionAppSubnet: ${{ variables.FunctionAppSubnet }}
+      KeyvaultName: ${{ variables.KeyvaultName }}
+      useStagingSlot: $ {{ parameters.useStagingSlot }}

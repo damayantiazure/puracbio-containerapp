@@ -1,0 +1,13 @@
+variables:
+  extensionName: tasCompliancyHubprod
+  azureSubscription: reg-prd-eu-tas (SPN)
+  resourceGroup: reg-prd-eu-tas-$(functionAppName)
+  organizations: raboweb,raboweb-brazil,raboweb-dublin,raboweb-na,raboweb-ranz,raboweb-ftbtr
+  validateGatesHostName: validategatesprd.azurewebsites.net
+  subscriptionId: 0cea37a3-6bdc-43cb-be5f-e6d390b05a3c
+  subscription: sub-prd-eu-tas
+  globalManagedIdentityClientId: b75aa93d-5186-48a2-bd22-897bd498329e
+  globalManagedIdentityResourceId: /subscriptions/0cea37a3-6bdc-43cb-be5f-e6d390b05a3c/resourcegroups/azdo-compliancy-prd-managed-identities/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-azdo-compliancy-prd
+  itsmEndpointKong: https://be21c78f-5388-4405-a693-c9d3f1b95455.eu.api.rabo.cloud
+  itsmApiResourceKong: 7c9c6db0-57cc-4b82-b844-11a22376abe1
+  AzureFunctionsEnvironment: Production

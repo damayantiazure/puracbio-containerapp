@@ -1,0 +1,20 @@
+parameters:
+- name: displayName
+  type: string
+- name: sourcePath
+  type: string
+- name: filePattern
+  type: string
+- name: tokenRegex
+  type: string
+- name: secretTokens
+  type: string
+
+steps:
+- task: colinsalmcorner.colinsalmcorner-buildtasks.replace-tokens-task.ReplaceTokens@1
+  displayName: Replace tokens in ${{parameters.displayName}}
+  inputs:
+    sourcePath: ${{parameters.sourcePath}}
+    filePattern: ${{parameters.filePattern}}
+    tokenRegex: ${{parameters.tokenRegex}}
+    secretTokens: ${{parameters.secretTokens}}

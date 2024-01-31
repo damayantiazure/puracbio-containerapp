@@ -1,0 +1,213 @@
+﻿{
+  "id": 1064,
+  "name": "Release-137",
+  "status": "active",
+  "environments": [
+    {
+      "id": 1325,
+      "releaseId": 1064,
+      "name": "Stage 1",
+      "status": "rejected",
+      "deploySteps": [
+        {
+          "id": 3983,
+          "deploymentId": 1419,
+          "attempt": 1,
+          "reason": "manual",
+          "status": "failed",
+          "operationStatus": "PhaseFailed",
+          "releaseDeployPhases": [
+            {
+              "id": 940,
+              "phaseId": "940",
+              "name": "Agent job",
+              "rank": 1,
+              "phaseType": "agentBasedDeployment",
+              "status": "failed",
+              "runPlanId": "d66af5bd-a050-47f6-b9da-cfc028fa22d7",
+              "deploymentJobs": [
+                {
+                  "job": {
+                    "id": 8,
+                    "timelineRecordId": "4eeaf102-2588-5280-aed3-4c16a302ab40",
+                    "name": "Agent job",
+                    "dateStarted": "2022-12-20T14:07:00.0466667Z",
+                    "dateEnded": "2022-12-20T14:07:30.7766667Z",
+                    "startTime": "2022-12-20T14:07:00.0466667Z",
+                    "finishTime": "2022-12-20T14:07:30.7766667Z",
+                    "status": "failed",
+                    "rank": 1,
+                    "issues": [],
+                    "agentName": "Hosted Agent",
+                    "logUrl": "https://vsrm.dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/Release/releases/1064/environments/1325/deployPhases/940/tasks/8/logs"
+                  },
+                  "tasks": [
+                    {
+                      "id": 4,
+                      "timelineRecordId": "e83e25ef-3c73-49ca-b0c4-3ab873a9c7f4",
+                      "name": "Initialize job",
+                      "dateStarted": "2022-12-20T14:07:00.3866667Z",
+                      "dateEnded": "2022-12-20T14:07:06.3666667Z",
+                      "startTime": "2022-12-20T14:07:00.3866667Z",
+                      "finishTime": "2022-12-20T14:07:06.3666667Z",
+                      "status": "succeeded",
+                      "rank": 1,
+                      "issues": [],
+                      "agentName": "Hosted Agent",
+                      "logUrl": "https://vsrm.dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/Release/releases/1064/environments/1325/deployPhases/940/tasks/4/logs"
+                    },
+                    {
+                      "id": 0,
+                      "timelineRecordId": "a0eaee4e-612f-5bbf-3162-2979295a235a",
+                      "name": "Pre-job: check pipeline registration and compliancy Linux or Darwin OS agent",
+                      "dateStarted": "2022-12-20T14:07:06.3833333Z",
+                      "dateEnded": "2022-12-20T14:07:06.5Z",
+                      "startTime": "2022-12-20T14:07:06.3833333Z",
+                      "finishTime": "2022-12-20T14:07:06.5Z",
+                      "status": "skipped",
+                      "percentComplete": 100,
+                      "rank": 2,
+                      "issues": [],
+                      "task": {
+                        "id": "6c731c3c-3c68-459a-a5c9-bde6e6595b5b",
+                        "name": "Bash",
+                        "version": "3.211.0"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "",
+                      "resultCode": "Evaluating: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))\r\nExpanded: or(eq('Windows_NT', 'Linux'), eq('Windows_NT', 'Darwin'))\r\nResult: False\r\n"
+                    },
+                    {
+                      "id": 5,
+                      "timelineRecordId": "f4bdd7bd-e017-5c47-7733-0dec5d0dcedf",
+                      "name": "Pre-job: check pipeline registration and compliancy Windows_NT OS agent",
+                      "dateStarted": "2022-12-20T14:07:06.5Z",
+                      "dateEnded": "2022-12-20T14:07:29.2033333Z",
+                      "startTime": "2022-12-20T14:07:06.5Z",
+                      "finishTime": "2022-12-20T14:07:29.2033333Z",
+                      "status": "succeeded",
+                      "rank": 3,
+                      "issues": [],
+                      "task": {
+                        "id": "d9bafed4-0b18-4f58-968d-86655b4d2ce9",
+                        "name": "CmdLine",
+                        "version": "2.212.0"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "https://vsrm.dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/Release/releases/1064/environments/1325/deployPhases/940/tasks/5/logs"
+                    },
+                    {
+                      "id": 6,
+                      "timelineRecordId": "e337a39e-17f9-5103-0fd6-34dac756d9c0",
+                      "name": "SM9 - Approve",
+                      "dateStarted": "2022-12-20T14:07:29.42Z",
+                      "dateEnded": "2022-12-20T14:07:30.5166667Z",
+                      "startTime": "2022-12-20T14:07:29.42Z",
+                      "finishTime": "2022-12-20T14:07:30.5166667Z",
+                      "status": "failed",
+                      "rank": 4,
+                      "issues": [
+                        {
+                          "issueType": "Error",
+                          "message": "No valid ChangeId has been provided.\n---------------------------------------------------------------------------------------------\nPlease have a look at the documentation to verify how to provide a Change Id in your pipeline run: \nhttps://confluence.dev.rabobank.nl/x/0hd9G\n---------------------------------------------------------------------------------------------\nThe following exception has been thrown:\nNo valid Change Id has been provided via either pipeline tags or pipeline variables.\nThe required format for a ChangeId is: C123456789.\n",
+                          "data": {
+                            "type": "error",
+                            "logFileLineNumber": "15"
+                          }
+                        }
+                      ],
+                      "task": {
+                        "id": "73cb0c6a-0623-4814-8774-57dc1ef33858",
+                        "name": "SM9 - Approve",
+                        "version": "2.0.5417595"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "https://vsrm.dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/Release/releases/1064/environments/1325/deployPhases/940/tasks/6/logs"
+                    },
+                    {
+                      "id": 0,
+                      "timelineRecordId": "4889ed70-8f0f-5641-025e-d27fd5cc1f7b",
+                      "name": "Post-job: Cleanup Processes",
+                      "dateStarted": "2022-12-20T14:07:30.7233333Z",
+                      "dateEnded": "2022-12-20T14:07:30.7266667Z",
+                      "startTime": "2022-12-20T14:07:30.7233333Z",
+                      "finishTime": "2022-12-20T14:07:30.7266667Z",
+                      "status": "skipped",
+                      "rank": 5,
+                      "issues": [],
+                      "task": {
+                        "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                        "name": "PowerShell",
+                        "version": "2.212.0"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "",
+                      "resultCode": "Evaluating: or(startsWith(variables['Agent.Name'], 'windows-agent-'), startsWith(variables['Agent.Name'], 'win-'))\r\nExpanded: or(startsWith('Hosted Agent', 'windows-agent-'), startsWith('Hosted Agent', 'win-'))\r\nResult: False\r\n"
+                    },
+                    {
+                      "id": 0,
+                      "timelineRecordId": "56f5eb76-ee72-5bc5-dcd9-e755e910548d",
+                      "name": "Post-job: Cleanup Windows Agent",
+                      "dateStarted": "2022-12-20T14:07:30.7266667Z",
+                      "dateEnded": "2022-12-20T14:07:30.73Z",
+                      "startTime": "2022-12-20T14:07:30.7266667Z",
+                      "finishTime": "2022-12-20T14:07:30.73Z",
+                      "status": "skipped",
+                      "rank": 6,
+                      "issues": [],
+                      "task": {
+                        "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                        "name": "PowerShell",
+                        "version": "2.212.0"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "",
+                      "resultCode": "Evaluating: startsWith(variables['Agent.Name'], 'win')\r\nExpanded: startsWith('Hosted Agent', 'win')\r\nResult: False\r\n"
+                    },
+                    {
+                      "id": 0,
+                      "timelineRecordId": "e2560d0c-a8ad-58f2-8e45-db2ac1eb1257",
+                      "name": "Post-job: Cleanup Linux Agent",
+                      "dateStarted": "2022-12-20T14:07:30.73Z",
+                      "dateEnded": "2022-12-20T14:07:30.73Z",
+                      "startTime": "2022-12-20T14:07:30.73Z",
+                      "finishTime": "2022-12-20T14:07:30.73Z",
+                      "status": "skipped",
+                      "rank": 7,
+                      "issues": [],
+                      "task": {
+                        "id": "d9bafed4-0b18-4f58-968d-86655b4d2ce9",
+                        "name": "CmdLine",
+                        "version": "2.212.0"
+                      },
+                      "agentName": "Hosted Agent",
+                      "logUrl": "",
+                      "resultCode": "Evaluating: and(startsWith(variables['Agent.Name'], 'linux-'), always())\r\nExpanded: and(startsWith('Hosted Agent', 'linux-'), always())\r\nResult: False\r\n"
+                    },
+                    {
+                      "id": 7,
+                      "timelineRecordId": "638ebaca-dcb3-4476-a387-ec11d2ed712e",
+                      "name": "Finalize Job",
+                      "dateStarted": "2022-12-20T14:07:30.7366667Z",
+                      "dateEnded": "2022-12-20T14:07:30.77Z",
+                      "startTime": "2022-12-20T14:07:30.7366667Z",
+                      "finishTime": "2022-12-20T14:07:30.77Z",
+                      "status": "succeeded",
+                      "percentComplete": 100,
+                      "rank": 8,
+                      "issues": [],
+                      "agentName": "Hosted Agent",
+                      "logUrl": "https://vsrm.dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/Release/releases/1064/environments/1325/deployPhases/940/tasks/7/logs"
+                    }
+                  ]
+                }
+              ],
+              "manualInterventions": [],
+              "startedOn": "2022-12-20T14:06:56.44Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

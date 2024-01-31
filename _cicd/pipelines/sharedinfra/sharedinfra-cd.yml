@@ -1,0 +1,400 @@
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: innersourceTemplates
+    type: git
+    name: Innersource/AzDo-pipeline-starters
+    ref: refs/heads/master
+
+variables:
+- template: vars/global.yml
+- name: IntegrationTestSpnId
+  value: 52daa2ac-0897-4cf5-b487-c998087bcaa3 # reg-dev-eu-azdocompliancy for integration tests
+
+stages:
+#######################################################
+#  DEVELOPMENT (DEV)
+#######################################################
+- stage: InfraDev
+  displayName: DEV - Shared Infra
+  variables:
+  - template: vars/dev.yml
+  - template: vars/global-dynamic.yml
+    parameters:
+      StageEnv: ${{ variables.environment }}
+  jobs:
+  - template: ../../templates/job/manage-aad-group-job.yml
+    parameters:
+      JobName: ManageAadGroup
+      AgentPoolName: ${{ variables.agentPool }}
+      pathtoPublish: ${{ variables.pathtoPublish }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      groupSubname: ${{ variables.groupSubname }}
+      memberObjectIds: ${{ variables.memberObjectIds }}
+
+  - template: ../../resources/azure/identity/job-managed-identity-create.yml
+    parameters:
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      ResourceGroupName: ${{ variables.IdentitiesResourceGroup }} # from global-dynamic.yml
+      ManagedIdentityName: ${{ variables.GlobalManagedIdentityName }} # from global-dynamic.yml
+
+  - template: ../../resources/azure/appconfiguration/job-appconfig-create-and-configure.yml
+    parameters:
+      # Job-level parameters
+      JobName: DeployAppConfigStore
+      dependsOn:
+      - ManageAadGroup
+      condition: succeeded()
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      variables:
+      - name: AadGroupObjectId
+        value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+      # Common parameters
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      ResourceGroupName: ${{ variables.AppConfigurationStoreResourceGroup }} # from global-dynamic.yml
+      # Specific parameters
+      AppConfigurationStoreName: ${{ variables.GlobalAppConfigurationStoreName }} # from global-dynamic.yml 
+      ConfigReaderIdentities:
+      - $(AadGroupObjectId)
+      - ${{ variables.euAutAADAzdoCompliancyAegisGroup }}
+      - ${{ variables.IntegrationTestSpnId }}
+      ConfigOwnerIdentities:
+      - $env:servicePrincipalId
+      - ${{ variables.euResAADAzureAzdoCompliancyGroup }}
+
+  - template: job-appconfig-set-shared-config.yml
+    parameters:
+      # Job-level parameters
+      dependsOn:
+      - DeployAppConfigStore
+      condition: succeeded()
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      # Common parameters
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      # Specific parameters
+      AppConfigurationStoreName: ${{ variables.GlobalAppConfigurationStoreName }} # from global-dynamic.yml
+
+  - job: CreateSharedInfra
+    displayName: Create shared infra
+    dependsOn:
+    - ManageAadGroup
+    pool: ${{ variables.agentPool }}
+    variables:
+    - name: AadGroupObjectId
+      value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+    steps:
+    - template: ../../templates/task/resourcegroup-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: $(resourceGroupName)
+    - template: ../../templates/task/storage-account-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: $(resourceGroupName)
+        storageAccountName: $(storageAccount)
+    # Create resource group needed for storing Terraform state
+    - template: ../../templates/task/resourcegroup-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: $(terraformResourceGroupName)
+        OutputStepName: TerraformStateResourceGroupCreateTaskOutput
+    # Create storage account needed for storing Terraform state
+    - template: ../../templates/task/storage-account-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: $(terraformResourceGroupName)
+        storageAccountName: $(terraformStorageAccount)
+    # Create storage account container needed for storing Terraform state
+    - template: ../../templates/task/storage-account-create-container.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        containerName: $(terraformContainerName)
+        storageAccountName: $(terraformStorageAccount)
+    - template: ../../templates/task/role-assignment-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        groups:
+          - $(functionAppId)
+        scope: /providers/Microsoft.Storage/storageAccounts/$(terraformStorageAccount)
+        resourceGroup: $(terraformResourceGroupName)
+    # Assign Reader and Data Access role to eu.aut.AADAzdoCompliancyAegis.us
+    - template: ../../templates/task/role-assignment-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        groups:
+          - ${{ variables.euAutAADAzdoCompliancyAegisGroup }}          
+        scope: /providers/Microsoft.Storage/storageAccounts/$(storageAccount)
+        resourceGroup: $(resourceGroupName)
+        role: Reader and Data Access
+    - template: ../../templates/task/log-analytics-workspace-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: $(resourceGroupName)
+        workspaceName: $(logAnalyticsWorkspaceName)
+    - template: ../../templates/task/role-assignment-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        groups:
+          - $(logAnalyticsContributorGroup)
+          - $(functionAppId)
+          - $(AadGroupObjectId)
+          - ${{ variables.IntegrationTestSpnId }}
+        scope: /providers/Microsoft.OperationalInsights/workspaces/$(logAnalyticsWorkspaceName)
+        resourceGroup: $(resourceGroupName)
+    
+  # Create Azure Monitor infra and tables via Terraform
+  - template: ../../templates/job/terraform-plan-job.yml
+    parameters:
+      JobName: CreateTerraformPlan
+      # Terraform fails if a Linux agent is used
+      AgentPoolName: Rabo-Windows-Production
+      dependsOn: 
+        - ManageAadGroup
+        - CreateSharedInfra
+      EnvironmentNamePrefix:  ${{ variables.environment }}
+      AzureServiceConnectionName: ${{ variables.azureSubscription }}
+      BackendResourceGroupName: ${{ variables.terraformResourceGroupName }}
+      BackendStorageAccountName: ${{ variables.terraformStorageAccount }}
+      BackendContainerName: ${{ variables.terraformContainerName }}
+      BackendStateKey: development/loganalyticsinfra.tfstate
+      terraformRootFolder: ${{ variables.terraformRootFolder }}
+      artifactName: loganalyticsInfraPlanDev
+      TerraformVarPath: "$(System.DefaultWorkingDirectory)/_cicd/pipelines/sharedinfra/terraform/vars"
+      variables:
+      - name: AadGroupObjectId
+        value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+      - name: WorkspaceId
+        value: $[ dependencies.CreateSharedInfra.outputs['LogAnalyticsTaskOutput.LogAnalyticsWorkspaceId'] ]
+      - name: LogAnalyticsResourceGroupId
+        value: $[ dependencies.CreateSharedInfra.outputs['ResourceGroupCreateTaskOutput.SharedResourceGroupId'] ]
+      azureDataAzdoCompliancyGroupId: $(AadGroupObjectId)
+      workspaceId: $(WorkspaceId)
+      logAnalyticsResourceGroupId: $(LogAnalyticsResourceGroupId)
+      Destroy: false
+      
+  - template: ../../templates/job/terraform-apply-job.yml
+    parameters:
+      JobName: ApplyTerraformPlan
+      # Terraform fails if a Linux agent is used
+      AgentPoolName: Rabo-Windows-Production
+      dependsOn: CreateTerraformPlan
+      EnvironmentNamePrefix:  ${{ variables.environment }}
+      AzureServiceConnectionName: ${{ variables.azureSubscription }}
+      BackendResourceGroupName: ${{ variables.terraformResourceGroupName }}
+      BackendStorageAccountName: ${{ variables.terraformStorageAccount }}
+      BackendContainerName: ${{ variables.terraformContainerName }}
+      artifactName: loganalyticsInfraPlanDev
+      Destroy: false
+
+#######################################################
+#  INTEGRATION TEST (ITE)
+#######################################################
+- stage: InfraIntegrationTest
+  displayName: Integration Test - Shared Infra
+  variables:
+  - template: vars/ite.yml
+  jobs:
+  - job: CreateSharedInfra
+    displayName: Create shared infra
+    pool: ${{ variables.agentPool }}
+    steps:
+    - template: ../../templates/task/resourcegroup-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: ${{ variables.resourceGroupName }}
+    - template: ../../templates/task/storage-account-create-task.yml
+      parameters:
+        azureSubscription: ${{ variables.azureSubscription }}
+        resourceGroup: ${{ variables.resourceGroupName }}
+        storageAccountName: ${{ variables.storageAccount }}
+
+#######################################################
+#  PRODUCTION (PRD)
+#######################################################
+- template: ../../templates/stage/production-approval-stage.yml
+
+- stage: InfraPrd
+  displayName: PROD - Shared Infra
+  variables:
+  - template: vars/prd.yml
+  - template: vars/global-dynamic.yml
+    parameters:
+      StageEnv:  ${{ variables.environment }}
+  jobs:
+  - template: ../../templates/job/manage-aad-group-job.yml
+    parameters:
+      JobName: ManageAadGroup
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      pathtoPublish: ${{ variables.pathtoPublish }}
+      ServiceConnectionName: ${{ variables.azureSubscription }}
+      groupSubname: ${{ variables.groupSubname }}
+      memberObjectIds: ${{ variables.memberObjectIds }}
+
+  - template: ../../resources/azure/identity/job-managed-identity-create.yml
+    parameters:
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      ResourceGroupName: ${{ variables.IdentitiesResourceGroup }} # from global-dynamic.yml
+      ManagedIdentityName: ${{ variables.GlobalManagedIdentityName }} # from global-dynamic.yml
+
+  - template: ../../resources/azure/appconfiguration/job-appconfig-create-and-configure.yml
+    parameters:
+      # Job-level parameters
+      JobName: DeployAppConfigStore
+      dependsOn:
+      - ManageAadGroup
+      condition: succeeded()
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      variables:
+      - name: AadGroupObjectId
+        value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+      # Common parameters
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      ResourceGroupName: ${{ variables.AppConfigurationStoreResourceGroup }} # from global-dynamic.yml
+      # Specific parameters
+      AppConfigurationStoreName: ${{ variables.GlobalAppConfigurationStoreName }} # from global-dynamic.yml 
+      ConfigReaderIdentities:
+      - $(AadGroupObjectId)
+      - ${{ variables.euAutAADAzdoCompliancyAegisGroup }}
+      ConfigOwnerIdentities:
+      - $env:servicePrincipalId
+      - ${{ variables.euResAADAzureAzdoCompliancyGroup }}
+
+  - template: job-appconfig-set-shared-config.yml
+    parameters:
+      # Job-level parameters
+      dependsOn:
+      - DeployAppConfigStore
+      condition: succeeded()
+      AgentPoolName: ${{ variables.agentPool }} # from global.yml
+      # Common parameters
+      ServiceConnectionName: ${{ variables.azureSubscription }} # from dev.yml
+      # Specific parameters
+      AppConfigurationStoreName: ${{ variables.GlobalAppConfigurationStoreName }} # from global-dynamic.yml
+
+  - deployment: CreateSharedInfra
+    displayName: Create shared infra
+    dependsOn:
+    - ManageAadGroup
+    pool: ${{ variables.agentPool }}
+    variables:
+    - name: AadGroupObjectId
+      value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+    environment: ${{ variables.environmentCheck }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../../templates/task/resourcegroup-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              resourceGroup: $(resourceGroupName)
+          - template: ../../templates/task/storage-account-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              resourceGroup: $(resourceGroupName)
+              storageAccountName: $(storageAccount)
+          # Create resource group needed for storing Terraform state
+          - template: ../../templates/task/resourcegroup-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              resourceGroup: $(terraformResourceGroupName)
+              OutputStepName: TerraformStateResourceGroupCreateTaskOutput
+          # Create storage account needed for storing Terraform state
+          - template: ../../templates/task/storage-account-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              resourceGroup: $(terraformResourceGroupName)
+              storageAccountName: $(terraformStorageAccount)
+          # Create storage account container needed for storing Terraform state
+          - template: ../../templates/task/storage-account-create-container.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              containerName: $(terraformContainerName)
+              storageAccountName: $(terraformStorageAccount)
+          - template: ../../templates/task/role-assignment-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              groups:
+                - $(functionAppId)
+              scope: /providers/Microsoft.Storage/storageAccounts/$(terraformStorageAccount)
+              resourceGroup: $(terraformResourceGroupName)
+          # Assign Reader and Data Access role to eu.aut.AADAzdoCompliancyAegis.us
+          - template: ../../templates/task/role-assignment-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              groups:
+                - ${{ variables.euAutAADAzdoCompliancyAegisGroup }}                
+              scope: /providers/Microsoft.Storage/storageAccounts/$(storageAccount)
+              resourceGroup: $(resourceGroupName)
+              role: Reader and Data Access
+          - template: ../../templates/task/log-analytics-workspace-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              resourceGroup: $(resourceGroupName)
+              workspaceName: $(logAnalyticsWorkspaceName)
+          - template: ../../templates/task/role-assignment-create-task.yml
+            parameters:
+              azureSubscription: ${{ variables.azureSubscription }}
+              groups:
+                - $(logAnalyticsContributorGroup)
+                - $(functionAppId)
+                - $(AadGroupObjectId)
+              scope: /providers/Microsoft.OperationalInsights/workspaces/$(logAnalyticsWorkspaceName)
+              resourceGroup: $(resourceGroupName)
+
+  # Create Azure Monitor infra and tables via Terraform
+  - template: ../../templates/job/terraform-plan-job.yml
+    parameters:
+      JobName: CreateTerraformPlan
+      # Terraform fails if a Linux agent is used
+      AgentPoolName: Rabo-Windows-Production
+      dependsOn: 
+        - ManageAadGroup
+        - CreateSharedInfra
+      EnvironmentNamePrefix:  ${{ variables.environment }}
+      AzureServiceConnectionName: ${{ variables.azureSubscription }}
+      BackendResourceGroupName: ${{ variables.terraformResourceGroupName }}
+      BackendStorageAccountName: ${{ variables.terraformStorageAccount }}
+      BackendContainerName: ${{ variables.terraformContainerName }}
+      BackendStateKey: production/loganalyticsinfra.tfstate
+      terraformRootFolder: ${{ variables.terraformRootFolder }}
+      artifactName: loganalyticsInfraPlanProd
+      TerraformVarPath: "$(System.DefaultWorkingDirectory)/_cicd/pipelines/sharedinfra/terraform/vars"
+      # The outputs from dependencies of a deployment job must also prefix the jobname within the brackets
+      variables:
+      - name: AadGroupObjectId
+        value: $[ dependencies.ManageAadGroup.outputs['AadGroupTaskOutput.GroupId'] ]
+      - name: WorkspaceId
+        value: $[ dependencies.CreateSharedInfra.outputs['CreateSharedInfra.LogAnalyticsTaskOutput.LogAnalyticsWorkspaceId'] ]
+      - name: LogAnalyticsResourceGroupId
+        value: $[ dependencies.CreateSharedInfra.outputs['CreateSharedInfra.ResourceGroupCreateTaskOutput.SharedResourceGroupId'] ]
+      azureDataAzdoCompliancyGroupId: $(AadGroupObjectId)
+      workspaceId: $(WorkspaceId)
+      logAnalyticsResourceGroupId: $(LogAnalyticsResourceGroupId)
+      Destroy: false
+
+  - template: ../../templates/job/terraform-apply-job.yml
+    parameters:
+      JobName: ApplyTerraformPlan
+      # Terraform fails if a Linux agent is used
+      AgentPoolName: Rabo-Windows-Production
+      dependsOn: CreateTerraformPlan
+      EnvironmentNamePrefix:  ${{ variables.environment }}
+      AzureServiceConnectionName: ${{ variables.azureSubscription }}
+      BackendResourceGroupName: ${{ variables.terraformResourceGroupName }}
+      BackendStorageAccountName: ${{ variables.terraformStorageAccount }}
+      BackendContainerName: ${{ variables.terraformContainerName }}
+      artifactName: loganalyticsInfraPlanProd
+      Destroy: false
+  
+  # Close change
+  - job: CloseChange
+    dependsOn: ApplyTerraformPlan
+    condition: succeededOrFailed()
+    
+    steps:    
+    - template: /templates/common/task/close-change-task.yml@innersourceTemplates

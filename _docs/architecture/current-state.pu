@@ -1,0 +1,172 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+skinparam ranksep 250
+AddElementTag("gate",  $bgColor="#ff8000")
+AddElementTag("serviceCandidate",  $bgColor="#3cb44b")
+AddRelTag("c1", $lineColor=#e6194b, $textColor=#e6194b)
+AddRelTag("c2", $lineColor=#3cb44b, $textColor=#3cb44b)
+AddRelTag("c3", $lineColor=#ffe119, $textColor=#ffe119)
+AddRelTag("c4", $lineColor=#4363d8, $textColor=#4363d8)
+AddRelTag("c5", $lineColor=#4363d8, $textColor=#4363d8)
+AddRelTag("c6", $lineColor=#f58231, $textColor=#f58231)
+AddRelTag("c7", $lineColor=#911eb4, $textColor=#911eb4)
+AddRelTag("c8", $lineColor=#46f0f0, $textColor=#46f0f0)
+AddRelTag("c9", $lineColor=#f032e6, $textColor=#f032e6)
+AddRelTag("c10", $lineColor=#bcf60c, $textColor=#bcf60c)
+AddRelTag("c11", $lineColor=#fabebe, $textColor=#fabebe)
+AddRelTag("c12", $lineColor=#008080, $textColor=#008080)
+AddRelTag("c13", $lineColor=#e6beff, $textColor=#e6beff)
+AddRelTag("c14", $lineColor=#9a6324, $textColor=#9a6324)
+AddRelTag("c15", $lineColor=#fffac8, $textColor=#fffac8)
+AddRelTag("c16", $lineColor=#800000, $textColor=#800000)
+AddRelTag("c17", $lineColor=#000075, $textColor=#000075)
+AddRelTag("c18", $lineColor=#808080, $textColor=#808080)
+AddRelTag("c19", $lineColor=#ffffff, $textColor=#ffffff)
+AddRelTag("c20", $lineColor=#000000, $textColor=#000000)
+
+LAYOUT_LEFT_RIGHT()
+
+Person_Ext(engineer, Engineer, "Engineer using azdo for their pipelines")
+
+Boundary(3thParty, 3th Party) {
+    Boundary(kong, Kong Gateway) {
+        System_Ext(changeAPI, SM9 Change API)
+        System_Ext(CMDBAPI, SM9 CMDB API)
+    }
+    Boundary(azureDevOps, Azure Devops) {
+        System_Ext(azdoExtensionData, Azdo Extension Data API)
+        System_Ext(AZDO, AZDO API)
+        System_Ext(azdoPermission, Azdo Permissions API)
+        System_Ext(azdoHooks, Azdo Hooks API)
+        System_Ext(azdoQueueStorage, Azdo Queue torage)
+        System_Ext(azdoPermissionsSPE, Azdo Permissions - Settings - Release Pipeline or Environments)
+        System_Ext(azdoInfo, Azdo Info API)
+        System_Ext(azdoGate, Gate On Azdo Pipeline, $tags="gate")
+    }
+    Boundary(azure, Azure) {
+        System_Ext(azureDataTable, Azure Data Tables)
+        System_Ext(azureStorageQueue, Azure Storage Queue)
+        System_Ext(logAnalytics, Log Analytics)
+    }
+    System_Ext(oauth, OAuth API)
+}
+
+Boundary(backend, .Net C#  [[https://dev.azure.com/raboweb/TAS/_git/compliancy-framework compliancy-framework]]) {
+    Boundary(httpTriggeredFunctions, HTTPTrigger Functions) {
+        Component(registerPipelineHTTP, Register Pipeline, endpoint)
+        Component(deviationHTTP, Deviation, endpoint)
+        Component(exclusionHTTP, Exclusion, endpoint, 1 time use : 4 eyes : expires 24 h)
+        Component(hasPermissionsHTTP, Has Permissions, endpoint)
+        Component(SM9HTTP, SM9 changes, endpoint)
+        Component(rescanHTTP, Scan\n-Item\n-CI\n-Project\n-NonProd, endpoint)
+        Component(reconcileHTTP, Reconcile\n-Item\n\nTypes:\n-Permissions\n-Gate\n-Settings\n(retention), endpoint)
+        Component(openPermissionsHTTP, OpenPermission\n-Pipelines\n-Repos, endpoint)
+        Component(validateGateHTTP, Validate Gates, endpoint)
+        Component(pipelineBreakerHTTP, Pipekine Breaker, endpoint)
+    }
+    Boundary(queueTriggeredFunctions, QueueTrigger Functions) {
+        Component(deviationQueue, Deviation, queue)
+        Component(auditLoggingQueue, AuditLogging, queue)
+    }
+    Boundary(scheduledTriggeredFunctions, Scheduled Functions) {
+        Component(rescanScheduledTask, Rescan, scheduled)
+        Component(importCIsScheduledTask, PipelineRegistrations and extra info, scheduled)
+        Component(createHooksScheduledTask, Managed hooks)
+
+        Rel(importCIsScheduledTask, CMDBAPI, Get Applications and SubApplications,$tags="c1")
+        Rel(importCIsScheduledTask, azureDataTable, update data,$tags="c2")
+
+        Rel(createHooksScheduledTask, azureDataTable, Get prod registrations,$tags="c3")
+        Rel(createHooksScheduledTask, azdoHooks, Set hooks for prod registrations,$tags="c4")
+        Rel(azdoHooks, azdoQueueStorage, Put message in queue,$tags="c5")
+        Rel(azdoQueueStorage, auditLoggingQueue, Gets Message,$tags="c6")
+    }
+}
+
+Boundary(azdo, Azure Devops) {
+    Boundary(generalPipeline, pipeline ) {
+        Component(task, SM9 Task, inputs, "template='Change Template'\nassets='Affected Configuration Items'", $tags="serviceCandidate")
+        Component(pipelineBreaker, PipelineBreaker, Task at start of each pipeline job)
+
+        Rel(SM9HTTP, CMDBAPI, get CI info from,$tags="c7")
+        Rel(SM9HTTP, changeAPI, manage change from,$tags="c8")
+        Rel(changeAPI, SM9HTTP, get changeID,$tags="c9")
+        Rel(AZDO, SM9HTTP, get run/approvers info from,$tags="c10")
+        Rel(SM9HTTP, AZDO, persist change ID into,$tags="c11")
+
+        Rel(engineer, task, includes in pipeline,$tags="c12")
+        Rel(task, SM9HTTP, calls,$tags="c13")
+    }
+}
+Boundary(powerBI, Power BI Reports) {
+    Component(reports, Reports, $tags="serviceCandidate")
+}
+
+Boundary(compliancyhub, Compliancy Hub, Azdo Extensie Frontend {React Typescript} ) {
+    Boundary(actions, Actions\n\nRescan\nOpenPermissions\nReconcile) {
+    }
+    Boundary(register, Registratie\n\nPROD / NON PROD\nPipeline\nDeviations\nExclusions) {
+    }
+    Boundary(insight, Inzicht\n\nCompliancy Status\nRegistered? CI/Pipeline (total process)\nPrinciple\nRule\nItem\nYaml OK?) {
+    }
+    Rel(azdoExtensionData, deviationHTTP, update,$tags="c14")
+    Rel(deviationHTTP, azureDataTable, create / update / delete,$tags="c15")
+    Rel(deviationHTTP, azureStorageQueue, send historic records ,$tags="c16")
+    Rel(azdoPermission, deviationHTTP, get if is Allowed from,$tags="c17")
+    Rel(azdoPermission, exclusionHTTP, get if is Allowed from,$tags="c18")
+    Rel(exclusionHTTP, azureDataTable, create / update,$tags="c19")
+
+    Rel(CMDBAPI, registerPipelineHTTP, get CI info (valid?,$tags="c20") & existing registrations for pipeline)
+    Rel(azdoPermission, registerPipelineHTTP, get if is Allowed from,$tags="c1")
+    Rel(registerPipelineHTTP, azureDataTable, create update delete ,$tags="c2")
+    Rel(registerPipelineHTTP, azdoExtensionData, update report ,$tags="c3")
+    Rel(azdoInfo, registerPipelineHTTP, get pipeline info (exist,$tags="c4") )
+
+    Rel(registerPipelineHTTP, CMDBAPI, add modify registrations,$tags="c5")
+    Rel(register, httpTriggeredFunctions, interacts with,$tags="c6")
+
+    Rel(deviationQueue, azureStorageQueue, reads historic data from ,$tags="c7")
+    Rel(deviationQueue, logAnalytics, writes historic data to ,$tags="c8")
+
+    Rel(azdoExtensionData,insight, Get json from,$tags="c9")
+    Rel(oauth, insight, Get token from,$tags="c10")
+    Rel(hasPermissionsHTTP, insight, Get show button info based on token from,$tags="c11")
+    Rel(hasPermissionsHTTP, azdoPermission, retrieve permissions from,$tags="c12")
+
+    Rel(actions, rescanHTTP, call,$tags="c13")
+    Rel(actions, rescanScheduledTask, call,$tags="c14")
+    Rel(rescanHTTP, azdo, Get required data,$tags="c15")
+    Rel(rescanHTTP, azdoExtensionData, Update Report for Project,$tags="c16")
+    Rel(rescanHTTP, logAnalytics, Update PowerBI Report Data,$tags="c17")
+
+    Rel(actions, reconcileHTTP, call,$tags="c18")
+    Rel(reconcileHTTP, azdoPermission, check permissions,$tags="c19")
+    Rel(reconcileHTTP, azdoInfo, Get Data,$tags="c20")
+    Rel(reconcileHTTP, azdoPermissionsSPE, Make changes,$tags="c1")
+    Rel(reconcileHTTP, azdoExtensionData, Update Report for Project,$tags="c2")
+
+    Rel(openPermissionsHTTP, azdoPermission, Check Permission Level for groups: Project- Build- Release administrator and Contributors,$tags="c3")
+    Rel(openPermissionsHTTP, azdoPermission, Set Permissions to allow for groups: Project- Build- Release administrator and Contributors,$tags="c4")
+    Rel(openPermissionsHTTP, logAnalytics, write item been used for production and deployments in past 450 days to,$tags="c5")
+    Rel(logAnalytics, auditLoggingQueue, store Audit Log Data,$tags="c6")
+
+    Rel(pipelineBreaker, pipelineBreakerHTTP, check if registrations and is prod registration and current stage is prod,$tags="c7")
+    Rel(pipelineBreakerHTTP, azureDataTable, Get registrations,$tags="c8")
+    Rel(pipelineBreakerHTTP, logAnalytics, Get any previous Scan result,$tags="c9")
+    Rel(pipelineBreakerHTTP, azdoInfo, Get pipeline info,$tags="c10")
+    Rel(pipelineBreakerHTTP, logAnalytics, update Scan logs,$tags="c11")
+
+}
+
+Rel(azdoGate, validateGateHTTP, uses,$tags="c12")
+Rel(azdoGate, logAnalytics, Get Cached PR Approvers,$tags="c13")
+Rel(azdoGate, azdoPermissionsSPE, Get Pipelines Approvers for Pipelines and Repos,$tags="c14")
+
+Rel(engineer, compliancyhub, uses,$tags="c15")
+Rel(logAnalytics, powerBI, reads data,$tags="c16")
+Rel(engineer, powerBI, looks at,$tags="c17")
+
+SHOW_LEGEND()
+
+@enduml

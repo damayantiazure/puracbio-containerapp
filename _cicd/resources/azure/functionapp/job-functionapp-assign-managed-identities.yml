@@ -1,0 +1,42 @@
+parameters:
+  # Job-level parameters
+  - name: JobName
+    default: AssignManagedIdentitiesToFunction
+  - name: condition
+    type: string
+    default: true
+  - name: dependsOn
+    type: object
+    default: []
+  - name: AgentPoolName
+  - name: variables
+    type: object
+    default: []
+  # Common parameters
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  - name: FunctionAppName
+  # Specific parameters
+  - name: UserAssignedManagedIdentityResourceIds # These can be provided a a List, Space Separated value, or a combination of both
+    type: object
+    default: []
+
+jobs:
+- job: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  pool: 
+    name: ${{ parameters.AgentPoolName }}
+    demands: pscore
+  variables: ${{ parameters.variables }}
+
+  steps:
+  - template: task-functionapp-identity-assign.yml
+    parameters:
+      # Common parameters
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+      ResourceGroupName: ${{ parameters.ResourceGroupName }}
+      FunctionAppName: ${{ parameters.FunctionAppName }}
+      # Task-specific parameters
+      UserAssignedManagedIdentityResourceIds:
+      - ${{ parameters.UserAssignedManagedIdentityResourceIds }}

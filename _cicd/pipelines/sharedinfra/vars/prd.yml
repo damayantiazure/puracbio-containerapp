@@ -1,0 +1,21 @@
+variables:
+  azureSubscription: reg-prd-eu-tas (SPN)
+  logAnalyticsWorkspaceName: AzureDevOpsLogs
+  resourceGroupName: reg-prd-eu-tas-sharedcompl
+  storageAccount: sharedcomplprdsa
+  terraformResourceGroupName: reg-prd-eu-tas-tfstate-rg
+  terraformStorageAccount: tfbackendstateprdsa
+  terraformContainerName: tfstateprd  
+  environment: prd
+  # This group is used for EDL
+  groupSubname: azdo-compliancy-prd
+  # These object ids are the managed identities of the different functionapps and are added to the above group
+  memberObjectIds: >-
+    ac410c05-97af-4dcb-8041-6ce160cad826,f2295bff-ae29-4c96-8047-363806ed6bb3,ed3c024c-067d-4ce4-943f-67c83c4e89a2,
+    462629a8-e05d-40da-b918-37cd4086b778,f2b6bf4f-f968-4431-9647-1109aee5b0af,bf5aca90-fb94-4750-a463-2557b95f695d,
+    cab166e1-5163-4ada-b5f1-ac932ce42007
+
+  # memberObjectIds from functionApps: 
+  # complscannerbatchprd, complscanneronlineprd, auditloggingprd, 
+  # validategatesprd, sm9changesv2prd, pipelinebreakerv2prd, 
+  # monitordashboardprd

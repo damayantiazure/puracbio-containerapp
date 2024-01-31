@@ -1,0 +1,25 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: functionAppName
+  type: string
+- name: resourceGroupName
+  type: string
+- name: useStagingSlot
+  type: string
+  default: true
+- name: slotName
+  type: string
+  default: staging
+
+steps:
+- ${{ if eq(parameters.useStagingSlot, true) }}:
+  - task: AzureAppServiceManage@0
+    displayName: Swap Deployment Slots
+    retryCountOnTaskFailure: 2
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      webAppName: ${{parameters.functionAppName}}
+      sourceSlot: ${{parameters.slotName}}
+      swapWithProduction: true
+      resourceGroupName: ${{parameters.resourceGroupName}}

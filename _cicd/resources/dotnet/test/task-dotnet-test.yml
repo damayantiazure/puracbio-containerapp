@@ -1,0 +1,28 @@
+parameters:
+- name: configuration
+  type: string
+  default: Release
+- name: env
+  type: object
+  default:
+    dummy: "dummy"
+- name: projects
+  type: string
+  default: "**/*.sln"
+# Exclude all Integration Tests by naming convention by default
+- name: filter
+  type: object
+  default: FullyQualifiedName!~Tests.Integration&FullyQualifiedName!~IntegrationTests
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Dotnet Test (DotNetCoreCLI)
+  inputs:
+    command: test
+    projects: ${{ parameters.projects }}
+    arguments: >-
+      --configuration ${{ parameters.configuration }} 
+      --filter "${{ parameters.filter }}"
+      /p:CollectCoverage=true 
+      /p:CoverletOutputFormat=opencover
+  env: ${{ parameters.env }}

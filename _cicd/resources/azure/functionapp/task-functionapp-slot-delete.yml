@@ -1,0 +1,26 @@
+parameters:
+  - name: SlotName
+    type: string
+    default: staging
+  - name: ResourceGroupName
+    type: string
+  - name: FunctionAppName
+    type: string
+  - name: ServiceConnectionName
+    type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: Delete slot in '${{ parameters.FunctionAppName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Deleting deployment slot with name: ${{ parameters.SlotName }} if exists";
+      
+      az functionapp deployment slot delete
+      --name ${{ parameters.FunctionAppName }} 
+      --resource-group ${{ parameters.ResourceGroupName }} 
+      --slot ${{ parameters.SlotName }}
+      ;

@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+		<AssemblyName>Rabobank.Compliancy.Clients.AzureDevopsClient</AssemblyName>
+		<RootNamespace>Rabobank.Compliancy.Clients.AzureDevopsClient</RootNamespace>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TeamFoundation.DistributedTask.WebApi" Version="19.227.0-preview" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.227.0-preview" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Gallery.WebApi" Version="16.205.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="19.227.0-preview" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.18" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.227.0-preview" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="19.227.0-preview" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="19.227.0-preview" />
+		<PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.5">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Rabobank.Compliancy.Domain\Rabobank.Compliancy.Domain.csproj" />
+		<ProjectReference Include="..\Rabobank.Compliancy.Clients.HttpClientExtensions\Rabobank.Compliancy.Clients.HttpClientExtensions.csproj" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Rabobank.Compliancy.Clients.AzureDevopsClient.Tests</_Parameter1>
+    </AssemblyAttribute>
+	</ItemGroup>
+
+</Project>

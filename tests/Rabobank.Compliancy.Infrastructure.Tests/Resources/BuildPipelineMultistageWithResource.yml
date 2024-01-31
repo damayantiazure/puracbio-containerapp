@@ -1,0 +1,47 @@
+trigger:
+  branches:
+    include:
+    - main
+
+variables:
+- name: AgentPoolName
+  value: Rabo-Windows-Canary
+
+resources:
+  pipelines:
+  - pipeline: MyPipeline
+    project: Fabrikam
+    source: Farbrikam-CI
+    branch: main
+ 
+stages:
+- stage: Development
+  jobs:
+  - job: Build
+    displayName: 'Build'
+    pool:
+      name: Rabo-Windows-Canary
+    timeoutInMinutes: 60
+    continueOnError: false
+    condition: True
+    steps:
+    - task: Build
+      displayName: Build Artifacts
+      inputs:
+        path: $(System.DefaultWorkingDirectory)        
+
+- stage: Production
+  jobs:
+  - job: PublishRepoArtifacts
+    displayName: 'Publishing Artifacts'
+    pool:
+      name: Rabo-Windows-Canary
+    timeoutInMinutes: 60
+    continueOnError: false
+    condition: True
+    steps:
+    - task: ecdc45f6-832d-4ad9-b52b-ee49e94659be@1
+      displayName: Publish BuildArtifact
+      inputs:
+        path: $(System.DefaultWorkingDirectory)
+        artifactName: BuildArtifact

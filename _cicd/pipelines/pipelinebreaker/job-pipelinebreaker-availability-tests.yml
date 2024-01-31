@@ -1,0 +1,35 @@
+parameters:
+  # Job-level parameters
+- name: dependsOn
+  type: object
+  default: []
+  # Common parameters
+- name: ServiceConnectionName
+- name: ResourceGroupName
+- name: Location
+  default: westeurope
+  # First time only parameters
+- name: ApplicationInsightsResourceId
+- name: TestNameAndUrlList
+  type: object
+      
+jobs:
+- job:  AvailabilityTests
+  displayName: Create or Update multiple Availability Tests with Mostly default values
+  dependsOn: ${{ parameters.dependsOn }}
+
+  steps:
+  - template: ../../resources/azure/cli/task-allow-install-cli-extension.yml
+    parameters:
+      ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+  
+  - ${{ each TestNameAndUrl in parameters.TestNameAndUrlList }}:
+    - template: ../../resources/azure/applicationinsights/task-create-availability-test.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        ResourceGroupName: ${{ parameters.ResourceGroupName }}
+        Location: ${{ parameters.Location }}
+        WebTestName: ${{ TestNameAndUrl.TestName }}
+        ApplicationInsightsResourceId: ${{ parameters.ApplicationInsightsResourceId }}
+        Description: Availability test against url ${{ TestNameAndUrl.Url }}
+        RequestUrl: ${{ TestNameAndUrl.Url }}

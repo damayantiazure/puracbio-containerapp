@@ -1,0 +1,25 @@
+parameters:
+- name: StageEnv
+  type: string
+  default: dev
+  values:
+  - dev
+  - prd
+
+variables:
+- name: applicationName
+  value: azdo-client
+- name: projectFileName
+  value: AzdoClient
+- name: buildProjectFile
+  value: src/Infra/AzdoClient/AzdoClient.csproj
+- name: testProjectFiles
+  value: |
+    src/Infra/AzdoClient.Tests/AzdoClient.Tests.csproj
+- name: integrationTestProjectFiles
+  value: |
+    src/Infra/AzdoClient.Tests.Integration/AzdoClient.Tests.Integration.csproj
+- name: publishProjectFiles
+  value: |
+    src/Infra/AzdoClient/AzdoClient.csproj
+- template: ../../sharedvars/${{parameters.StageEnv}}.yml

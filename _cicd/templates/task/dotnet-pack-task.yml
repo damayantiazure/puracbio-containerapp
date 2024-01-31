@@ -1,0 +1,22 @@
+parameters:
+- name: packageVersion
+  type: string
+  default: $(Build.BuildNumber)
+- name: configuration
+  type: string
+  default: Release
+- name: projects
+  type: string
+  default: "**/*.csproj"
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: "Pack"
+  inputs:
+    command: "custom"
+    custom: "pack"
+    projects: ${{ parameters.projects }}
+    ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+      arguments: "-c=${{ parameters.configuration }} -o $(Build.ArtifactStagingDirectory) -p:PackageVersion=${{ parameters.packageVersion }}"
+    ${{ if ne(variables['Build.SourceBranchName'], 'main') }}:
+      arguments: "-c=${{ parameters.configuration }} -o $(Build.ArtifactStagingDirectory) -p:PackageVersion=${{ parameters.packageVersion }}-rc"

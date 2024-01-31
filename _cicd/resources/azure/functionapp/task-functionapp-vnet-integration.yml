@@ -1,0 +1,52 @@
+parameters:
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: VnetName
+  type: string
+- name: SubnetName
+  type: string
+- name: FunctionAppName
+  type: string  
+- name: UseStagingSlot
+  type: string
+  default: true
+- name: SlotName
+  type: string
+  default: "staging"  
+
+steps:
+- ${{ if eq(parameters.UseStagingSlot, true) }}:
+  - task: AzureCLI@2
+    displayName: 'Function app (${{parameters.SlotName}} slot) - vnet subnet integration'
+    inputs:
+      azureSubscription: ${{ parameters.ServiceConnectionName }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: >-
+        Write-Host "Configure outbound traffic to vnet";
+
+        az functionapp vnet-integration add 
+        --name ${{ parameters.FunctionAppName }} 
+        --resource-group ${{ parameters.ResourceGroupName }} 
+        --subnet ${{ parameters.SubnetName }} 
+        --vnet ${{ parameters.VnetName }} 
+        --slot ${{ parameters.SlotName }}
+        ;
+
+  - task: AzureCLI@2
+    displayName: 'Function app - vnet subnet integration'
+    inputs:
+      azureSubscription: ${{ parameters.ServiceConnectionName }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: >-
+        Write-Host "Configure outbound traffic to vnet";
+
+        az functionapp vnet-integration add 
+        --name ${{ parameters.FunctionAppName }} 
+        --resource-group ${{ parameters.ResourceGroupName }} 
+        --subnet ${{ parameters.SubnetName }} 
+        --vnet ${{ parameters.VnetName }}
+        ;

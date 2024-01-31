@@ -1,0 +1,30 @@
+parameters:
+- name: StageEnv
+  values: # should always be only 3 lower-case characters
+  - dev # development
+  - ite # integration test
+  - prd # production
+
+variables:
+# importing other variable templates
+- template: global.yml
+
+# defining dynamic variables
+
+## common
+- name: CoreApplicationName
+  value: ${{ lower(variables.ciName) }} # from: global.yml
+- name: ApplicationNameEnvironment
+  value: ${{ variables.CoreApplicationName }}-${{ parameters.StageEnv }}
+
+## managed identities 
+- name: GlobalManagedIdentityName
+  value: mi-${{ variables.ApplicationNameEnvironment }}
+- name: IdentitiesResourceGroup
+  value: ${{ variables.ApplicationNameEnvironment }}-managed-identities
+
+## app configuration 
+- name: GlobalAppConfigurationStoreName
+  value: configstore-${{ variables.ApplicationNameEnvironment }}
+- name: AppConfigurationStoreResourceGroup
+  value: ${{ variables.ApplicationNameEnvironment }}-app-configuration-store

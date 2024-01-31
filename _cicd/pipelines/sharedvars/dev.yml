@@ -1,0 +1,13 @@
+variables:
+  extensionName: tasCompliancyHubtest
+  azureSubscription: reg-dev-eu-devaut (SPN)
+  resourceGroup: reg-dev-eu-devaut-$(functionAppName)
+  organizations: raboweb-test
+  validateGatesHostName: validategatesdev.azurewebsites.net
+  subscriptionId: 06dc44e1-5a27-4289-a2bf-e81da276cafe
+  subscription: sub-dev-eu-devaut
+  globalManagedIdentityClientId: 187c0033-c685-4455-9d76-4989d7b8cb95
+  globalManagedIdentityResourceId: /subscriptions/06dc44e1-5a27-4289-a2bf-e81da276cafe/resourcegroups/azdo-compliancy-dev-managed-identities/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-azdo-compliancy-dev
+  itsmEndpointKong: https://be21c78f-5388-4405-a693-c9d3f1b95455-tst.eu.api.rabo.cloud
+  itsmApiResourceKong: 6ab590f9-61db-4728-bc90-4dd9b5887223
+  AzureFunctionsEnvironment: Development

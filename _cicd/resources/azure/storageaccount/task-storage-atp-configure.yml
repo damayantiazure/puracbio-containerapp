@@ -1,0 +1,24 @@
+parameters:
+  - name: ServiceConnectionName
+  - name: ResourceGroupName
+  - name: StorageAccountName
+  - name: IsEnabled
+    type: boolean
+    default: true
+    
+steps:
+- task: AzureCLI@2
+  displayName: 'Configure Storage account Advanced Threat Protection (ATP)'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+
+    inlineScript: >-
+      Write-Host "Configuring Advanced Threat Protection on the Storage Account";
+
+      az security atp storage update 
+      --resource-group '${{ parameters.ResourceGroupName }}'
+      --storage-account '${{ parameters.StorageAccountName }}'
+      --is-enabled '${{ parameters.IsEnabled }}'
+      ;

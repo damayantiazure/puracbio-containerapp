@@ -1,0 +1,25 @@
+trigger:
+  - none
+
+variables:
+  System.Debug: true
+
+stages:
+- template: ../../templates/stage/stage-deploy-functionapp-infra.yml
+  parameters:
+    # Stage-level parameters
+    StageId: MyDevStage
+    dependsOn: []
+    condition: succeeded()
+    environment: azdo-compliancy-development
+    # Template-specfific parameters
+    StageEnv: tst
+    FunctionAppNameBase: sm9changesvjt
+    VariableTemplates: []
+    # Function App Plan parameters
+    Sku: EP1
+    MaxBurst: 20
+    # Function App parameters
+    PrewarmedInstances: 3
+    # Managed Identity parameters
+    CountOfIdentities: 3

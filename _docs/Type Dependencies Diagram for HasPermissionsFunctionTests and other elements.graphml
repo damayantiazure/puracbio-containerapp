@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Created by yFiles WPF 3.4.0.0-->
+<graphml xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.wpf/3.0/ygraphml.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="d0" attr.type="boolean" attr.name="Expanded" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+    <default>true</default>
+  </key>
+  <key id="d1" attr.name="metadata" for="node">
+    <default>
+      <x:Null />
+    </default>
+  </key>
+  <key id="d2" attr.type="boolean" attr.name="is_group_node" for="node">
+    <default>false</default>
+  </key>
+  <key id="d3" attr.type="string" attr.name="type_node" for="node" />
+  <key id="d4" attr.name="path" for="node">
+    <default>
+      <x:Null />
+    </default>
+  </key>
+  <key id="d5" attr.type="boolean" attr.name="is_static" for="node">
+    <default>false</default>
+  </key>
+  <key id="d6" attr.type="string" attr.name="type_element" for="node" />
+  <key id="d7" attr.type="string" attr.name="type" for="node" />
+  <key id="d8" attr.type="string" attr.name="access" for="node" />
+  <key id="d9" attr.type="string" attr.name="fqn" for="node" />
+  <key id="d10" attr.type="string" attr.name="display_name" for="node" />
+  <key id="d11" attr.name="NodeLabels" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels" />
+  <key id="d12" attr.name="NodeGeometry" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry" />
+  <key id="d13" attr.name="UserTags" for="all" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags" />
+  <key id="d14" attr.name="NodeViewState" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState" />
+  <key id="d15" attr.type="string" attr.name="target" for="edge" />
+  <key id="d16" attr.type="string" attr.name="source" for="edge" />
+  <key id="d17" attr.type="string" attr.name="dependency_type" for="edge" />
+  <key id="d18" attr.name="EdgeLabels" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels" />
+  <key id="d19" attr.name="EdgeGeometry" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry" />
+  <key id="d20" attr.name="EdgeViewState" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState" />
+  <key id="d21" attr.name="PortLabels" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels" />
+  <key id="d22" attr.name="PortLocationParameter" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored" />
+    </default>
+  </key>
+  <key id="d23" attr.name="PortViewState" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState" />
+  <key id="d24" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData" />
+  <key id="d25" attr.name="layouting" />
+  <key id="d26" attr.name="graph_control_center" />
+  <key id="d27" attr.name="graph_control_zoom" />
+  <key id="d28" attr.name="grouping_depth" />
+  <key id="d29" attr.name="grouping_id" />
+  <data key="d24">
+    <y:SharedData>
+      <y:SandwichParameter x:Key="1">
+        <y:SandwichParameter.Model>
+          <y:SandwichLabelModel YOffset="-70" />
+        </y:SandwichParameter.Model>
+      </y:SandwichParameter>
+      <y:EdgeSegmentLabelModelParameter x:Key="2" SegmentIndex="1">
+        <y:EdgeSegmentLabelModelParameter.Model>
+          <y:EdgeSegmentLabelModel Distance="10" AutoRotationEnabled="False" />
+        </y:EdgeSegmentLabelModelParameter.Model>
+      </y:EdgeSegmentLabelModelParameter>
+    </y:SharedData>
+  </data>
+  <data key="d25">Component</data>
+  <data key="d26">
+    <y:PointD X="882.09995245171831" Y="-44.706147614358656" />
+  </data>
+  <data key="d27">0.405502003682443</data>
+  <data key="d28">4</data>
+  <data key="d29">ProjectStructure</data>
+  <graph id="G">
+    <node id="n0">
+      <data key="d1">
+        <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+          <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+          <sys:String x:Key="ProjectFolderName">Functions</sys:String>
+          <sys:String x:Key="ProjectFolderPersistentId">7A1E0EA8-E43B-4F8A-AC73-CB3A2DA1FF34</sys:String>
+          <sys:String x:Key="Level">2</sys:String>
+        </sys:Dictionary>
+      </data>
+      <data key="d2">true</data>
+      <data key="d10"><![CDATA[Functions]]></data>
+      <data key="d11">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+          <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="220,100" />
+        </x:List>
+      </data>
+      <data key="d12">
+        <y:RectD X="-99.999999999999972" Y="-180" Width="638.52" Height="368" />
+      </data>
+      <data key="d14">
+        <y:ViewState>
+          <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+            <y:FolderNodeState.Labels>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="220,100" />
+            </y:FolderNodeState.Labels>
+          </y:FolderNodeState>
+        </y:ViewState>
+      </data>
+      <graph id="n0:">
+        <node id="n0::n0">
+          <data key="d1">
+            <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+              <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+              <sys:String x:Key="ProjectFolderName">ComplianceScanner.Online</sys:String>
+              <sys:String x:Key="ProjectFolderPersistentId">4E22596E-7E5D-451D-87F4-79A384D17F89</sys:String>
+              <sys:String x:Key="Level">1</sys:String>
+            </sys:Dictionary>
+          </data>
+          <data key="d2">true</data>
+          <data key="d10"><![CDATA[ComplianceScanner.Online]]></data>
+          <data key="d11">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="520,100" />
+            </x:List>
+          </data>
+          <data key="d12">
+            <y:RectD X="-50" Y="-90" Width="538.52" Height="228" />
+          </data>
+          <data key="d14">
+            <y:ViewState>
+              <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                <y:FolderNodeState.Labels>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="520,100" />
+                </y:FolderNodeState.Labels>
+              </y:FolderNodeState>
+            </y:ViewState>
+          </data>
+          <graph id="n0::n0:">
+            <node id="n0::n0::n0">
+              <data key="d1">
+                <sys:Dictionary x:TypeArguments="sys:String,sys:String" />
+              </data>
+              <data key="d3"><![CDATA[Unknown]]></data>
+              <data key="d4">
+                <x:Array Type="sys:String">
+                  <sys:String>C:\Projects\compliancy-framework\src\Functions\ComplianceScanner\Online\HasPermissionFunction.cs</sys:String>
+                </x:Array>
+              </data>
+              <data key="d6"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+              <data key="d7"><![CDATA[class]]></data>
+              <data key="d8"><![CDATA[public]]></data>
+              <data key="d9"><![CDATA[Rabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+              <data key="d10"><![CDATA[HasPermissionFunction]]></data>
+              <data key="d12">
+                <y:RectD X="0" Y="0" Width="438.52000000000004" Height="88" />
+              </data>
+              <port name="p0">
+                <data key="d22">
+                  <y:FreeNodePortLocationModelParameter Ratio="0.236858574802112,1" />
+                </data>
+              </port>
+              <port name="p1">
+                <data key="d22">
+                  <y:FreeNodePortLocationModelParameter Ratio="0.537554349478549,1" />
+                </data>
+              </port>
+              <port name="p2">
+                <data key="d22">
+                  <y:FreeNodePortLocationModelParameter Ratio="0.744299005746602,0" />
+                </data>
+              </port>
+              <port name="p3">
+                <data key="d22">
+                  <y:FreeNodePortLocationModelParameter Ratio="0.255700994253398,0" />
+                </data>
+              </port>
+              <port name="p4">
+                <data key="d22">
+                  <y:FreeNodePortLocationModelParameter Ratio="0.838250124154986,1" />
+                </data>
+              </port>
+            </node>
+          </graph>
+        </node>
+      </graph>
+    </node>
+    <node id="n1">
+      <data key="d1">
+        <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+          <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+          <sys:String x:Key="ProjectFolderName">Core</sys:String>
+          <sys:String x:Key="ProjectFolderPersistentId">8278A077-D639-4B7D-B0A2-AFF11EF4BB00</sys:String>
+          <sys:String x:Key="Level">3</sys:String>
+        </sys:Dictionary>
+      </data>
+      <data key="d2">true</data>
+      <data key="d10"><![CDATA[Core]]></data>
+      <data key="d11">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+          <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="120,100" />
+        </x:List>
+      </data>
+      <data key="d12">
+        <y:RectD X="-198.91" Y="673.5" Width="855.34" Height="868" />
+      </data>
+      <data key="d14">
+        <y:ViewState>
+          <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+            <y:FolderNodeState.Labels>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="120,100" />
+            </y:FolderNodeState.Labels>
+          </y:FolderNodeState>
+        </y:ViewState>
+      </data>
+      <graph id="n1:">
+        <node id="n1::n0">
+          <data key="d1">
+            <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+              <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+              <sys:String x:Key="ProjectFolderName">InputValidation</sys:String>
+              <sys:String x:Key="ProjectFolderPersistentId">094E62B4-9651-419C-B737-E818F07250D7</sys:String>
+              <sys:String x:Key="Level">2</sys:String>
+            </sys:Dictionary>
+          </data>
+          <data key="d2">true</data>
+          <data key="d10"><![CDATA[InputValidation]]></data>
+          <data key="d11">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="340,100" />
+            </x:List>
+          </data>
+          <data key="d12">
+            <y:RectD X="-148.91" Y="763.5" Width="755.34" Height="728" />
+          </data>
+          <data key="d14">
+            <y:ViewState>
+              <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                <y:FolderNodeState.Labels>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="340,100" />
+                </y:FolderNodeState.Labels>
+              </y:FolderNodeState>
+            </y:ViewState>
+          </data>
+          <graph id="n1::n0:">
+            <node id="n1::n0::n0">
+              <data key="d1">
+                <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+                  <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+                  <sys:String x:Key="ProjectFolderName">Services</sys:String>
+                  <sys:String x:Key="ProjectFolderPersistentId">094E62B4-9651-419C-B737-E818F07250D7/d:Services</sys:String>
+                  <sys:String x:Key="Level">1</sys:String>
+                </sys:Dictionary>
+              </data>
+              <data key="d2">true</data>
+              <data key="d10"><![CDATA[Services]]></data>
+              <data key="d11">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="200,100" />
+                </x:List>
+              </data>
+              <data key="d12">
+                <y:RectD X="-17.063333333333333" Y="853.5" Width="510.64666666666676" Height="228" />
+              </data>
+              <data key="d14">
+                <y:ViewState>
+                  <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                    <y:FolderNodeState.Labels>
+                      <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                      <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="200,100" />
+                    </y:FolderNodeState.Labels>
+                  </y:FolderNodeState>
+                </y:ViewState>
+              </data>
+              <graph id="n1::n0::n0:">
+                <node id="n1::n0::n0::n0">
+                  <data key="d1">
+                    <sys:Dictionary x:TypeArguments="sys:String,sys:String" />
+                  </data>
+                  <data key="d3"><![CDATA[Interface]]></data>
+                  <data key="d4">
+                    <x:Array Type="sys:String">
+                      <sys:String>C:\Projects\compliancy-framework\src\Core\InputValidation\Services\IValidateInputService.cs</sys:String>
+                    </x:Array>
+                  </data>
+                  <data key="d6"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Services.IValidateInputService]]></data>
+                  <data key="d7"><![CDATA[interface]]></data>
+                  <data key="d8"><![CDATA[public]]></data>
+                  <data key="d9"><![CDATA[Rabobank.Compliancy.Core.InputValidation.Services.IValidateInputService]]></data>
+                  <data key="d10"><![CDATA[IValidateInputService]]></data>
+                  <data key="d12">
+                    <y:RectD X="32.936666666666667" Y="943.5" Width="410.6466666666667" Height="88" />
+                  </data>
+                  <port name="p0">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.172728920780774,0" />
+                    </data>
+                  </port>
+                  <port name="p1">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.493834927025667,0" />
+                    </data>
+                  </port>
+                  <port name="p2">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.5,1" />
+                    </data>
+                  </port>
+                </node>
+              </graph>
+            </node>
+            <node id="n1::n0::n1">
+              <data key="d1">
+                <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+                  <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+                  <sys:String x:Key="ProjectFolderName">Model</sys:String>
+                  <sys:String x:Key="ProjectFolderPersistentId">094E62B4-9651-419C-B737-E818F07250D7/d:Model</sys:String>
+                  <sys:String x:Key="Level">1</sys:String>
+                </sys:Dictionary>
+              </data>
+              <data key="d2">true</data>
+              <data key="d10"><![CDATA[Model]]></data>
+              <data key="d11">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="140,100" />
+                </x:List>
+              </data>
+              <data key="d12">
+                <y:RectD X="-98.91" Y="1213.5" Width="655.34" Height="228" />
+              </data>
+              <data key="d14">
+                <y:ViewState>
+                  <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                    <y:FolderNodeState.Labels>
+                      <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                      <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="140,100" />
+                    </y:FolderNodeState.Labels>
+                  </y:FolderNodeState>
+                </y:ViewState>
+              </data>
+              <graph id="n1::n0::n1:">
+                <node id="n1::n0::n1::n0">
+                  <data key="d1">
+                    <sys:Dictionary x:TypeArguments="sys:String,sys:String" />
+                  </data>
+                  <data key="d3"><![CDATA[Unknown]]></data>
+                  <data key="d4">
+                    <x:Array Type="sys:String">
+                      <sys:String>C:\Projects\compliancy-framework\src\Core\InputValidation\Model\ExceptionBaseMetaInformation.cs</sys:String>
+                    </x:Array>
+                  </data>
+                  <data key="d6"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Model.ExceptionBaseMetaInformation]]></data>
+                  <data key="d7"><![CDATA[class]]></data>
+                  <data key="d8"><![CDATA[public]]></data>
+                  <data key="d9"><![CDATA[Rabobank.Compliancy.Core.InputValidation.Model.ExceptionBaseMetaInformation]]></data>
+                  <data key="d10"><![CDATA[ExceptionBaseMetaInformation]]></data>
+                  <data key="d12">
+                    <y:RectD X="-48.91" Y="1303.5" Width="555.34" Height="88" />
+                  </data>
+                  <port name="p0">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.983931765525024,0" />
+                    </data>
+                  </port>
+                  <port name="p1">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.517106637375302,0" />
+                    </data>
+                  </port>
+                </node>
+              </graph>
+            </node>
+            <edge id="n1::n0::e0" source="n1::n0::n0::n0" target="n1::n0::n1::n0" sourceport="p2" targetport="p1">
+              <data key="d15"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Model.ExceptionBaseMetaInformation]]></data>
+              <data key="d16"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Services.IValidateInputService]]></data>
+              <data key="d17"><![CDATA[Usages]]></data>
+            </edge>
+          </graph>
+        </node>
+      </graph>
+    </node>
+    <node id="n2">
+      <data key="d1">
+        <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+          <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+          <sys:String x:Key="ProjectFolderName">src</sys:String>
+          <sys:String x:Key="ProjectFolderPersistentId">4491FE20-AF5E-4369-AAAA-0BF4E76A4886</sys:String>
+          <sys:String x:Key="Level">3</sys:String>
+        </sys:Dictionary>
+      </data>
+      <data key="d2">true</data>
+      <data key="d10"><![CDATA[src]]></data>
+      <data key="d11">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+          <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="100,100" />
+        </x:List>
+      </data>
+      <data key="d12">
+        <y:RectD X="-182.94166666666669" Y="-736.75" Width="804.40333333333342" Height="508" />
+      </data>
+      <data key="d14">
+        <y:ViewState>
+          <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+            <y:FolderNodeState.Labels>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="100,100" />
+            </y:FolderNodeState.Labels>
+          </y:FolderNodeState>
+        </y:ViewState>
+      </data>
+      <graph id="n2:">
+        <node id="n2::n0">
+          <data key="d1">
+            <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+              <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+              <sys:String x:Key="ProjectFolderName">Rabobank.Compliancy.Application</sys:String>
+              <sys:String x:Key="ProjectFolderPersistentId">B1F22DF6-5CA8-4C3B-9746-EE7DDF2AA8DC</sys:String>
+              <sys:String x:Key="Level">2</sys:String>
+            </sys:Dictionary>
+          </data>
+          <data key="d2">true</data>
+          <data key="d10"><![CDATA[Rabobank.Compliancy.Application]]></data>
+          <data key="d11">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+              <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="660,100" />
+            </x:List>
+          </data>
+          <data key="d12">
+            <y:RectD X="-132.94166666666669" Y="-646.75" Width="704.40333333333342" Height="368" />
+          </data>
+          <data key="d14">
+            <y:ViewState>
+              <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                <y:FolderNodeState.Labels>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="660,100" />
+                </y:FolderNodeState.Labels>
+              </y:FolderNodeState>
+            </y:ViewState>
+          </data>
+          <graph id="n2::n0:">
+            <node id="n2::n0::n0">
+              <data key="d1">
+                <sys:Dictionary x:TypeArguments="sys:String,sys:String">
+                  <sys:String x:Key="NodeType">ProjectFolder</sys:String>
+                  <sys:String x:Key="ProjectFolderName">Interfaces</sys:String>
+                  <sys:String x:Key="ProjectFolderPersistentId">B1F22DF6-5CA8-4C3B-9746-EE7DDF2AA8DC/d:Interfaces</sys:String>
+                  <sys:String x:Key="Level">1</sys:String>
+                </sys:Dictionary>
+              </data>
+              <data key="d2">true</data>
+              <data key="d10"><![CDATA[Interfaces]]></data>
+              <data key="d11">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                  <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="240,100" />
+                </x:List>
+              </data>
+              <data key="d12">
+                <y:RectD X="-82.941666666666691" Y="-556.75" Width="604.40333333333342" Height="228" />
+              </data>
+              <data key="d14">
+                <y:ViewState>
+                  <y:FolderNodeState x:Key="c|view" Layout="0,0,30,30">
+                    <y:FolderNodeState.Labels>
+                      <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.NorthEast}" PreferredSize="35,35" />
+                      <y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="240,100" />
+                    </y:FolderNodeState.Labels>
+                  </y:FolderNodeState>
+                </y:ViewState>
+              </data>
+              <graph id="n2::n0::n0:">
+                <node id="n2::n0::n0::n0">
+                  <data key="d1">
+                    <sys:Dictionary x:TypeArguments="sys:String,sys:String" />
+                  </data>
+                  <data key="d3"><![CDATA[Interface]]></data>
+                  <data key="d4">
+                    <x:Array Type="sys:String">
+                      <sys:String>C:\Projects\compliancy-framework\src\Rabobank.Compliancy.Application\Interfaces\ICheckAuthorizationProcess.cs</sys:String>
+                    </x:Array>
+                  </data>
+                  <data key="d6"><![CDATA[b1f22df6-5ca8-4c3b-9746-ee7ddf2aa8dc%28Rabobank.Compliancy.Application%29-907D0EDC%5Bnet6.0%5D/T%3ARabobank.Compliancy.Application.Interfaces.ICheckAuthorizationProcess]]></data>
+                  <data key="d7"><![CDATA[interface]]></data>
+                  <data key="d8"><![CDATA[public]]></data>
+                  <data key="d9"><![CDATA[Rabobank.Compliancy.Application.Interfaces.ICheckAuthorizationProcess]]></data>
+                  <data key="d10"><![CDATA[ICheckAuthorizationProcess]]></data>
+                  <data key="d12">
+                    <y:RectD X="-32.941666666666663" Y="-466.75" Width="504.40333333333336" Height="88" />
+                  </data>
+                  <port name="p0">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.712389555977029,1" />
+                    </data>
+                  </port>
+                  <port name="p1">
+                    <data key="d22">
+                      <y:FreeNodePortLocationModelParameter Ratio="0.287610444022971,1" />
+                    </data>
+                  </port>
+                </node>
+              </graph>
+            </node>
+          </graph>
+        </node>
+      </graph>
+    </node>
+    <edge id="e0" source="n0::n0::n0" target="n1::n0::n0::n0" sourceport="p0" targetport="p0">
+      <data key="d15"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Services.IValidateInputService]]></data>
+      <data key="d16"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+      <data key="d17"><![CDATA[Aggregation]]></data>
+      <data key="d18">
+        <x:List>
+          <y:Label LayoutParameter="{y:GraphMLReference 2}" PreferredSize="192,23">
+            <y:Label.Text>_validateInputService</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+    </edge>
+    <edge id="e1" source="n0::n0::n0" target="n1::n0::n0::n0" sourceport="p1" targetport="p1">
+      <data key="d15"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Services.IValidateInputService]]></data>
+      <data key="d16"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+      <data key="d17"><![CDATA[Usages]]></data>
+    </edge>
+    <edge id="e2" source="n0::n0::n0" target="n2::n0::n0::n0" sourceport="p2" targetport="p0">
+      <data key="d15"><![CDATA[b1f22df6-5ca8-4c3b-9746-ee7ddf2aa8dc%28Rabobank.Compliancy.Application%29-907D0EDC%5Bnet6.0%5D/T%3ARabobank.Compliancy.Application.Interfaces.ICheckAuthorizationProcess]]></data>
+      <data key="d16"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+      <data key="d17"><![CDATA[Aggregation]]></data>
+      <data key="d18">
+        <x:List>
+          <y:Label LayoutParameter="{y:GraphMLReference 2}" PreferredSize="253,23">
+            <y:Label.Text>_checkAuthorizationProcess</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+    </edge>
+    <edge id="e3" source="n0::n0::n0" target="n2::n0::n0::n0" sourceport="p3" targetport="p1">
+      <data key="d15"><![CDATA[b1f22df6-5ca8-4c3b-9746-ee7ddf2aa8dc%28Rabobank.Compliancy.Application%29-907D0EDC%5Bnet6.0%5D/T%3ARabobank.Compliancy.Application.Interfaces.ICheckAuthorizationProcess]]></data>
+      <data key="d16"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+      <data key="d17"><![CDATA[Usages]]></data>
+    </edge>
+    <edge id="e4" source="n0::n0::n0" target="n1::n0::n1::n0" sourceport="p4" targetport="p0">
+      <data key="d15"><![CDATA[094e62b4-9651-419c-b737-e818f07250d7%28InputValidation%29-2C2C391%5Bnet6.0%5D/T%3ARabobank.Compliancy.Core.InputValidation.Model.ExceptionBaseMetaInformation]]></data>
+      <data key="d16"><![CDATA[4e22596e-7e5d-451d-87f4-79a384d17f89%28ComplianceScanner.Online%29-D0364AB8%5Bnet6.0%5D/T%3ARabobank.Compliancy.Functions.ComplianceScanner.Online.HasPermissionFunction]]></data>
+      <data key="d17"><![CDATA[Usages]]></data>
+      <data key="d19">
+        <x:List>
+          <y:Bend Location="367.589444444445,774.829444444445" />
+          <y:Bend Location="386.26,793.5" />
+          <y:Bend Location="478.26,793.5" />
+          <y:Bend Location="497.506666666667,812.746666666667" />
+        </x:List>
+      </data>
+    </edge>
+  </graph>
+</graphml>

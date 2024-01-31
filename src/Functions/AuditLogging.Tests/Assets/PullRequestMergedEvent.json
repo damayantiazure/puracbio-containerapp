@@ -1,0 +1,201 @@
+{
+  "id": "05320a2e-67b9-4ca1-844b-0f10e0995771",
+  "eventType": "git.pullrequest.merged",
+  "publisherId": "tfs",
+  "message": {
+    "text": "Merge attempted  for pull request 156 (Updated Readme.MD) in dotnetcoresample\r\nhttps://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/",
+    "html": "Merge attempted  for <a href=\"https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/pullrequest/156\">pull request 156</a> (Updated Readme.MD) in <a href=\"https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/\">dotnetcoresample</a>",
+    "markdown": "Merge attempted  for [pull request 156](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/pullrequest/156) (Updated Readme.MD) in [dotnetcoresample](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/)"
+  },
+  "detailedMessage": {
+    "text": "Merge attempted  for pull request 156 (Updated Readme.MD) in dotnetcoresample\r\nhttps://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/\r\nUpdated Readme.MD\r\n",
+    "html": "Merge attempted  for <a href=\"https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/pullrequest/156\">pull request 156</a> (Updated Readme.MD) in <a href=\"https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/\">dotnetcoresample</a><p>Updated Readme.MD</p>",
+    "markdown": "Merge attempted  for [pull request 156](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/pullrequest/156) (Updated Readme.MD) in [dotnetcoresample](https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/)\r\nUpdated Readme.MD\r\n"
+  },
+  "resource": {
+    "repository": {
+      "id": "97d7b870-a21b-461c-8085-208d84d1a1c1",
+      "name": "dotnetcoresample",
+      "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1",
+      "project": {
+        "id": "53410703-e2e5-4238-9025-233bd7c811b3",
+        "name": "SOx-compliant-demo",
+        "description": "migrated from raboweb.visualstudio.com",
+        "url": "https://dev.azure.com/raboweb-test/_apis/projects/53410703-e2e5-4238-9025-233bd7c811b3",
+        "state": "wellFormed",
+        "revision": 895,
+        "visibility": "private",
+        "lastUpdateTime": "2019-11-11T08:17:37.257Z"
+      },
+      "size": 624570,
+      "remoteUrl": "https://raboweb-test@dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample",
+      "sshUrl": "git@ssh.dev.azure.com:v3/raboweb-test/SOx-compliant-demo/dotnetcoresample",
+      "webUrl": "https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample",
+      "isDisabled": false
+    },
+    "pullRequestId": 156,
+    "codeReviewId": 156,
+    "status": "completed",
+    "createdBy": {
+      "displayName": "Chung Lok Lam",
+      "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+        }
+      },
+      "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+      "uniqueName": "someone@rabobank.nl",
+      "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e",
+      "descriptor": "aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+    },
+    "creationDate": "2021-07-06T20:58:47.5904034Z",
+    "closedDate": "2021-07-06T20:59:12.8716453Z",
+    "title": "Updated Readme.MD",
+    "description": "Updated Readme.MD",
+    "sourceRefName": "refs/heads/auditlogging-pr-approvers",
+    "targetRefName": "refs/heads/master",
+    "mergeStatus": "succeeded",
+    "isDraft": false,
+    "mergeId": "400971d1-f427-4d0c-bdbc-cfc59a2b8fa7",
+    "lastMergeSourceCommit": {
+      "commitId": "9b924b0b298df8e6924569eb64df1d09586e67e3",
+      "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/commits/9b924b0b298df8e6924569eb64df1d09586e67e3"
+    },
+    "lastMergeTargetCommit": {
+      "commitId": "02624f3186e170444eea30f4f7394d44cb25597c",
+      "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/commits/02624f3186e170444eea30f4f7394d44cb25597c"
+    },
+    "lastMergeCommit": {
+      "commitId": "71c08469bae86b87883dd3b9d6b45f4ed84603f3",
+      "author": {
+        "name": "Chung Lok Lam",
+        "email": "Chung.Lok.Lam@rabobank.nl",
+        "date": "2021-07-06T20:59:12Z"
+      },
+      "committer": {
+        "name": "Chung Lok Lam",
+        "email": "Chung.Lok.Lam@rabobank.nl",
+        "date": "2021-07-06T20:59:12Z"
+      },
+      "comment": "Merged PR 156: Updated Readme.MD",
+      "commentTruncated": true,
+      "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/commits/71c08469bae86b87883dd3b9d6b45f4ed84603f3"
+    },
+    "reviewers": [
+      {
+        "reviewerUrl": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156/reviewers/36bca3d9-448e-654e-a009-af83d334c70e",
+        "vote": 10,
+        "hasDeclined": false,
+        "isFlagged": false,
+        "displayName": "Chung Lok Lam",
+        "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+          }
+        },
+        "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+        "uniqueName": "Chung.Lok.Lam@rabobank.nl", 
+        "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e"
+      },
+      {
+        "reviewerUrl": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156/reviewers/36bca3d9-448e-654e-a009-af83d334c70e",
+        "vote": 10,
+        "hasDeclined": false,
+        "isFlagged": false,
+        "displayName": "Harmen de Rooij",
+        "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+          }
+        },
+        "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+        "uniqueName": "Harmen.de.Rooij@rabobank.nl",
+        "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e"
+      },
+      {
+        "reviewerUrl": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156/reviewers/36bca3d9-448e-654e-a009-af83d334c70e",
+        "vote": 20,
+        "hasDeclined": false,
+        "isFlagged": false,
+        "displayName": "Rik Brouwer",
+        "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+          }
+        },
+        "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+        "uniqueName": "Rik.Brouwer@rabobank.com",
+        "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e"
+      },
+      {
+        "reviewerUrl": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156/reviewers/36bca3d9-448e-654e-a009-af83d334c70e",
+        "vote": 10,
+        "hasDeclined": false,
+        "isFlagged": false,
+        "displayName": "Chung Lok Lam",
+        "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+          }
+        },
+        "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+        "uniqueName": "vstfs:///Classification/TeamProject/77e2647f-e1a3-4b56-8cbb-64f6f2751642\\Rocca-Reviewers", 
+        "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e"
+      }
+    ],
+    "url": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156",
+    "_links": {
+      "web": {
+        "href": "https://dev.azure.com/raboweb-test/SOx-compliant-demo/_git/dotnetcoresample/pullrequest/156"
+      },
+      "statuses": {
+        "href": "https://dev.azure.com/raboweb-test/53410703-e2e5-4238-9025-233bd7c811b3/_apis/git/repositories/97d7b870-a21b-461c-8085-208d84d1a1c1/pullRequests/156/statuses"
+      }
+    },
+    "completionOptions": {
+      "mergeCommitMessage": "Merged PR 156: Updated Readme.MD\n\nUpdated Readme.MD",
+      "deleteSourceBranch": true,
+      "mergeStrategy": "noFastForward",
+      "transitionWorkItems": true,
+      "triggeredByAutoComplete": true,
+      "autoCompleteIgnoreConfigIds": []
+    },
+    "supportsIterations": true,
+    "completionQueueTime": "2021-07-06T20:59:11.3075073Z",
+    "closedBy": {
+      "displayName": "Chung Lok Lam",
+      "url": "https://spsprodweu1.vssps.visualstudio.com/Ab0ae02f6-64d2-439b-a771-4ec43a2465a2/_apis/Identities/36bca3d9-448e-654e-a009-af83d334c70e",
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/raboweb-test/_apis/GraphProfile/MemberAvatars/aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+        }
+      },
+      "id": "36bca3d9-448e-654e-a009-af83d334c70e",
+      "uniqueName": "Chung.Lok.Lam@rabobank.nl",
+      "imageUrl": "https://dev.azure.com/raboweb-test/_api/_common/identityImage?id=36bca3d9-448e-654e-a009-af83d334c70e",
+      "descriptor": "aad.MzZiY2EzZDktNDQ4ZS03NTRlLWEwMDktYWY4M2QzMzRjNzBl"
+    },
+    "artifactId": "vstfs:///Git/PullRequestId/53410703-e2e5-4238-9025-233bd7c811b3%2f97d7b870-a21b-461c-8085-208d84d1a1c1%2f156"
+  },
+  "resourceVersion": "1.0",
+  "resourceContainers": {
+    "collection": {
+      "id": "764e9f75-d69a-4705-9b33-b8e0d95c63d3",
+      "baseUrl": "https://dev.azure.com/raboweb-test/"
+    },
+    "account": {
+      "id": "b0ae02f6-64d2-439b-a771-4ec43a2465a2",
+      "baseUrl": "https://dev.azure.com/raboweb-test/"
+    },
+    "project": {
+      "id": "53410703-e2e5-4238-9025-233bd7c811b3",
+      "baseUrl": "https://dev.azure.com/raboweb-test/"
+    }
+  },
+  "createdDate": "2021-07-06T20:59:24.1489452Z"
+}

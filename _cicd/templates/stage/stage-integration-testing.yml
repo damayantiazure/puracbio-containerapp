@@ -1,0 +1,33 @@
+parameters:
+- name: AgentPoolName
+  type: string
+- name: ServiceConnectionName # Used to autenticate for the Integration Tests
+  type: string
+- name: SolutionPath
+  type: string
+  default: "**/*.sln"
+- name: EnvironmentVariables
+  type: object
+  default:
+    dummy: "dummy"
+
+stages:
+- stage: IntegrationTests
+  displayName: Running all IntegrationTests for Solutions
+  jobs:
+  - job: RunIntegrationtests
+    pool: 
+      name: ${{ parameters.AgentPoolName }}
+      demands: azurite
+    displayName: Run Integration tests for Solution Path ${{ parameters.SolutionPath }}
+    steps:
+    - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+    - template: ../task/start-azurite-task.yml
+      parameters:
+        startAzurite: true
+    - template: ../../resources/dotnet/test/task-dotnet-integrated-test-azcli.yml
+      parameters:
+        ServiceConnectionName: ${{ parameters.ServiceConnectionName }}
+        Projects: ${{ parameters.SolutionPath }}
+        Filter: FullyQualifiedName~Tests.Integration|FullyQualifiedName~IntegrationTests
+        env: ${{ parameters.EnvironmentVariables }}

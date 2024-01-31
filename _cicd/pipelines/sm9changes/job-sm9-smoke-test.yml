@@ -1,0 +1,103 @@
+parameters:
+- name: dependsOn
+  type: object
+  default: []
+- name: resourceGroup
+  type: string
+- name: functionAppName
+  type: string
+- name: FunctionAppKey
+  type: string
+- name: StageEnv
+  type: string
+  values:
+  - dev
+  - prd
+- name: organization
+  type: string
+- name: projectId
+  type: string
+- name: buildId
+  type: number
+- name: releaseId
+  type: number
+- name: ciAsset
+  type: string
+
+jobs:
+- job: SmokeTest
+  displayName: Invoke Azure Functions
+  dependsOn: ${{ parameters.dependsOn }}  
+  
+  # As this job runs AzureFunction@1 tasks that need to run as an Agentless Job, the pool is fixed to 'server'
+  pool: server
+
+  variables:
+    AppKey: ${{ parameters.FunctionAppKey }}
+    
+  # Remove existing tags and call the Azure Functions
+  steps:
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: diagnostics 
+      route: diagnostics
+      method: GET
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: create-change-classic
+      route: create-change/${{ parameters.organization }}/${{ parameters.projectId }}/release/${{ parameters.releaseId }}
+      key: $(AppKey)
+      method: POST
+      body: |
+        {
+        "PriorityTemplate":"TAS ADO Generic Change Template",
+        "ImplementationPlan":[null],
+        "Assets":["${{ parameters.ciAsset }}"],
+        "Title":null,
+        "Description":null
+        }
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: close-change-classic
+      route: close-change/${{ parameters.organization }}/${{ parameters.projectId }}/release/${{ parameters.releaseId }}
+      key: $(AppKey)
+      method: POST
+      body: |
+        {
+        "ChangeId":null,
+        "CompletionCode":"1",
+        "CompletionComments":["Great success"]
+        }
+      sleep: true
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: create-change-yaml
+      route: create-change/${{ parameters.organization }}/${{ parameters.projectId }}/build/${{ parameters.buildId }}
+      key: $(AppKey)
+      method: POST
+      body: |
+        {
+        "PriorityTemplate":"TAS ADO Generic Change Template",
+        "ImplementationPlan":[null],
+        "Assets":["${{ parameters.ciAsset }}"],
+        "Title":null,
+        "Description":null
+        }
+  - template: ../../templates/task/invoke-azure-function-task.yml
+    parameters:
+      functionAppName: ${{ parameters.functionAppName }}
+      functionName: close-change-yaml
+      route: close-change/${{ parameters.organization }}/${{ parameters.projectId }}/build/${{ parameters.buildId }}
+      key: $(AppKey)
+      method: POST
+      body: |
+        {
+        "ChangeId":null,
+        "CompletionCode":"1",
+        "CompletionComments":["Great success"]
+        }
+      sleep: true

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Rabobank.Compliancy.Core.Approvals</RootNamespace>
+    <AssemblyName>Rabobank.Compliancy.Core.Approvals</AssemblyName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infra\AzdoClient\AzdoClient.csproj" />
+    <ProjectReference Include="..\..\Rabobank.Compliancy.Application\Rabobank.Compliancy.Application.csproj" />
+  </ItemGroup>
+
+</Project>

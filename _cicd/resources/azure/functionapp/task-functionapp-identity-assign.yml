@@ -1,0 +1,33 @@
+# Summary:
+# This task assigns Managed Identities to a Function App resource
+# By default, this task will always assign the System Managed Identity, and can be expanded with any User-Assigned Managed Identities (Full Azure Resource Ids need to be provided)
+
+parameters:
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: FunctionAppName
+  type: string
+# Task-specific parameters
+- name: UserAssignedManagedIdentityResourceIds # These can be provided a a List, Space Separated value, or a combination of both
+  type: object
+  default: []
+
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Assign Managed Identities To Function App ${{ parameters.FunctionAppName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Assigning managed identity to function app";
+
+      az functionapp identity assign
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --identities [system] ${{ join(' ', parameters.UserAssignedManagedIdentityResourceIds) }}
+      ;

@@ -1,0 +1,39 @@
+parameters:
+  - name: JobName
+    default: TerraformApply
+  - name: dependsOn
+    type: object
+    default: []
+  - name: AgentPoolName
+    type: string
+  - name: EnvironmentNamePrefix
+    type: string
+  - name: AzureServiceConnectionName
+    type: string
+  - name: BackendResourceGroupName
+    type: string
+  - name: BackendStorageAccountName
+    type: string
+  - name: BackendContainerName
+    type: string
+  - name: artifactName
+    type: string
+  - name: Destroy
+    type: boolean
+    default: false
+
+jobs:
+- job: ${{ parameters.JobName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  pool: ${{ parameters.AgentPoolName }}
+  displayName: Terraform apply
+  steps:
+  - template: ../task/terraform-apply-task.yml
+    parameters:
+      EnvironmentNamePrefix: ${{ parameters.EnvironmentNamePrefix }}
+      AzureServiceConnectionName: ${{ parameters.AzureServiceConnectionName }}
+      BackendResourceGroupName: ${{ parameters.BackendResourceGroupName }}
+      BackendStorageAccountName: ${{ parameters.BackendStorageAccountName }}
+      BackendContainerName: ${{ parameters.BackendContainerName }}
+      artifactName: ${{ parameters.artifactName }}
+      Destroy: ${{ parameters.Destroy }}

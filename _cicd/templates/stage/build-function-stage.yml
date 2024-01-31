@@ -1,0 +1,69 @@
+parameters:
+- name: AgentPool
+  default: Rabo-Windows-Production
+- name: pipelineVariables
+  type: string
+- name: env
+  type: object
+  default:
+    dummy: "dummy"
+- name: startAzurite
+  type: boolean
+  default: false
+- name: copyComplianceScannerShared
+  type: boolean
+  default: false
+- name: setHubName
+  type: boolean
+  default: false
+- name: hostJsonPath
+  type: string
+  default: ""
+- name: hubNamePrefix
+  type: string
+  default: ""
+
+stages:
+- stage: Build
+  displayName: Build
+  variables:
+  - template: ${{ parameters.pipelineVariables }}
+  - template: ../../pipelines/sharedvars/global.yml
+  jobs:
+  - template: /templates/netcore/job/static-analysis-job.yml@innersourceTemplates
+    parameters: 
+      agentPool: ${{ parameters.AgentPool }}
+      # Fortify
+      fortifyApplicationName: ${{variables.fortifyApplicationName}}
+      fortifyServiceEndPoint: ${{variables.fortifyServiceEndPoint}}
+      skipFortifyBuildBreaker: ${{variables.skipFortifyBuildBreaker}}
+      publishFortifyScanResults: ${{variables.publishFortifyScanResults}}
+      beforeFortifyPublish:
+      - task: NuGetAuthenticate@0
+        displayName: 'NuGet authenticate'
+      # Nexus IQ
+      nexusIQApplicationId: ${{variables.nexusIQApplicationId}}
+      nexusIQServiceEndPoint: ${{variables.nexusIQServiceEndPoint}}
+      beforeNexusIQScan:
+      - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+      - template: ../task/dotnet-build-projects-task.yml
+      # SonarQube
+      sonarQubeEndpoint: ${{variables.sonarQubeEndpoint}}
+      sonarQubeProjectKey: ${{variables.sonarQubeProjectKey}}
+      sonarQubeProjectName: ${{variables.sonarQubeProjectName}}
+      beforeSonarScan:
+      - template: ../task/start-azurite-task.yml
+        parameters:
+          startAzurite: ${{ parameters.startAzurite }}
+      - template: /templates/netcore/task/dotnet-restore-config-task.yml@innersourceTemplates
+      - template: ../../resources/dotnet/test/task-dotnet-test.yml
+  - template: ../job/publish-job.yml
+    parameters:
+      setHubName: ${{parameters.setHubName}}
+      hostJsonPath: ${{parameters.hostJsonPath}}
+      hubNamePrefix: ${{parameters.hubNamePrefix}}
+      agentPool: ${{variables.agentPool}}
+      buildProjectFile: ${{variables.buildProjectFile}}
+      publishProjectFiles: ${{variables.publishProjectFiles}}
+      projectFileName: ${{variables.projectFileName}}
+      copyComplianceScannerShared: ${{parameters.copyComplianceScannerShared}}    

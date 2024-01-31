@@ -1,0 +1,51 @@
+parameters:
+# Task-level parameters
+- name: StepName
+  default: CreateAppConfigurationStore
+# Common parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+# First-time parameters
+- name: Location
+  type: string
+  default: westeurope
+- name: AppConfigurationStoreName
+  type: string
+  
+steps:
+- task: AzureCLI@2
+  name: ${{ parameters.StepName }} # Required when providing output variables
+  displayName: 'Create or Update an App Configuration Store'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Create or Update App Configuration Store with name ${{ parameters.AppConfigurationStoreName }}";
+
+      $appConfig = az appconfig create
+      --name ${{ parameters.AppConfigurationStoreName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --location ${{ parameters.Location }}
+      --assign-identity
+      ;
+
+      Write-Host "Create or Update Successful. Details:";
+      $appConfig;
+
+      Write-Host "##vso[task.setvariable variable=AppConfig;isOutput=true]$appConfig";
+
+      $parsedAppConfig = ($appConfig | ConvertFrom-Json);
+
+      $endpoint = $parsedAppConfig.endpoint;
+      Write-Host "##vso[task.setvariable variable=Endpoint;isOutput=true]$endpoint";
+
+      $resourceId = $parsedAppConfig.id;
+      Write-Host "##vso[task.setvariable variable=ResourceId;isOutput=true]$resourceId";
+
+      $identityObjectId = $parsedAppConfig.identity.principalId;
+      Write-Host "##vso[task.setvariable variable=IdentityObjectId;isOutput=true]$identityObjectId";
+
+    # This script is idempotent and will simply return the existing appConfiguration if it already exists

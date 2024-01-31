@@ -1,0 +1,193 @@
+parameters:
+- name: npmAuthenticate
+  type: boolean
+  default: false
+- name: applicationName
+  type: string
+- name: cliSources
+  type: string
+- name: sonarTests
+  type: string
+- name: sonarTestInclusions
+  type: string
+- name: nexusIQscanTargets
+  type: string
+- name: copyFiles
+  type: boolean
+  default: false
+- name: rootFolderOrFile
+  type: string
+- name: archiveFile
+  type: string
+- name: npmTestable
+  type: boolean
+  default: true
+
+stages:
+- stage: Build
+  displayName: Build
+
+  variables:
+    agentPool: Rabo-Windows-Production
+    artifactName: "Package"
+    packageVersion: "0.1.$(build.buildid)"
+
+  jobs:
+
+##########################
+# SONARQUBE
+##########################
+
+  - job: SonarQube
+    displayName: SonarQube
+    pool: ${{ variables.agentPool }}
+    steps:
+    # For documentation, see https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/package/npm-authenticate?view=azure-devops
+    - ${{ if eq(parameters.npmAuthenticate, true) }}:
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM
+        inputs:
+          workingFile: '.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Close
+        inputs:
+          workingFile: 'SM9Close/.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Create
+        inputs:
+          workingFile: 'SM9Create/.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Approve
+        inputs:
+          workingFile: 'SM9Approve/.npmrc'
+
+    - task: SonarQubePrepare@4
+      displayName: "Prepare analysis on SonarQube"
+      timeoutInMinutes: 15
+      inputs:
+        SonarQube: "SonarQube Production On Prem - with token"
+        scannerMode: "CLI"
+        configMode: "manual"
+        cliProjectKey: ${{ parameters.applicationName }}
+        cliProjectName: ${{ parameters.applicationName }}
+        cliSources: ${{ parameters.cliSources }}
+        extraProperties: |
+          sonar.verbose=true
+          sonar.language=ts
+          sonar.sourceEncoding=UTF-8
+          sonar.tests=${{ parameters.sonarTests }}
+          sonar.test.inclusions=${{ parameters.sonarTestInclusions }}
+
+    - ${{ if parameters.npmTestable }}:      
+      - script: |
+          npm install
+        displayName: "npm install"
+      # This specific version of node is needed, otherwise tests will break
+      - script: |
+          npm install -g node@15.14.0
+        displayName: "npm install nodejs 15.14.0"
+      - bash: |
+          CI=true npm test
+        displayName: "npm test"
+      - script: |
+          npm run lint
+        displayName: "npm running linting"
+
+    - template: /templates/common/task/sonarqube-analysis-task.yml@innersourceTemplates
+
+##########################
+# FORTIFY
+##########################
+
+  - template: /templates/common/job/fortify-job.yml@innersourceTemplates
+    parameters:
+      fortifyBuildId: "prod"
+      fortifyServiceEndPoint: "Fortify SSC TAS"
+      fortifyApplicationName: ${{ parameters.applicationName }}
+      fortifyApplicationVersion: "1.0"
+      fortifyProjects: "**/*.ts"
+      applicationType: "other"
+      agentPool: ${{ variables.agentPool }}
+
+##########################
+# CRED SCAN
+##########################
+
+  - template: /templates/common/job/credscan-job.yml@innersourceTemplates
+    parameters:
+      credScanSuppressionsFile: $(System.DefaultWorkingDirectory)/credscan-exclusion.json
+      agentPool: ${{ variables.agentPool }}
+
+##########################
+# NEXUS IQ
+##########################
+
+  - template: /templates/netcore/job/nexusiq-job.yml@innersourceTemplates
+    parameters:
+      nexusIQServiceEndPoint: "Nexus IQ - Production"
+      nexusIQApplicationId: ${{ parameters.applicationName }}
+      nexusIQscanTargets: ${{ parameters.nexusIQscanTargets }}
+      nexusIQStage: "Build"
+      agentPool: ${{ variables.agentPool }}
+      beforeScan: []
+
+##########################
+# PACKAGE ARTIFACT
+##########################
+
+  - job: PublishNPM
+    pool: ${{ variables.agentPool }}
+    displayName: "Publish NPM"
+    steps:    
+    # For documentation, see https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/package/npm-authenticate?view=azure-devops
+    - ${{ if eq(parameters.npmAuthenticate, true) }}:
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM
+        inputs:
+          workingFile: '.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Close
+        inputs:
+          workingFile: 'SM9Close/.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Create
+        inputs:
+          workingFile: 'SM9Create/.npmrc'
+      - task: npmAuthenticate@0
+        displayName: Authenticate before using NPM SM9Approve
+        inputs:
+          workingFile: 'SM9Approve/.npmrc'
+
+    - script: |
+        npm install
+      displayName: "npm install"    
+    - script: |
+        npm install -g node@15.14.0
+      displayName: "npm install nodejs 15.14.0"
+    - script: |
+        npm run build
+      displayName: "npm run build"
+    - script: |
+        npm version $(packageVersion) --no-git-tag-version
+      displayName: "Set package version"
+
+    - ${{ if eq(parameters.copyFiles, true) }}:
+      - task: CopyFiles@2
+        inputs:
+          contents: |
+            README-extension.md
+            vss-extension.json
+            vss-extension-prod.json
+          targetFolder: "$(Build.SourcesDirectory)/build"
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: ${{ parameters.rootFolderOrFile }}
+        includeRootFolder: false
+        archiveType: "zip"
+        archiveFile: ${{ parameters.archiveFile }}
+        replaceExistingArchive: true
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Artifact: package"
+      inputs:
+        PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+        ArtifactName: ${{ variables.artifactName }}

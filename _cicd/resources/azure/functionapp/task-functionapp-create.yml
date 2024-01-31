@@ -1,0 +1,82 @@
+# Summary:
+# This task creates or updates a Function App resource
+# This task should create the bare minimum Function App. Additional configuration should be set separately.
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: FunctionAppName
+  type: string
+# First Time Parameters
+- name: StorageAccountName
+  type: string
+- name: FunctionsVersion
+  type: string
+  default: 4
+- name: OsType
+  type: string
+  values: 
+    - Linux
+    - Windows
+  default: Windows
+# Updatable parameters
+- name: FunctionAppPlanName
+  type: string
+- name: Runtime
+  default: dotnet
+- name: HttpsOnly
+  type: boolean
+  default: true
+
+  
+steps:
+- task: AzureCLI@2
+  displayName: 'Create or Update Function App Instance'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Validating if Function App already exists";
+
+      $result = az functionapp list 
+      --resource-group ${{ parameters.ResourceGroupName }} 
+      --query "[?name=='${{ parameters.FunctionAppName }}'].[name]" 
+      -o tsv;
+
+      if ($result -ne "${{ parameters.FunctionAppName }}")
+      {
+      Write-Host "Creating new Function App";
+
+      az functionapp create
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --storage-account ${{ parameters.StorageAccountName }}
+      --plan ${{ parameters.FunctionAppPlanName }}
+      --os-type ${{ parameters.OsType }}
+      --runtime ${{ parameters.Runtime }}
+      --functions-version ${{ parameters.FunctionsVersion }}
+      --https-only=${{ parameters.HttpsOnly }}
+      ;
+      }
+      else
+      {
+      Write-Host "Updating existing Function App";
+
+      az functionapp update
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --functions-version ${{ parameters.FunctionsVersion }}
+      --set httpsOnly=${{ parameters.HttpsOnly }}
+      ;
+      }
+
+      Write-Host "# Assign managed identity to function app";
+
+      az functionapp identity assign
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      ;

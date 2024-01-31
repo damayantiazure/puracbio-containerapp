@@ -1,0 +1,40 @@
+# Summary:
+# This task configures a Function App resource
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: FunctionAppName
+  type: string
+# Updatable parameters
+- name: PrewarmedInstances
+  type: number
+  default: 0
+- name: FtpsState
+  default: Disabled
+  values:
+  - AllAllowed
+  - Disabled
+  - FtpsOnly
+      
+steps:
+- task: AzureCLI@2
+  displayName: 'Configure Function App'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Setting Configuration for Function App";
+
+      az functionapp config set
+      --name ${{ parameters.FunctionAppName }}
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --http20-enabled true 
+      --prewarmed-instance-count ${{ parameters.PrewarmedInstances }}
+      --ftps-state ${{ parameters.FtpsState }}
+      --min-tls-version '1.2'
+      ;

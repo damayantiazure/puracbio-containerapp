@@ -1,0 +1,42 @@
+{
+    "manifestVersion": 1,
+    "id": "PipelineBreaker",
+    "name": "Pipeline Breaker",
+    "description": "This decorator blocks release pipelines that do not comply with the Azure DevOps Security Blueprint.",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],    
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "icons": {
+        "default": "extension-icon.png"        
+    },
+    "content": {
+        "details": {
+            "path": "README.md"
+        }
+    },
+    "files": [
+        {
+            "path": "invoke-pipelinebreaker-function.yml",
+            "addressable": true,
+            "contentType": "text/plain"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "pipeline-breaker-task",
+            "type": "ms.azure-pipelines.pipeline-decorator",
+            "targets": [
+                "ms.azure-pipelines-agent-job.pre-job-tasks",
+                "ms.azure-release-pipelines-agent-job.pre-job-tasks"
+            ],
+            "properties": {
+                "template": "invoke-pipelinebreaker-function.yml"
+            }
+        }
+    ]
+}

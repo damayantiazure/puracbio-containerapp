@@ -1,0 +1,42 @@
+# Summary:
+# This task configures a Web App logging. Works for all Web App Types, including Function Apps
+
+parameters:
+# Common Parameters
+- name: ServiceConnectionName
+  type: string
+- name: ResourceGroupName
+  type: string
+- name: WebAppName
+  type: string
+# Updatable parameters
+- name: DetailedErrorMessages
+  type: boolean
+  default: true
+- name: FailedRequestTracing
+  type: boolean
+  default: true
+- name: WebServerLogging
+  default: filesystem
+  values:
+  - 'off'
+  - filesystem
+
+      
+steps:
+- task: AzureCLI@2
+  displayName: 'Configure Web App Logging'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnectionName }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: >-
+      Write-Host "# Configuring Web App Log";
+
+      az webapp log config
+      --resource-group ${{ parameters.ResourceGroupName }}
+      --name ${{ parameters.WebAppName }}
+      --detailed-error-messages ${{ parameters.DetailedErrorMessages }}
+      --failed-request-tracing ${{ parameters.FailedRequestTracing }}
+      --web-server-logging ${{ parameters.WebServerLogging }}
+      ;

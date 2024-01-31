@@ -1,0 +1,20 @@
+parameters:
+  - name: hostJsonPath
+    type: string
+  - name: hubNamePrefix
+    type: string
+    default: DurableFunctionsHub
+  - name: hubNameSuffix
+    type: string
+    default: $(Build.BuildId)
+
+steps:
+- task: PowerShell@2
+  displayName: "Set HubName"
+  inputs:
+    targetType: inline
+    script: |
+      $json = Get-Content ${{parameters.hostJsonPath}} | Out-String | ConvertFrom-Json
+      $json.extensions.durableTask.hubName = "${{parameters.hubNamePrefix}}${{parameters.hubNameSuffix}}"
+      $json | ConvertTo-Json | Out-File ${{parameters.hostJsonPath}}
+    pwsh: true
