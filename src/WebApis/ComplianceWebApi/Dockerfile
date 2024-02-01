@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/WebApis/ComplianceWebApi/ComplianceWebApi.csproj", "src/WebApis/ComplianceWebApi/"]
+COPY ["/WebApis/ComplianceWebApi/ComplianceWebApi.csproj", "src/WebApis/ComplianceWebApi/"]
 RUN dotnet restore "./src/WebApis/ComplianceWebApi/./ComplianceWebApi.csproj"
 COPY . .
 WORKDIR "/src/WebApis/ComplianceWebApi"
