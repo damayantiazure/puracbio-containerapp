@@ -18,6 +18,7 @@ variables:
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "src/WebApis/ComplianceWebApi/"
+ dockerfilePath: '$(Build.SourcesDirectory)src/WebApis/ComplianceWebApi/'
 
 
 
@@ -31,27 +32,22 @@ steps:
 #     scriptLocation: 'scriptPath'
 #     scriptPath: 'Infrastructure/Platform/create-core-infra.sh'
 
-# - task: AzureCLI@2
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Login to Azure Container Registry"
-#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
-      
-#       echo "Building Images with Tag '${imageName}:${tag}'"
-#       docker build -t $(registry)/$(imageName):$(tag) $(ComplianceWebApi_Path)
-      
-#       echo "Pushing to '$registry'"
-#       docker push $(registry)/$(imageName):$(tag)
-- task: Docker@2
+- task: AzureCLI@2
   inputs:
-    containerRegistry: 'acrconnection'
-    repository: 'compliancewebapi'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Login to Azure Container Registry"
+      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+      
+      echo "Building Images with Tag '${imageName}:${tag}'"
+      docker build -t $(registry)/$(imageName):$(tag) $(dockerfilePath)
+      
+      echo "Pushing to '$registry'"
+      docker push $(registry)/$(imageName):$(tag)
+
 
 
 
