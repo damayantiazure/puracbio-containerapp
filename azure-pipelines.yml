@@ -13,7 +13,7 @@ variables:
  location: "eastus"
  APP_NAME: "solar201"
  APP_ENV: "dev"  
- imageName: "ComplianceWebApi"
+ imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  imageRepository: "compliancewebapi"
