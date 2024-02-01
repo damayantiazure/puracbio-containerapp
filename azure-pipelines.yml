@@ -17,6 +17,8 @@ variables:
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  imageRepository: "ComplianceWebApi"
+ ComplianceWebApi_Path: "src/WebApis/ComplianceWebApi"
+
 
 
 steps:
@@ -40,10 +42,10 @@ steps:
       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
       echo "Building Images with Tag '${imageName}:${tag}'"
-      docker build -t ${registry}/${imageName}:${tag} 'src/WebApis/ComplianceWebApi'
+      docker build -t $(registry)/$(imageName):$(tag) $(ComplianceWebApi_Path)
       
       echo "Pushing to '$registry'"
-      docker push ${registry}/${imageName}:${tag}
+      docker push $(registry)/$(imageName):$(tag)
 
 
        
