@@ -4,9 +4,12 @@
 # tag="beta2"
 # registry="neptuneimages.azurecr.io"
 
-var imageName = readEnvironmentVariable('imageName')
-var tag = readEnvironmentVariable('tag')
-var tag = readEnvironmentVariable('registry')
+imageName=${imageName}
+tag=${tag}
+registry=$(registry)
+# var imageName = readEnvironmentVariable('imageName')
+# var tag = readEnvironmentVariable('tag')
+# var tag = readEnvironmentVariable('registry')
 
 
 echo "Login to Azure Container Registry"
