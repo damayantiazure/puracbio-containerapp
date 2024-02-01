@@ -1,8 +1,13 @@
 #!/bin/bash
 
-imageName="ComplianceWebApi"
-tag="beta2"
-registry="neptuneimages.azurecr.io"
+# imageName="ComplianceWebApi"
+# tag="beta2"
+# registry="neptuneimages.azurecr.io"
+
+var imageName = readEnvironmentVariable('imageName')
+var tag = readEnvironmentVariable('tag')
+var tag = readEnvironmentVariable('registry')
+
 
 echo "Login to Azure Container Registry"
 accessToken=$(az acr login --name $registry --expose-token --output tsv --query accessToken)
