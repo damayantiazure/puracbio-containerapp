@@ -16,7 +16,7 @@ variables:
  imageName: "ComplianceWebApi"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
- imageRepository: "ComplianceWebApi"
+ imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "src/WebApis/ComplianceWebApi"
 
 
