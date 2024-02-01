@@ -8,12 +8,50 @@ trigger: none
 
 pool:
   vmImage: ubuntu-latest
+variables:
+ resourceGroupName: "APIM-DEVOPS"
+ location: "eastus"
+ APP_NAME: "solar201"
+ APP_ENV: "dev"  
+ imageName: "ComplianceWebApi"
+ tag: "$(Build.BuildId)"
+ registry: "${appname}contregistry${appEnv}.azurecr.io"
+ imageRepository: "ComplianceWebApi"
+
 
 steps:
-
+# Create Core Infra stucture
+# - task: AzureCLI@2
+#   displayName: Create Core Infrastructure
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'scriptPath'
+#     scriptPath: 'Infrastructure/Platform/create-core-infra.sh'
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Platform/create-core-infra.sh'
+    scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
+  env:
+    imageName: $imageName
+    tag: $tag
+    registry: $registry
+
+# - task: Docker@2
+#   displayName: Build and push an image to container registry
+#   inputs:
+#     command: buildAndPush
+#     repository: $(imageRepository)
+#     dockerfile: $(dockerfilePath)
+#     containerRegistry: $(dockerRegistryServiceConnection)
+#     tags: |
+#         $(tag)  
+       
+
+
+
+# Deploy Infra for Container app 
+
+
