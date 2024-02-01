@@ -12,7 +12,7 @@ WORKDIR /src
 COPY ["src/WebApis/ComplianceWebApi/ComplianceWebApi.csproj", "src/WebApis/ComplianceWebApi/"]
 RUN dotnet restore "./src/WebApis/ComplianceWebApi/ComplianceWebApi.csproj"
 COPY . .
-WORKDIR "/src/src/WebApis/ComplianceWebApi"
+WORKDIR "/src/WebApis/ComplianceWebApi"
 RUN dotnet build "./ComplianceWebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
