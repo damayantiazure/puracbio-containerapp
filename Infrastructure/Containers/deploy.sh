@@ -1,6 +1,5 @@
 #!/bin/bash
-#var appname = 'containerapp-demo-api'
-#var appEnv = 'Containerapp-demo-env'
+
 
 export resourceGroupName="APIM-DEVOPS"
 export location="westeurope"
