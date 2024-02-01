@@ -46,6 +46,12 @@ steps:
       
       echo "Pushing to '$registry'"
       docker push $(registry)/$(imageName):$(tag)
+- task: Docker@2
+  inputs:
+    containerRegistry: 'acrconnection'
+    repository: 'compliancewebapi'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
 
 
 
