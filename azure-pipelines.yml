@@ -15,7 +15,7 @@ variables:
  APP_ENV: "dev"  
  imageName: "ComplianceWebApi"
  tag: "$(Build.BuildId)"
- registry: "${appname}contregistry${appEnv}.azurecr.io"
+ registry: "solar201contregistrydev.azurecr.io"
  imageRepository: "ComplianceWebApi"
 
 
