@@ -55,7 +55,7 @@ steps:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/ContainerImages/buildpushdockerimage.sh'
+    scriptPath: 'Infrastructure/ContainerImages/buildpushdockerimage.sh $(registry) $(imageName) $(tag) $(APP_NAME) $(APP_ENV)'
   env:
    registry: $(registry)
    imageName: $(imageName)
