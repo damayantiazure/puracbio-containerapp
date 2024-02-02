@@ -15,6 +15,7 @@ variables:
  APP_ENV: "dev"  
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
+ registryname: "$(APP_NAME)contregistry$(APP_ENV)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
@@ -56,13 +57,8 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'scriptPath'    
     scriptPath: 'Infrastructure/ContainerImages/buildpushdockerimage.sh'
-    arguments: '$(registry) $(imageName) $(tag) $(APP_NAME) $(APP_ENV)'
-  env:
-   registry: $(registry)
-   imageName: $(imageName)
-   tag: $(tag)
-   APP_NAME: $(APP_NAME)
-   APP_ENV: $(APP_ENV)
+    arguments: '$(registry) $(registryname) $(imageName) $(tag) $(APP_NAME) $(APP_ENV)'
+ 
 
             
 
