@@ -1,14 +1,15 @@
-registry="$registry"
-imageName="$imageName"
-tag="$tag"
-APP_NAME="$APP_NAME"
-APP_ENV="$APP_ENV"
+registry=$registry
+imageName=$imageName
+tag=$tag
+APP_NAME=$APP_NAME
+APP_ENV=$APP_ENV
 
 echo $registry
 echo $imageName
 echo $tag
-echo $APP_NAME
-echo $APP_ENV
+
+# URL="https://solar201contregistrydev.azurecr.io\r"
+# CLEAN_URL=$(echo $URL | tr -d '\r')
 
 echo "Login to Azure Container Registry"
 accessToken=$(az acr login --name $registry --expose-token --output tsv --query accessToken)
