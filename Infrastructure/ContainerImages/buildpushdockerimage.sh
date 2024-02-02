@@ -1,9 +1,9 @@
 
-registry=$(registry)
-imageName=$(imageName)
-tag=$(tag)
-APP_NAME=$(APP_NAME)
-APP_ENV=$(APP_ENV)
+registry="$(registry)"
+imageName="$(imageName)"
+tag="$(tag)"
+APP_NAME="$(APP_NAME)"
+APP_ENV="$(APP_ENV)"
 
 echo "Login to Azure Container Registry"
 accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
