@@ -38,7 +38,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      cd src/WebApis/ComplianceWebApi
+     
       echo "Login to Azure Container Registry"
       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
