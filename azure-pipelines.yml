@@ -104,7 +104,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az group create --name $(resourceGroupName) --location $(location)
-      az deployment group create --template-file 'Infrastructure/Containers/app.bicep' --parameters resourceGroupName=$(resourceGroupName) location=$(location)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters resourceGroupName=$(resourceGroupName) location=$(location)
       
 
 
