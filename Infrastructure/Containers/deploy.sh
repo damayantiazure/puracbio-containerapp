@@ -13,4 +13,4 @@ echo "Starting deploying the app provisioning..."
 
 
 echo "Deploying app Bicep file..."
-az deployment group create --resource-group 'APIM-DEVOPS' --template-file 'app.bicep'  
+az deployment group create --resource-group 'APIM-DEVOPS' --template-file 'Infrastructure/Containers/app.bicep'  
