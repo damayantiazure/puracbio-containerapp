@@ -56,6 +56,14 @@ steps:
     scriptLocation: 'scriptPath'
     scriptPath: 'Infrastructure/Containers/deploy.sh'
     arguments: '$resourceGroupName $location $APP_NAME $APP_ENV $tag $imageName'
+  env:
+   resourceGroupName: $resourceGroupName
+   location: $location
+   APP_NAME: $APP_NAME
+   tag: $tag
+   imageName: $imageName
+
+      
 
  
    
