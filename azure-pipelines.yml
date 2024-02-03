@@ -51,23 +51,23 @@ steps:
       
 #       echo "Pushing to '$registry'"
 #       docker push $(registry)/$(imageName):$(tag)
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Containers/deploy.sh '
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'scriptPath'
+#     scriptPath: 'Infrastructure/Containers/deploy.sh '
     
-  env:
-   resourceGroupName: $resourceGroupName
-   location: $location
-   APP_NAME: $APP_NAME
-   acaEnvName: $APP_ENV
-   tagName: $tag
-   imageName: $imageName
-   containerRegistryName: $registry
-   uamiName: $uamiName
-   appInsightName: $appInsightName
+#   env:
+#    resourceGroupName: $resourceGroupName
+#    location: $location
+#    APP_NAME: $APP_NAME
+#    acaEnvName: $APP_ENV
+#    tagName: $tag
+#    imageName: $imageName
+#    containerRegistryName: $registry
+#    uamiName: $uamiName
+#    appInsightName: $appInsightName
 
 - task: AzureCLI@2
   inputs:
