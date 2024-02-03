@@ -22,6 +22,34 @@ variables:
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
 
+#  parameters:
+# - name: resourceGroupName
+#   type: string
+#   default: $resourceGroupName
+# - name: location
+#   type: string
+#   default: $location
+# - name: APP_NAME
+#   type: string
+#   default: $APP_NAME
+# - name: APP_ENV
+#   type: string
+#   default: $APP_ENV
+# - name: tag
+#   type: string
+#   default: $tag
+# - name: uamiName
+#   type: string
+#   default: $uamiName  
+# - name: appInsightName
+#   type: string
+#   default: $appInsightName    
+# - name: registry
+#   type: string
+#   default: $registry    
+# - name: imageName
+#   type: string
+#   default: $imageName   
 
 
 steps:
@@ -76,9 +104,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az group create --name $(resourceGroupName) --location $(location)
-      az deployment group create \
-      --template-file 'Infrastructure/Containers/app.bicep' \       
-      --parameters '{"location": {$location}, "imageName": {$imageName}}'
+      az deployment group create --template-file 'Infrastructure/Containers/app.bicep' --parameters resourceGroupName=$(resourceGroupName) location=$(location)
       
 
 
