@@ -15,6 +15,8 @@ variables:
  APP_ENV: "dev"  
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
+ uamiName: "$(APP_NAME)uami$(APP_ENV)"
+ appInsightName: "$(APP_NAME)appinsight$(APP_ENV)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
@@ -54,14 +56,18 @@ steps:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Containers/deploy.sh'
-    arguments: '$resourceGroupName $location $APP_NAME $APP_ENV $tag $imageName'
+    scriptPath: 'Infrastructure/Containers/deploy.sh '
+    
   env:
    resourceGroupName: $resourceGroupName
    location: $location
    APP_NAME: $APP_NAME
-   tag: $tag
+   acaEnvName: $APP_ENV
+   tagName: $tag
    imageName: $imageName
+   containerRegistryName: $registry
+   uamiName: $uamiName
+   appInsightName: $appInsightName
 
       
 
