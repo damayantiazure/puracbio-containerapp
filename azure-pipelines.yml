@@ -69,6 +69,21 @@ steps:
    uamiName: $uamiName
    appInsightName: $appInsightName
 
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az group create --name $(resourceGroupName) --location $(location)
+      az deployment group create  \
+      --template-file 'Infrastructure/Containers/app.bicep' \      
+      --resource-group $(resourceGroupName) \
+      --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(registry) acaEnvName=$(APP_ENV) uamiName=$(uamiName) appInsightName=$(appInsightName)
+      
+
+
+
       
 
  
