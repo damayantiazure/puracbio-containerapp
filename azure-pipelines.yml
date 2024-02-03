@@ -77,8 +77,7 @@ steps:
     inlineScript: |
       az group create --name $(resourceGroupName) --location $(location)
       az deployment group create  \
-      --template-file 'Infrastructure/Containers/app.bicep' \      
-      --resource-group $(resourceGroupName) \
+      --template-file 'Infrastructure/Containers/app.bicep' \ 
       --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(registry) acaEnvName=$(APP_ENV) uamiName=$(uamiName) appInsightName=$(appInsightName)
       
 
