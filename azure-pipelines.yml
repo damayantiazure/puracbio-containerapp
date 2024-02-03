@@ -72,7 +72,7 @@ steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'masterconnection'
-    scriptType: 'bash'
+    scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
       az group create --name $(resourceGroupName) --location $(location)
