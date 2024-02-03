@@ -1,3 +1,4 @@
+echo $registry
 echo "Login to Azure Container Registry"
 accessToken=$(az acr login --name $registry --expose-token --output tsv --query accessToken)
 docker login $registry --username 00000000-0000-0000-0000-000000000000 --password $accessToken
