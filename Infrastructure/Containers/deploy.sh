@@ -1,11 +1,13 @@
 #!/bin/bash
 
 
-export resourceGroupName="APIM-DEVOPS"
-export location="westeurope"
-export APP_NAME="containerapp-demo-api"
-export APP_ENV="Containerapp-demo-env"
-export TAG_NAME="beta2"
+export resourceGroupName=$resourceGroupName
+export location=$location
+export APP_NAME=$APP_NAME
+export APP_ENV=$APP_ENV
+export TAG_NAME=$tag
+export TAG_NAME=$tag
+export imageName=$imageName
 
 echo "Starting deploying the app provisioning..."
 
