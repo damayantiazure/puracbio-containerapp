@@ -33,10 +33,7 @@ module frontendApp 'modules/http-app.bicep' = {
     isExternalIngress: true // external ingress for a vent app is still a private IP
     minReplicas: 1
     env: [
-      {
-        name: 'AZDO_ORG'
-        value: azureDevOpsOrg
-      }
+    
       {
         name: 'APPINSIGHT_CONN_STR'
         value: appInsights.properties.ConnectionString
