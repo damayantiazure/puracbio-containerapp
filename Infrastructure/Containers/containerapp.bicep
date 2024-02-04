@@ -82,7 +82,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: containerAppName
   location: location
   properties: {
-    managedEnvironmentId: acaEnvName.id
+    managedEnvironmentId: environment.id
     configuration: {
       ingress: {
         external: true
