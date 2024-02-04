@@ -85,6 +85,14 @@ steps:
       echo "Pushing to '$registry'"
       docker push $(registry)/$(pipelinvalidationimage):$(tag)      
 
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |      
+#       echo "Configure Container app"
+#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'masterconnection'
@@ -92,7 +100,10 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |      
       echo "Configure Container app"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/src/Infrastructure/Containers/containerapp.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) containerAppName=$(pipelinvalidationimage)
+      
+
+
       
 
 
