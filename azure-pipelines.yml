@@ -41,6 +41,8 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
+     echo "Create core infrastructure" 
+     az group create --name $(resourceGroupName) --location $(location)
      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
   env:
    appname: $(APP_NAME)
@@ -70,8 +72,7 @@ steps:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: |
-      #az group create --name $(resourceGroupName) --location $(location)
+    inlineScript: |      
       echo "Configure Container app"
       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
       
