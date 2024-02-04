@@ -14,7 +14,7 @@ variables:
  APP_NAME: "aegis"
  APP_ENV: "dev"  
  imageName: "compliancewebapi"
- pipelinvalidationimage: "PipelineValidationApi"
+ pipelinvalidationimage: "pipelinevalidationapi"
  tag: "$(Build.BuildId)"
  uamiName: "$(APP_NAME)-uami-$(APP_ENV)"
  acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
