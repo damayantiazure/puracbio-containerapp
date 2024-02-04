@@ -50,23 +50,23 @@ steps:
 #    appEnv: $(APP_ENV)
       
 
-- task: AzureCLI@2
-  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
-      echo "Login to Azure Container Registry"
-      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+# - task: AzureCLI@2
+#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+#       echo "Login to Azure Container Registry"
+#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-      echo "Building Images with Tag '${imageName}:${tag}'"
-      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+#       echo "Building Images with Tag '${imageName}:${tag}'"
+#       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
-      echo "Pushing to '$registry'"
-      docker push $(registry)/$(imageName):$(tag)
+#       echo "Pushing to '$registry'"
+#       docker push $(registry)/$(imageName):$(tag)
 - task: AzureCLI@2
   displayName: Build docker image for Compliancy.PipelineValidationApi and push to Azure container registry
   inputs:
@@ -74,6 +74,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
+      registry="pipelinvalidationacr.azurecr.io"
       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
       echo "Login to Azure Container Registry"
       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
@@ -98,7 +99,8 @@ steps:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: |      
+    inlineScript: | 
+      containerRegistryName="pipelinvalidationacr"     
       echo "Configure Container app"
       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/containerapp.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) containerAppName=$(pipelinvalidationimage)
       
