@@ -19,6 +19,7 @@ variables:
  acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
  appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
+ containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
  imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
@@ -76,7 +77,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az group create --name $(resourceGroupName) --location $(location)
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(registry) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
       
 
 
