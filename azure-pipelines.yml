@@ -42,7 +42,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-     
+      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
       echo "Login to Azure Container Registry"
       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
@@ -59,7 +59,8 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az group create --name $(resourceGroupName) --location $(location)
+      #az group create --name $(resourceGroupName) --location $(location)
+      echo "Configure Container app"
       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
       
 
