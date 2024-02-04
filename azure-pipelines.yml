@@ -100,7 +100,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |      
       echo "Configure Container app"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/src/Infrastructure/Containers/containerapp.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) containerAppName=$(pipelinvalidationimage)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/containerapp.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) containerAppName=$(pipelinvalidationimage)
       
 
 
