@@ -9,7 +9,7 @@ param logAnalyticsName = '${appname}-log-analytics-${appEnv}'
 param appInsightName = '${appname}-appinsights-${appEnv}'
 param acaEnvName = '${appname}-appenv-${appEnv}'
 
-param apimServiceName = '${appname}apim${appEnv}12'
+param apimServiceName = '${appname}apim${appEnv}13'
 param publisherEmail = 'dbhuyan@microsoft.com'
 param publisherName = 'compliancewebapi Inc.'
 param sku = 'Premium' // (Premium | Standard | Developer | Basic | Consumption)
