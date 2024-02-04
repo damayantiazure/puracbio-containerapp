@@ -1,6 +1,8 @@
 targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
+param appname string
+param appEnv string
 param uamiName string 
 param vnetName string
 param containerRegistryName string
