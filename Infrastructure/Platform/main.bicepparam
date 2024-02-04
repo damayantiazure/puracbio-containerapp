@@ -1,7 +1,7 @@
 using 'main.bicep'
 
-param appname = $appname
-param appEnv = $appEnv
+param appname = '${appname}'
+param appEnv = '${appEnv}'
 param uamiName = '${appname}-uami-${appEnv}'
 param containerRegistryName = '${appname}contregistry${appEnv}'
 param keyvaultName = '${appname}keyvault${appEnv}'
