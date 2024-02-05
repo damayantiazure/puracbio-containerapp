@@ -86,15 +86,15 @@ steps:
       echo "Pushing to '$registry'"
       docker push $(registry)/$(pipelinvalidationimage):$(tag)      
 
-- task: AzureCLI@2
-  displayName: Create container app using the image compliancewebapi
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |      
-      echo "Configure Container app for compliancewebapi"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+# - task: AzureCLI@2
+#   displayName: Create container app using the image compliancewebapi
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |      
+#       echo "Configure Container app for compliancewebapi"
+#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
 - task: AzureCLI@2
   displayName: Create container app using the image pipelinevalidationapi
   inputs:
