@@ -28,45 +28,45 @@ variables:
 
 steps:
 # Create Core Infra stucture
-- task: AzureCLI@2
-  displayName: Create Core Infrastructure
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Platform/create-core-infra.sh --parameters appname=$(APP_NAME) appEnv=$(APP_ENV)'
-- task: AzureCLI@2
-  displayName: Create Core Infrastructure
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-     echo "Create core infrastructure" 
-     az group create --name $(resourceGroupName) --location $(location)
-     az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
-  env:
-   appname: $(APP_NAME)
-   appEnv: $(APP_ENV)
+# - task: AzureCLI@2
+#   displayName: Create Core Infrastructure
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'scriptPath'
+#     scriptPath: 'Infrastructure/Platform/create-core-infra.sh --parameters appname=$(APP_NAME) appEnv=$(APP_ENV)'
+# - task: AzureCLI@2
+#   displayName: Create Core Infrastructure
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#      echo "Create core infrastructure" 
+#      az group create --name $(resourceGroupName) --location $(location)
+#      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
+#   env:
+#    appname: $(APP_NAME)
+#    appEnv: $(APP_ENV)
       
 
-- task: AzureCLI@2
-  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
-      echo "Login to Azure Container Registry"
-      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+# - task: AzureCLI@2
+#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+#       echo "Login to Azure Container Registry"
+#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-      echo "Building Images with Tag '${imageName}:${tag}'"
-      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+#       echo "Building Images with Tag '${imageName}:${tag}'"
+#       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
-      echo "Pushing to '$registry'"
-      docker push $(registry)/$(imageName):$(tag)
+#       echo "Pushing to '$registry'"
+#       docker push $(registry)/$(imageName):$(tag)
 - task: AzureCLI@2
   displayName: Build docker image for Compliancy.PipelineValidationApi and push to Azure container registry
   inputs:
