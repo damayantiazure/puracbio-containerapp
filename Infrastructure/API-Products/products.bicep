@@ -4,7 +4,6 @@ param envrionmentName string
 param containerAppName string
 param productName string
 param apiName string
-param backendHostKeyName string
 param azureDevOpsEndpoint string = 'https://dev.azure.com/moim/_apis/connectionData'
 param azureDevOpsEndpointKeyName string = 'azuredevopsendpoint'
 param backendHostKeyName string = 'containerappbackendhostname'
