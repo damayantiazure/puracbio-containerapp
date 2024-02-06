@@ -117,7 +117,7 @@ steps:
     inlineScript: |
       echo "Updating API products..."
       echo "Deploying products Bicep file..."
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters location=$(location) apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(containerRegistryName) apiName=$(apiName)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(containerRegistryName) apiName=$(apiName)
       
 
 
