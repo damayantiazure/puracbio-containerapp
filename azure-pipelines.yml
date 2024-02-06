@@ -24,7 +24,10 @@ variables:
  imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
-
+ 
+ apimServiceName: "APP_NAME}apim${APP_ENV}13"
+ productName: "${appname}-product"
+ apiName: "${appname}-api" 
 
 steps:
 # Create Core Infra stucture
@@ -117,7 +120,12 @@ steps:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'gghh'
+    inlineScript: |
+      echo "Updating API products..."
+      echo "Deploying products Bicep file..."
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters location=$(location) apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(containerRegistryName) apiName=$(apiName)
+      
+
 
 
 
