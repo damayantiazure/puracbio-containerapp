@@ -25,9 +25,9 @@ variables:
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  
- apimServiceName: "APP_NAME}apim${APP_ENV}13"
- productName: "${appname}-product"
- apiName: "${appname}-api" 
+ apimServiceName: "(APP_NAME)apim$(APP_ENV)13"
+ productName: "$(APP_NAME)-product"
+ apiName: "$(APP_NAME)-api" 
 
 steps:
 # Create Core Infra stucture
