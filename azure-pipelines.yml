@@ -112,7 +112,12 @@ steps:
       echo "Configure Container app for pipelinevalidationapi"
       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
 
-
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'gghh'
 
 
 
