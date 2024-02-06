@@ -25,7 +25,7 @@ variables:
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  
- apimServiceName: "(APP_NAME)apim$(APP_ENV)13"
+ apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
  productName: "$(APP_NAME)-product"
  apiName: "$(APP_NAME)-api" 
 
