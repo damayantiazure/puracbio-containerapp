@@ -73,9 +73,8 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      previousRevisionName="$(az containerapp revision list -n compliancewebapi -g CONTAPP-APIM-DEVOPS --query '[0].name')"
-      echo $(previousRevisionName)      
-      # az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $(previousRevisionName)
+      previousRevisionName="$(az containerapp revision list -n compliancewebapi -g CONTAPP-APIM-DEVOPS --query '[0].name' | tr -d '"')"
+      echo $previousRevisionName
 
 # - task: AzureCLI@2
 #   inputs:
