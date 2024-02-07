@@ -24,6 +24,7 @@ variables:
  imageRepository: "compliancewebapi" 
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
+ revisionSuffix: "rev$(tag)"
  
  apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
  productName: "$(APP_NAME)-product"
@@ -98,7 +99,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |      
       echo "Configure Container app for compliancewebapi"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName) revisionSuffix=$(revisionSuffix)
 # - task: AzureCLI@2
 #   displayName: Create container app using the image pipelinevalidationapi
 #   inputs:
