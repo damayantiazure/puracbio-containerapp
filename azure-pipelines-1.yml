@@ -117,13 +117,13 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      APP_DOMAIN="$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')"
-      echo "Invoking https://$imageName---$(labelgreen).$APP_DOMAIN/health"
-      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$imageName---$(labelgreen).$APP_DOMAIN/health/health")
+      APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
+      echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
       echo "status_code: $status_code"
       
       #Test the green lable FQDN
-      healthcheck=$(curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT)
+      healthcheck=$(curl -s https://$(imageName)---green.$APP_DOMAIN/api/env | jq | grep COMMIT)
       echo $healthcheck
       
       if [[ "$status_code" -ne 200 ]] ; then
