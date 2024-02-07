@@ -11,8 +11,8 @@ prevNameWithoutQuites=$(echo $previousRevisionName | tr -d "\"")        # using 
 echo 'Previous revision name: ' $prevNameWithoutQuites
 echo 'Next revision name: ' $nextRevisionName
 
-sed -i "s/PREV/$prevNameWithoutQuites/g" /Infrastructure/Containers/$fileName 
-sed -i "s/NEXT/$nextRevisionName/g" /Infrastructure/Containers/$fileName 
+sed -i "s/PREV/$prevNameWithoutQuites/g" Infrastructure/Containers/$fileName 
+sed -i "s/NEXT/$nextRevisionName/g" Infrastructure/Containers/$fileName 
 
 
-cat /Infrastructure/Containers/$FileName
+cat Infrastructure/Containers/$FileName
