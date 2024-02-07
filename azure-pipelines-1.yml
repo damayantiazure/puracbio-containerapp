@@ -73,7 +73,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      export previousRevisionName=$(az containerapp revision list -n compliancewebapi -g CONTAPP-APIM-DEVOPS --query '[0].name')
+      previousRevisionName="$(az containerapp revision list -n compliancewebapi -g CONTAPP-APIM-DEVOPS --query '[0].name')"
       echo $(previousRevisionName)      
       # az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $(previousRevisionName)
 
