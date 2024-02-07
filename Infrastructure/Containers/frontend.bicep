@@ -14,7 +14,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = { nam
 
 var revisionSUffix = substring(tagName, 0, 10)
 
-module frontendApp 'modules/httpApp.bicep' = {
+module frontendApp 'modules/http-containerapp.bicep' = {
   name: imageName
   params: {    
     location: location
