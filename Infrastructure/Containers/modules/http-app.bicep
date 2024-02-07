@@ -1,7 +1,7 @@
 param containerAppName string
 param location string = resourceGroup().location
 // param revisionSuffix string = uniqueString(resourceGroup().id)
-param revisionSuffix string = uniqueString(resourceGroup().id)
+param revisionSuffix string = 'rev${tagName}'
 param environmentName string 
 param containerImage string
 param containerPort int
@@ -31,7 +31,7 @@ param trafficDistribution array = [
   }
 ]
 
-var sanitizedRevisionSuffix = substring(revisionSuffix, 0, 10)
+//var sanitizedRevisionSuffix = substring(revisionSuffix, 0, 10)
 var useCustomRevisionSuffix = revisionMode == 'Multiple'
 
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
@@ -77,7 +77,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-11-01-preview' = {
       }
     }
     template: {
-      revisionSuffix: useCustomRevisionSuffix ? sanitizedRevisionSuffix : null
+      revisionSuffix: useCustomRevisionSuffix ? revisionSuffix : null
       containers: [
         {
           image: containerImage
