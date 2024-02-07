@@ -7,6 +7,7 @@ param containerRegistryName string
 param targetPort int = 80
 param uamiName string
 param containerAppLogAnalyticsName string = 'log-${containerAppName}'
+param revisionSuffix string = 'rev${tagName}'
 
 
 @description('Number of CPU cores the container can use. Can be with a maximum of two decimals.')
@@ -97,7 +98,8 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
       }
     }
     template: {
-      revisionSuffix: 'firstrevision'
+     // revisionSuffix: 'firstrevision'
+      revisionSuffix: revisionSuffix'
       containers: [
         {
           name: containerAppName
