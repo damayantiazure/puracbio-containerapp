@@ -21,7 +21,7 @@ variables:
  appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
- imageRepository: "compliancewebapi" 
+ imageRepository: "compliancewebapi"
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  
@@ -32,7 +32,20 @@ variables:
 steps:
 # Create Core Infra stucture
 
-     
+# - task: AzureCLI@2
+#   displayName: Create Core Infrastructure
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#      echo "Create core infrastructure" 
+#      az group create --name $(resourceGroupName) --location $(location)
+#      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
+#   env:
+#    appname: $(APP_NAME)
+#    appEnv: $(APP_ENV)
+      
 
 - task: AzureCLI@2
   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
@@ -50,18 +63,55 @@ steps:
       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
       echo "Pushing to '$registry'"
-      docker push $(registry)/$(imageName):$(tag)  
+      docker push $(registry)/$(imageName):$(tag)
 
+      # echo "Building Images with Tag '$(pipelinvalidationimage):${tag}'"
+      # docker build -t $(registry)/$(pipelinvalidationimage):$(tag) -f ./src/WebApis/Compliancy.PipelineValidationApi/Dockerfile .
+      
+      # echo "Pushing to '$registry'"
+      # docker push $(registry)/$(pipelinvalidationimage):$(tag)   
+
+# - task: AzureCLI@2
+#   displayName: Build docker image for Compliancy.PipelineValidationApi and push to Azure container registry
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       registry="pipelinvalidationacr.azurecr.io"
+#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+#       echo "Login to Azure Container Registry"
+#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+      
+#       echo "Building Images with Tag '${imageName}:${tag}'"
+#       docker build -t $(registry)/$(pipelinvalidationimage):$(tag) -f ./src/WebApis/Compliancy.PipelineValidationApi/Dockerfile .
+      
+#       echo "Pushing to '$registry'"
+#       docker push $(registry)/$(pipelinvalidationimage):$(tag)      
 
 - task: AzureCLI@2
-  displayName: Create container app using the image pipelinevalidationapi
+  displayName: Create container app using the image compliancewebapi
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |      
-      echo "Configure Container app for pipelinevalidationapi"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+      echo "Configure Container app for compliancewebapi"
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Updating API products..."
+#       echo "Deploying products Bicep file..."
+#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
+      
+
+
 
 
 
