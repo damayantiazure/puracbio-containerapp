@@ -1,4 +1,5 @@
 param containerAppName string
+param tagName string
 param location string = resourceGroup().location
 // param revisionSuffix string = uniqueString(resourceGroup().id)
 param revisionSuffix string = 'rev${tagName}'
