@@ -1,23 +1,25 @@
 targetScope = 'resourceGroup'
 
+param imageName string
 param tagName string
-param containerRegistryName string = 'xenielscontainerregistry'
+param containerRegistryName string 
 param location string = resourceGroup().location
-param acaEnvName string = 'xeniel-aca-environment'
+param acaEnvName string 
+param uamiName string
+param appInsightName string
 
-param uamiName string = 'xeniel-app-identity'
-var appNameFrontend = 'xeniel-frontend'
-resource acaEnvironment 'Microsoft.App/managedEnvironments@2022-03-01'  existing = {   name: acaEnvName }
+resource acaEnvironment 'Microsoft.App/managedEnvironments@2022-11-01-preview'  existing = {   name: acaEnvName }
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = { name: uamiName }
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = { name: appInsightName }
 
 var revisionSUffix = substring(tagName, 0, 10)
 
 module frontendApp 'modules/httpApp.bicep' = {
-  name: appNameFrontend
+  name: imageName
   params: {    
     location: location
-    containerAppName: appNameFrontend
-    environmentName: acaEnvironment.name    
+    containerAppName: imageName
+    environmentName: acaEnvironment.name   
     revisionMode: 'Multiple'    
     trafficDistribution: [         
       {           
@@ -33,7 +35,7 @@ module frontendApp 'modules/httpApp.bicep' = {
     revisionSuffix: revisionSUffix
     hasIdentity: true
     userAssignedIdentityName: uami.name
-    containerImage: '${containerRegistryName}.azurecr.io/frontend:${tagName}'
+    containerImage: '${containerRegistryName}.azurecr.io/${imageName}:${tagName}'
     containerRegistry: '${containerRegistryName}.azurecr.io'
     isPrivateRegistry: true
     containerRegistryUsername: ''
