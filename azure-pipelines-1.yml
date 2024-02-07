@@ -51,23 +51,32 @@ steps:
       docker push $(registry)/$(pipelinvalidationimage):$(tag)
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Starting script...$(tag) and file name $(fileName)"
-      az config set extension.use_dynamic_install=yes_without_prompt
-      az extension add -n containerapp      
-      nextRevisionName="$(pipelinvalidationimage)--$tag"
-      previousRevisionName=$(az containerapp revision list -n $(pipelinvalidationimage) -g $(resourceGroupName) --query '[0].name')
+      azureSubscription: 'masterconnection'
+      scriptType: 'bash'
+      scriptLocation: 'scriptPath'
+      scriptPath: 'Infrastructure/Containers/preparerevision.sh'
+      arguments: '--tag $(tag) --fileName $(fileName) --resourceGroupName $(resourceGroupName) --pipelinvalidationimage $(pipelinvalidationimage)'
       
-      prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")
-      echo 'Previous revision name: ' $prevNameWithoutQuites
-      echo 'Next revision name: ' $nextRevisionName   
+
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Starting script...$(tag) and file name $(fileName)"
+#       az config set extension.use_dynamic_install=yes_without_prompt
+#       az extension add -n containerapp      
+#       nextRevisionName="$(pipelinvalidationimage)--$tag"
+#       previousRevisionName=$(az containerapp revision list -n $(pipelinvalidationimage) -g $(resourceGroupName) --query '[0].name')
+      
+#       prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")
+#       echo 'Previous revision name: ' $prevNameWithoutQuites
+#       echo 'Next revision name: ' $nextRevisionName   
                   
-      sed -i "s/PREV/$(prevNameWithoutQuites)/g" Infrastructure/Containers/$(fileName) 
-      sed -i "s/NEXT/$(nextRevisionName)/g" Infrastructure/Containers/$(fileName) 
-      cat Infrastructure/Containers/$(fileName)
+#       sed -i "s/PREV/$(prevNameWithoutQuites)/g" Infrastructure/Containers/$(fileName) 
+#       sed -i "s/NEXT/$(nextRevisionName)/g" Infrastructure/Containers/$(fileName) 
+#       cat Infrastructure/Containers/$(fileName)
       
         
       
