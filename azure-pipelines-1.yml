@@ -85,7 +85,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      resourceGroupId=$(az group show --name myResourceGroup --query id -o tsv)
+      resourceGroupId=$(az group show --name $(resourceGroupName) --query id -o tsv)
       revisionSuffix=$(echo -n $resourceGroupId | openssl dgst -sha256)
       revisionSuffix=$(echo -n $resourceGroupId | openssl dgst -sha256 | cut -c1-10)
       #create a second revision for green commitId
