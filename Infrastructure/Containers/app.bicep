@@ -7,8 +7,6 @@ param location string = resourceGroup().location
 param acaEnvName string 
 param uamiName string
 param appInsightName string
-param revisionSuffix string 
-
 
 resource acaEnvironment 'Microsoft.App/managedEnvironments@2022-11-01-preview'  existing = {   name: acaEnvName }
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = { name: uamiName }
@@ -20,8 +18,7 @@ module frontendApp 'modules/http-app.bicep' = {
     location: location
     containerAppName: imageName
     environmentName: acaEnvironment.name    
-    revisionMode: 'Multiple'  
-    revisionSuffix: revisionSuffix  
+    revisionMode: 'Single'
     hasIdentity: true
     userAssignedIdentityName: uami.name
     containerImage: '${containerRegistryName}.azurecr.io/${imageName}:${tagName}'
