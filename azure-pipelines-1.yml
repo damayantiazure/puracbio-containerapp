@@ -53,22 +53,20 @@ steps:
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
-    scriptLocation: 'scriptPath'
+    scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Starting script...$(tag) and file name $(fileName)"
       az config set extension.use_dynamic_install=yes_without_prompt
-      az extension add -n containerapp
-
+      az extension add -n containerapp      
       nextRevisionName="$(pipelinvalidationimage)--$tag"
       previousRevisionName=$(az containerapp revision list -n $(pipelinvalidationimage) -g $(resourceGroupName) --query '[0].name')
-
-      prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")        
-      echo 'Previous revision name: ' $(prevNameWithoutQuites)
-      echo 'Next revision name: ' $(nextRevisionName)
-
+      
+      prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")   
+                  
       sed -i "s/PREV/$prevNameWithoutQuites/g" /Infrastructure/Containers/$(fileName) 
       sed -i "s/NEXT/$nextRevisionName/g" /Infrastructure/Containers/$(fileName) 
       cat /Infrastructure/Containers/$(fileName)
+      
         
       
 - task: AzureCLI@2
