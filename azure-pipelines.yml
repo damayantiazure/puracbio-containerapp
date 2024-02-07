@@ -98,7 +98,8 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |      
       echo "Configure Container app for compliancewebapi"
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName) 
+      # az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName) 
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/frontend.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName) 
 # - task: AzureCLI@2
 #   displayName: Create container app using the image pipelinevalidationapi
 #   inputs:
