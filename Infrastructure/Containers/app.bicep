@@ -7,7 +7,7 @@ param location string = resourceGroup().location
 param acaEnvName string 
 param uamiName string
 param appInsightName string
-param revisionSuffix string = 'rev${tagName}'
+param revisionSuffix string 
 
 
 resource acaEnvironment 'Microsoft.App/managedEnvironments@2022-11-01-preview'  existing = {   name: acaEnvName }
