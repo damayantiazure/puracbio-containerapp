@@ -56,6 +56,13 @@ steps:
       scriptLocation: 'scriptPath'
       scriptPath: 'Infrastructure/Containers/preparerevision.sh'
       arguments: '--tag $(tag) --fileName $(fileName) --resourceGroupName $(resourceGroupName) --pipelinvalidationimage $(pipelinvalidationimage)'
+  env:
+   tag: $(tag)
+   fileName: $(fileName)
+   resourceGroupName: $(resourceGroupName)
+   pipelinvalidationimage: $(pipelinvalidationimage)
+
+     
       
 
 # - task: AzureCLI@2
