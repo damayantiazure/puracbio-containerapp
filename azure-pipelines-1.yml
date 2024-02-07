@@ -37,23 +37,23 @@ steps:
 
       
 
-- task: AzureCLI@2
-  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
-      echo "Login to Azure Container Registry"
-      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+# - task: AzureCLI@2
+#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+#       echo "Login to Azure Container Registry"
+#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-      echo "Building Images with Tag '${imageName}:${tag}'"
-      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+#       echo "Building Images with Tag '${imageName}:${tag}'"
+#       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
-      echo "Pushing to '$registry'"
-      docker push $(registry)/$(imageName):$(tag)
+#       echo "Pushing to '$registry'"
+#       docker push $(registry)/$(imageName):$(tag)
 
      
 
@@ -78,30 +78,20 @@ steps:
 #       echo $previousRevisionName
 #       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName
 
-- task: AzureCLI@2
-  displayName: "Deploy changes for the APIs to container app with a new label"
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
+# - task: AzureCLI@2
+#   displayName: "Deploy changes for the APIs to container app with a new label"
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
       
-      #create a second revision for green commitId
-      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
+#       #create a second revision for green commitId
+#       az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
       
-      #give that revision a 'green' label
-      az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
-      # Health check for the update
-
-      APP_DOMAIN="$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')"
-      echo $APP_DOMAIN
-      echo "Health check: https://$imageName---green.$APP_DOMAIN/api/env"     
-      
-      status=$(curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT)
-      if [[ "$status_code" -ne 200 ]] ; then
-        echo "Site status changed to $status_code" 
-      else
-        exit 0
+#       #give that revision a 'green' label
+#       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
+     
 
 # - task: AzureCLI@2
 #   displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
@@ -121,21 +111,21 @@ steps:
       
 #       #Test the green lable FQDN
 #       curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT      
-# - task: AzureCLI@2
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Invoking https://$nextRevisionName.politesand-02cd6988.westeurope.azurecontainerapps.io/health"
-#       status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$nextRevisionName.politesand-02cd6988.westeurope.azurecontainerapps.io/health")
-#       echo "status_code: $status_code"
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Invoking https://compliancewebapi---green.thankfulmushroom-9d92c978.eastus.azurecontainerapps.io/health"
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://compliancewebapi---green.thankfulmushroom-9d92c978.eastus.azurecontainerapps.io/health")
+      echo "status_code: $status_code"
       
-#       if [[ "$status_code" -ne 200 ]] ; then
-#         echo "Site status changed to $status_code" 
-#       else
-#         exit 0
-#       fi
+      if [[ "$status_code" -ne 200 ]] ; then
+        echo "Site status changed to $status_code" 
+      else
+        exit 0
+      fi
 
 
 # - task: AzureCLI@2
