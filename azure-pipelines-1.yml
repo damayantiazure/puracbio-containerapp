@@ -28,7 +28,7 @@ variables:
  apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
  productName: "$(APP_NAME)-product"
  apiName: "$(APP_NAME)-api" 
- fileName: "Infrastructure/Containers/app.bicep"
+ fileName: "app.bicep"
 
 steps:      
 
@@ -61,7 +61,9 @@ steps:
       nextRevisionName="$(pipelinvalidationimage)--$tag"
       previousRevisionName=$(az containerapp revision list -n $(pipelinvalidationimage) -g $(resourceGroupName) --query '[0].name')
       
-      prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")   
+      prevNameWithoutQuites=$(echo $(previousRevisionName) | tr -d "\"")
+      echo 'Previous revision name: ' $prevNameWithoutQuites
+      echo 'Next revision name: ' $nextRevisionName   
                   
       sed -i "s/PREV/$prevNameWithoutQuites/g" /Infrastructure/Containers/$(fileName) 
       sed -i "s/NEXT/$nextRevisionName/g" /Infrastructure/Containers/$(fileName) 
