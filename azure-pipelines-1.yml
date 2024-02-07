@@ -117,9 +117,14 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      echo "Invoking https://compliancewebapi---green.thankfulmushroom-9d92c978.eastus.azurecontainerapps.io/health"
-      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://compliancewebapi---green.thankfulmushroom-9d92c978.eastus.azurecontainerapps.io/health")
+      APP_DOMAIN="$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')"
+      echo "Invoking https://$imageName---$(labelgreen).$APP_DOMAIN/health"
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$imageName---$(labelgreen).$APP_DOMAIN/health/health")
       echo "status_code: $status_code"
+      
+      #Test the green lable FQDN
+      healthcheck=$(curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT)
+      echo $healthcheck
       
       if [[ "$status_code" -ne 200 ]] ; then
         echo "Site status changed to $status_code" 
