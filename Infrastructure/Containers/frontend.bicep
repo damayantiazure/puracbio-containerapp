@@ -33,7 +33,7 @@ module frontendApp 'modules/http-containerapp.bicep' = {
       }
     ]
     //revisionSuffix: revisionSUffix
-    revisionSuffix: ${tagName}
+    revisionSuffix: '${tagName}'
     hasIdentity: true
     userAssignedIdentityName: uami.name
     containerImage: '${containerRegistryName}.azurecr.io/${imageName}:${tagName}'
