@@ -19,17 +19,6 @@ module frontendApp 'modules/http-app.bicep' = {
     containerAppName: imageName
     environmentName: acaEnvironment.name    
     revisionMode: 'Multiple'
-    trafficDistribution: [         
-      {           
-          revisionName: 'PREV'
-          weight: 80
-      }
-      {
-          revisionName: 'NEXT'
-          label: 'latest'
-          weight: 20
-      }
-    ]
     hasIdentity: true
     userAssignedIdentityName: uami.name
     containerImage: '${containerRegistryName}.azurecr.io/${imageName}:${tagName}'
