@@ -21,7 +21,7 @@ variables:
  appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
- imageRepository: "compliancewebapi"
+ imageRepository: "compliancewebapi" 
  ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  
@@ -109,15 +109,15 @@ steps:
 #       echo "Configure Container app for pipelinevalidationapi"
 #       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(pipelinvalidationimage) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Updating API products..."
-      echo "Deploying products Bicep file..."
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Updating API products..."
+#       echo "Deploying products Bicep file..."
+#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
       
 
 
