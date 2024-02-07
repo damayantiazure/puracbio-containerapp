@@ -1,5 +1,6 @@
 param containerAppName string
 param location string = resourceGroup().location
+// param revisionSuffix string = uniqueString(resourceGroup().id)
 param revisionSuffix string = uniqueString(resourceGroup().id)
 param environmentName string 
 param containerImage string
