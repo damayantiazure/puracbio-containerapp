@@ -90,7 +90,7 @@ steps:
       az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
       
       #give that revision a 'green' label
-      az containerapp revision label add --name $APP_NAME --resource-group $RESOURCE_GROUP --label $(labelgreen) --revision $imageName--$(tag)
+      az containerapp revision label add --name $APP_NAME --resource-group $(resourceGroupName) --label $(labelgreen) --revision $imageName--$(tag)
 
 
 # - task: AzureCLI@2
