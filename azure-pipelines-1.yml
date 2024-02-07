@@ -75,7 +75,7 @@ steps:
     inlineScript: |
       previousRevisionName="$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')"
       echo $previousRevisionName
-      az containerapp revision label add --name $(imageName) --resource-group $RESOURCE_GROUP --label $(labelblue) --revision $($previousRevisionNam)
+      az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $(previousRevisionNam)
 
 
 # - task: AzureCLI@2
