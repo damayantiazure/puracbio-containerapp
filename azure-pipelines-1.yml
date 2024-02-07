@@ -85,7 +85,7 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      revisionSuffix string="uniqueString(resourceGroup().id)"
+      revisionSuffix="uniqueString(resourceGroup().id)"
       #create a second revision for green commitId
       az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tagName) --revision-suffix $revisionSuffix --set-env-vars REVISION_COMMIT_ID=$revisionSuffix
       
