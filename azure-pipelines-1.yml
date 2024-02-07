@@ -78,19 +78,37 @@ steps:
 #       echo $previousRevisionName
 #       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName
 
+# - task: AzureCLI@2
+#   displayName: "Deploy changes for the APIs to container app with a new label"
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+      
+#       #create a second revision for green commitId
+#       az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
+      
+#       #give that revision a 'green' label
+#       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
 - task: AzureCLI@2
-  displayName: "Deploy changes for the APIs to container app with a new label"
+  displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
+      #get the containerapp environment default domain
+      export APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
       
-      #create a second revision for green commitId
-      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
+      #Test the production FQDN
+      curl -s https://$imageName.$APP_DOMAIN/api/env | jq | grep COMMIT
       
-      #give that revision a 'green' label
-      az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
+      #Test the blue lable FQDN
+      curl -s https://$imageName---blue.$APP_DOMAIN/api/env | jq | grep COMMIT
+      
+      #Test the green lable FQDN
+      curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT      
 
 
 # - task: AzureCLI@2
