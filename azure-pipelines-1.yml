@@ -37,23 +37,23 @@ steps:
 
       
 
-# - task: AzureCLI@2
-#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
-#       echo "Login to Azure Container Registry"
-#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+- task: AzureCLI@2
+  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+      echo "Login to Azure Container Registry"
+      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-#       echo "Building Images with Tag '${imageName}:${tag}'"
-#       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+      echo "Building Images with Tag '${imageName}:${tag}'"
+      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
-#       echo "Pushing to '$registry'"
-#       docker push $(registry)/$(imageName):$(tag)
+      echo "Pushing to '$registry'"
+      docker push $(registry)/$(imageName):$(tag)
 
      
 
@@ -87,10 +87,10 @@ steps:
     inlineScript: |
       
       #create a second revision for green commitId
-      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tagName) --revision-suffix $(tagName) --set-env-vars REVISION_COMMIT_ID=$(tagName)
+      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
       
       #give that revision a 'green' label
-      az containerapp revision label add --name $APP_NAME --resource-group $RESOURCE_GROUP --label $(labelgreen) --revision $imageName--$(tagName))
+      az containerapp revision label add --name $APP_NAME --resource-group $RESOURCE_GROUP --label $(labelgreen) --revision $imageName--$(tag)
 
 
 # - task: AzureCLI@2
