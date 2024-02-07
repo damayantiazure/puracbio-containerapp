@@ -44,18 +44,22 @@ steps:
       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-      echo "Building Images with Tag '${imageName}:${tag}'"
-      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+      echo "Building Images with Tag '$(pipelinvalidationimage):${tag}'"
+      docker build -t $(registry)/$(pipelinvalidationimage):$(tag) -f ./src/WebApis/Compliancy.PipelineValidationApi/Dockerfile .
       
       echo "Pushing to '$registry'"
-      docker push $(registry)/$(imageName):$(tag)
-    
+      docker push $(registry)/$(pipelinvalidationimage):$(tag
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Containers/preparerevision.sh $tag $fileName $pipelinvalidationimage $resourceGroupName'
+    scriptPath: 'Infrastructure/Containers/preparerevision.sh'
+  env:
+    tag: $tag
+    fileName: $fileName  
+    pipelinvalidationimage: $pipelinvalidationimage
+    resourceGroupName: $resourceGroupName
         
       
 - task: AzureCLI@2
