@@ -26,7 +26,6 @@ variables:
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  labelblue: "blue"
  labelgreen: "green"
- GREEN_COMMIT_ID: 
  
  apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
  productName: "$(APP_NAME)-product"
@@ -84,6 +83,7 @@ steps:
       previousRevisionName="$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')"      
       latestRevisionName="$(imageName)--$(tag)"
       echo $previousRevisionName
+      echo $latestRevisionName
             
       #Update Container app with updated API
       echo "Updating the Container APP $(imageName)"
@@ -94,7 +94,7 @@ steps:
       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $latestRevisionName
       
       #Test the newly deployed revision
-      echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN - https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+      echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN "
       APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
       
       echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
