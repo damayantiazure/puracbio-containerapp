@@ -1,0 +1,79 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+#- master
+
+pool:
+  vmImage: ubuntu-latest
+variables:
+ resourceGroupName: "CONTAPP-APIM-DEVOPS "
+ location: "eastus"
+ APP_NAME: "aegis"
+ APP_ENV: "dev"  
+ imageName: "compliancewebapi"
+ pipelinvalidationimage: "pipelinevalidationapi"
+ tag: "$(Build.BuildId)"
+ uamiName: "$(APP_NAME)-uami-$(APP_ENV)"
+ acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
+ appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
+ registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
+ containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
+ imageRepository: "compliancewebapi"
+ ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
+ dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
+ labelblue: "blue"
+ labelgreen: "green"
+ GREEN_COMMIT_ID: 
+ 
+ apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
+ productName: "$(APP_NAME)-product"
+ apiName: "$(APP_NAME)-api"
+
+
+steps:      
+
+- task: AzureCLI@2
+  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+      echo "Login to Azure Container Registry"
+      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+      
+      echo "Building Images with Tag '${imageName}:${tag}'"
+      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+      
+      echo "Pushing to '$registry'"
+      docker push $(registry)/$(imageName):$(tag)     
+
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Starting script...Creating revision"
+      az config set extension.use_dynamic_install=yes_without_prompt
+      az extension add -n containerapp
+      
+      nextRevisionName="$imageName--$tag"
+      previousRevisionName=$(az containerapp revision list -n $imageName -g $resourceGroupName --query '[0].name')
+      
+      prevNameWithoutQuites=$(echo $previousRevisionName | tr -d "\"")        # using sed echo $pname | sed "s/\"//g"
+      echo 'Previous revision name: ' $prevNameWithoutQuites
+      echo 'Next revision name: ' $nextRevisionName
+      
+      sed -i "s/PREV/$prevNameWithoutQuites/g" Infrastructure/Containers/app.bicep 
+      sed -i "s/NEXT/$nextRevisionName/g" Infrastructure/Containers/app.bicep
+      
+      
+      cat Infrastructure/Containers/app.bicep
+
