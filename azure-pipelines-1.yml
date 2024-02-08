@@ -114,6 +114,8 @@ steps:
 
         echo "Restoring traffic 100% to older revision - $previousRevisionName"
         az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $previousRevisionName=100
+
+        # latestfqdn=$(az containerapp revision show -n $(imageName) -g $(resourceGroupName) --revision $(imageName)--$(tag) --query fqdn -o tsv)
       else
         exit 0
       fi
