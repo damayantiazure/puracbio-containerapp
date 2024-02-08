@@ -117,6 +117,8 @@ steps:
 
         # latestfqdn=$(az containerapp revision show -n $(imageName) -g $(resourceGroupName) --revision $(imageName)--$(tag) --query fqdn -o tsv)
       else
+        echo "Restoring traffic 100% to the new revision - $(imageName)--$(tag)"
+        az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $(imageName)--$(tag)=100
         exit 0
       fi
 
