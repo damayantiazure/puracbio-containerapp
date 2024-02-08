@@ -122,62 +122,15 @@ steps:
         az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $latestRevisionName=100
         exit 0
       fi
-
-     
-
-# - task: AzureCLI@2
-#   displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-      
-#       APP_DOMAIN="$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')"
-      
-#       #Test the production FQDN
-#       curl -s https://$imageName.$APP_DOMAIN/api/env | jq | grep COMMIT
-      
-#       #Test the blue lable FQDN
-#       curl -s https://$imageName---blue.$APP_DOMAIN/api/env | jq | grep COMMIT
-      
-#       #Test the green lable FQDN
-#       curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT      
-# - task: AzureCLI@2
-#   displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN"
-#       APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
-      
-#       echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
-#       status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
-#       echo "status_code: $status_code"
-      
-#       #Test the green lable FQDN
-      
-      
-#       if [[ "$status_code" -ne 200 ]] ; then
-#         echo "Site status changed to - failure to establish a connection to the app" 
-#       else
-#         exit 0
-#       fi
-
-
-
-
-# - task: AzureCLI@2
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Updating API products..."
-#       echo "Deploying products Bicep file..."
-#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Updating API products..."
+      echo "Deploying products Bicep file..."
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
       
 
 
