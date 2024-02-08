@@ -33,29 +33,25 @@ variables:
  apiName: "$(APP_NAME)-api"
 
 
-steps:
+steps:      
 
+- task: AzureCLI@2
+  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+      echo "Login to Azure Container Registry"
+      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
       
-
-# - task: AzureCLI@2
-#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#       echo "Build docker image for ComplianceWebApi and push to Azure container registry"
-#       echo "Login to Azure Container Registry"
-#       accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
-#       docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+      echo "Building Images with Tag '${imageName}:${tag}'"
+      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
       
-#       echo "Building Images with Tag '${imageName}:${tag}'"
-#       docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
-      
-#       echo "Pushing to '$registry'"
-#       docker push $(registry)/$(imageName):$(tag)
-
-     
+      echo "Pushing to '$registry'"
+      docker push $(registry)/$(imageName):$(tag)     
 
 
 # - task: AzureCLI@2
@@ -78,19 +74,50 @@ steps:
 #       echo $previousRevisionName
 #       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName
 
-# - task: AzureCLI@2
-#   displayName: "Deploy changes for the APIs to container app with a new label"
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
+- task: AzureCLI@2
+  displayName: "Deploy changes for the APIs to container app with a new label"
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      previousRevisionName="$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')"      
+      echo $previousRevisionName
+            
+      #Update Container app with updated API
+      echo "Updating the Container APP $(imageName)"
+      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
       
-#       #create a second revision for green commitId
-#       az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
+      #give that revision a 'green' label
+      echo "Add a Label green $(imageName)"
+      az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
       
-#       #give that revision a 'green' label
-#       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $(imageName)--$(tag)
+      #Test the newly deployed revision
+      echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN - https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+      APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
+      
+      echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
+      echo "status_code: $status_code"
+      
+      #Test the green lable FQDN      
+      
+      if [[ "$status_code" -ne 200 ]] ; then
+        echo "Site status changed to - failure to establish a connection to the app" 
+
+        #Swapping lable Blue
+        echo "Swapping lable Blue to the $previousRevisionName revision"
+        az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision previousRevisionName -y       
+
+        echo "Deactivating the Green revision $(imageName)--$(tag) "
+        az containerapp revision deactivate -g $(resourceGroupName) --revision $(imageName)--$(tag)
+
+        echo "Restoring traffic 100% to older revision - $previousRevisionName"
+        az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $previousRevisionName=100
+      else
+        exit 0
+      fi
+
      
 
 # - task: AzureCLI@2
@@ -111,28 +138,29 @@ steps:
       
 #       #Test the green lable FQDN
 #       curl -s https://$imageName---green.$APP_DOMAIN/api/env | jq | grep COMMIT      
-- task: AzureCLI@2
-  displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN"
-      APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
+# - task: AzureCLI@2
+#   displayName: "Test the newly deployed revision can be tested by using the label-specific FQDN"
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN"
+#       APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
       
-      echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
-      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
-      echo "status_code: $status_code"
+#       echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+#       status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
+#       echo "status_code: $status_code"
       
-      #Test the green lable FQDN
+#       #Test the green lable FQDN
       
       
-      if [[ "$status_code" -ne 200 ]] ; then
-        echo "Site status changed to - failure to establish a connection to the app" 
-      else
-        exit 0
-      fi
+#       if [[ "$status_code" -ne 200 ]] ; then
+#         echo "Site status changed to - failure to establish a connection to the app" 
+#       else
+#         exit 0
+#       fi
+
 
 
 
