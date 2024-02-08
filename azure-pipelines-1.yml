@@ -107,7 +107,7 @@ steps:
 
         #Swapping lable Blue
         echo "Swapping lable Blue to the $previousRevisionName revision"
-        az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision previousRevisionName -y       
+        az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName -y       
 
         echo "Deactivating the Green revision $(imageName)--$(tag) "
         az containerapp revision deactivate -g $(resourceGroupName) --revision $(imageName)--$(tag)
