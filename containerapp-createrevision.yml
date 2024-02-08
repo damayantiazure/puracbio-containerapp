@@ -26,7 +26,7 @@ variables:
  dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
  labelblue: "blue"
  labelgreen: "green"
- GREEN_COMMIT_ID: 
+ filename: "app.bicep"
  
  apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
  productName: "$(APP_NAME)-product"
@@ -54,26 +54,41 @@ steps:
       docker push $(registry)/$(imageName):$(tag)     
 
 
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       echo "Starting script...Creating revision"
+#       az config set extension.use_dynamic_install=yes_without_prompt
+#       az extension add -n containerapp
+      
+#       nextRevisionName="$(imageName)--$(tag)"
+#       previousRevisionName=$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name')
+      
+#       prevNameWithoutQuites=$(echo $previousRevisionName | tr -d "\"")        # using sed echo $pname | sed "s/\"//g"
+#       echo 'Previous revision name: ' $previousRevisionName
+#       echo 'Next revision name: ' $nextRevisionName
+      
+#       sed -i "s/PREV/$previousRevisionName/g" Infrastructure/Containers/app.bicep 
+#       sed -i "s/NEXT/$nextRevisionName/g" Infrastructure/Containers/app.bicep      
+      
+#       cat Infrastructure/Containers/app.bicep
+
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'masterconnection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Starting script...Creating revision"
-      az config set extension.use_dynamic_install=yes_without_prompt
-      az extension add -n containerapp
+    scriptPath: |
+     sh  /Infrastructure/prepare-revisions.sh $(tag) $(fileName) $(imageName) $(resourceGroupName)
+  env:
+   fileName: $(fileName)
+   tag: $(tag)
+
+  
       
-      nextRevisionName="$(imageName)--$(tag)"
-      previousRevisionName=$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name')
-      
-      prevNameWithoutQuites=$(echo $previousRevisionName | tr -d "\"")        # using sed echo $pname | sed "s/\"//g"
-      echo 'Previous revision name: ' $previousRevisionName
-      echo 'Next revision name: ' $nextRevisionName
-      
-      sed -i "s/PREV/$previousRevisionName/g" Infrastructure/Containers/app.bicep 
-      sed -i "s/NEXT/$nextRevisionName/g" Infrastructure/Containers/app.bicep      
-      
-      cat Infrastructure/Containers/app.bicep
+
     
 
