@@ -9,55 +9,58 @@ trigger: none
 pool:
   vmImage: ubuntu-latest
 variables:
- resourceGroupName: "CONTAPP-APIM "
+ resourceGroupName: "CONTAPP-APIM-DEV"
+ testresourceGroupName: "CONTAPP-APIM-TEST"
  location: "eastus"
  APP_NAME: "mydemo"
- APP_ENV: "dev"  
- imageName: "compliancewebapi"
- pipelinvalidationimage: "pipelinevalidationapi"
- tag: "$(Build.BuildId)"
- uamiName: "$(APP_NAME)-uami-$(APP_ENV)"
- acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
- appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
- registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
- containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
- imageRepository: "compliancewebapi"
- ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
- dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
- 
- apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
- productName: "$(APP_NAME)-product"
- apiName: "$(APP_NAME)-api" 
+ APP_ENV: "dev"
+ APP_ENV_TEST: "Test"
 
-steps:
-# Create Core Infra stucture
+stages:
+  - stage: Dev
+    jobs:
+      - deployment: Dev
+        displayName: Create_Infra_Dev
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/Platform/create-infra.sh'
+                  env:
+                    appname: $(APP_NAME)
+                    appEnv: $(APP_ENV)
+                    resourceGroupName: $(resourceGroupName)
+                    location: $(location)
+  - stage: Test
+    jobs:
+      - deployment: Test
+        displayName: Create_Infra_Test
+        environment: Test
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/Platform/create-infra.sh'
+                  env:
+                    appname: $(APP_NAME)
+                    appEnv: $(APP_ENV_TEST)
+                    resourceGroupName: $(testresourceGroupName)
+                    location: $(location)                    
 
-# - task: AzureCLI@2
-#   displayName: Create Core Infrastructure
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'inlineScript'
-#     inlineScript: |
-#      echo "Create core infrastructure" 
-#      az group create --name $(resourceGroupName) --location $(location)
-#      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
-#   env:
-#    appname: $(APP_NAME)
-#    appEnv: $(APP_ENV)
-#    resourceGroupName: $(resourceGroupName)
-#    location: $(location) 
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'scriptPath'
-    scriptPath: 'Infrastructure/Platform/modules/create-infra.sh'
-  env:
-   appname: $(APP_NAME)
-   appEnv: $(APP_ENV)
-   resourceGroupName: $(resourceGroupName)
-   location: $(location)  
+  
       
 
