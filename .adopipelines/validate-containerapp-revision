@@ -1,0 +1,158 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+#- master
+
+pool:
+  vmImage: ubuntu-latest
+variables:
+ resourceGroupName: "CONTAPP-APIM-DEVOPS "
+ location: "eastus"
+ APP_NAME: "aegis"
+ APP_ENV: "dev"  
+ imageName: "compliancewebapi"
+ pipelinvalidationimage: "pipelinevalidationapi"
+ tag: "$(Build.BuildId)"
+ uamiName: "$(APP_NAME)-uami-$(APP_ENV)"
+ acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
+ appInsightName: "$(APP_NAME)-appinsights-$(APP_ENV)"
+ registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
+ containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
+ imageRepository: "compliancewebapi"
+ ComplianceWebApi_Path: "/src/WebApis/ComplianceWebApi/"
+ dockerfilePath: "src/WebApis/ComplianceWebApi/Dockerfile"
+ labelblue: "blue"
+ labelgreen: "green"
+ 
+ apimServiceName: "$(APP_NAME)apim$(APP_ENV)13"
+ productName: "$(APP_NAME)-product"
+ apiName: "$(APP_NAME)-api"
+
+
+steps:      
+
+- task: AzureCLI@2
+  displayName: Build docker image for ComplianceWebApi and push to Azure container registry
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Build docker image for ComplianceWebApi and push to Azure container registry"
+      echo "Login to Azure Container Registry"
+      accessToken=$(az acr login --name $(registry) --expose-token --output tsv --query accessToken)
+      docker login $(registry) --username 00000000-0000-0000-0000-000000000000 --password $accessToken
+      
+      echo "Building Images with Tag '${imageName}:${tag}'"
+      docker build -t $(registry)/$(imageName):$(tag) -f ./src/WebApis/ComplianceWebApi/Dockerfile .
+      
+      echo "Pushing to '$registry'"
+      docker push $(registry)/$(imageName):$(tag)     
+
+
+# - task: AzureCLI@2
+#   displayName: Create container app using the image compliancewebapi
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |      
+#       echo "Configure Container app for compliancewebapi"
+#       az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Containers/app.bicep' --parameters location=$(location) imageName=$(imageName) tagName=$(tag) containerRegistryName=$(containerRegistryName) acaEnvName=$(acaEnvName) uamiName=$(uamiName) appInsightName=$(appInsightName)
+
+# - task: AzureCLI@2
+#   inputs:
+#     azureSubscription: 'masterconnection'
+#     scriptType: 'bash'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: |
+#       previousRevisionName="$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')"
+#       echo $previousRevisionName
+#       az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName
+
+- task: AzureCLI@2
+  displayName: "Deploy changes for the APIs to container app with a new label"
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      previousRevisionName="$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')"      
+      latestRevisionName="$(imageName)--$(tag)"
+      echo $previousRevisionName
+      echo $latestRevisionName
+            
+      #Update Container app with updated API
+      echo "Updating the Container APP $(imageName)"
+      az containerapp update --name $(imageName) --resource-group $(resourceGroupName) --image $(containerRegistryName).azurecr.io/$(imageName):$(tag) --revision-suffix $(tag) --set-env-vars REVISION_COMMIT_ID=$(tag)
+      
+      #give that revision a 'green' label
+      echo "Add a Label green $(imageName)"
+      az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelgreen) --revision $latestRevisionName
+      
+      #Test the newly deployed revision
+      echo "Test the newly deployed revision can be tested by using the Green label-specific FQDN "
+      APP_DOMAIN=$(az containerapp env show -g $(resourceGroupName) -n $(acaEnvName) --query properties.defaultDomain -o tsv | tr -d '\r\n')
+      
+      echo "Invoking https://$(imageName)---$(labelgreen).$APP_DOMAIN/health"
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$(imageName)---$(labelgreen).$APP_DOMAIN/health/health")
+      echo "status_code: $status_code"
+      
+      #Test the green lable FQDN      
+      
+      if [[ "$status_code" -ne 200 ]] ; then
+        echo "Site status changed to - failure to establish a connection to the app" 
+
+        #Swapping lable Blue
+        echo "Swapping lable Blue to the $previousRevisionName revision"
+        az containerapp revision label add --name $(imageName) --resource-group $(resourceGroupName) --label $(labelblue) --revision $previousRevisionName -y       
+
+        echo "Deactivating the Green revision $(imageName)--$(tag) "
+        az containerapp revision deactivate -g $(resourceGroupName) --revision $(imageName)--$(tag)
+
+        echo "Restoring traffic 100% to older revision - $previousRevisionName"
+        az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $previousRevisionName=100
+
+        # latestfqdn=$(az containerapp revision show -n $(imageName) -g $(resourceGroupName) --revision $(imageName)--$(tag) --query fqdn -o tsv)
+      else
+        echo "Restoring traffic 100% to the new revision - $latestRevisionName"
+        az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $latestRevisionName=100
+        exit 0
+      fi
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'masterconnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Updating API products..."
+      echo "Deploying products Bicep file..."
+      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
+      
+
+
+
+
+
+
+      
+
+ 
+   
+
+
+            
+
+
+
+
+       
+
+
+
+
+
+
