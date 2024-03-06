@@ -11,7 +11,7 @@ pool:
 variables:
  resourceGroupName: "CONTAPP-APIM-DEVOPS "
  location: "eastus"
- APP_NAME: "aegis"
+ APP_NAME: "mydemos"
  APP_ENV: "dev"  
  imageName: "compliancewebapi"
  pipelinvalidationimage: "pipelinevalidationapi"
@@ -29,23 +29,7 @@ variables:
  productName: "$(APP_NAME)-product"
  apiName: "$(APP_NAME)-api" 
 
-steps:
-# Create Core Infra stucture
-
-- task: AzureCLI@2
-  displayName: Create Core Infrastructure
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-     echo "Create core infrastructure" 
-     az group create --name $(resourceGroupName) --location $(location)
-     az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/Platform/main.bicep' --parameters 'Infrastructure/Platform/main.bicepparam' appname=$(APP_NAME) appEnv=$(APP_ENV)
-  env:
-   appname: $(APP_NAME)
-   appEnv: $(APP_ENV)
-      
+steps:     
 
 - task: AzureCLI@2
   displayName: Build docker image for ComplianceWebApi and push to Azure container registry
