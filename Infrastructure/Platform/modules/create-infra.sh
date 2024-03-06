@@ -6,7 +6,7 @@ export APP_NAME=$APP_NAME
 export APP_ENV=$APP_ENV
 
 echo "Starting Infrastructure provisioning..."
-
+echo $resourceGroupName
 
 echo "Creating resource group..."
 az group create --name $resourceGroupName --location $location
