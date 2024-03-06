@@ -13,6 +13,5 @@ export appInsightName=$appInsightName
 
 echo "Starting deploying the app provisioning..."
 
-
 echo "Deploying app Bicep file..."
-az deployment group create --resource-group 'APIM-DEVOPS' --template-file 'Infrastructure/Containers/app.bicep'
+az deployment group create --resource-group 'APIM-DEVOPS' --template-file 'Infrastructure/Containers/app.bicep' --parameters 'Infrastructure/Containers/app.bicepparam'
