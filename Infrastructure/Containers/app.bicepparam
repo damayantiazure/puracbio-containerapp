@@ -6,16 +6,9 @@ var appEnv = readEnvironmentVariable('APP_ENV')
 
 
 param uamiName = '${appname}-uami-${appEnv}'
-
-param imageName = 'neptune-webapi'
-param tagName = 'beta2'
+param imageName = ${imageName}
+param tagName = ${tag}
 param containerRegistryName = '${appname}contregistry${appEnv}'
 param acaEnvName = '${appname}-appenv-${appEnv}'
-
-
-//param appInsightName = '${appname}-appinsights-${appEnv}'
-param appInsightName = 'containerapp-demo-api-appinsights-Containerapp-demo-env'
-
-param azureDevOpsOrg = 'damayantibhuyan' 
-
+param appInsightName = '${appname}-appinsights-${appEnv}'
 
