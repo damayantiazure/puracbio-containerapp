@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export resourceGroupName=$resourceGroupName
-export location=$location
-export APP_NAME=$APP_NAME
-export APP_ENV=$APP_ENV
+# export resourceGroupName=$resourceGroupName
+# export location=$location
+# export APP_NAME=$APP_NAME
+# export APP_ENV=$APP_ENV
 
 echo "Starting Infrastructure provisioning..."
 echo $resourceGroupName
