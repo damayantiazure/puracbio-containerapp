@@ -22,8 +22,8 @@ variables:
 stages:
   - stage: Dev
     jobs:
-      - deployment: Build_api_pushimage_acr
-        displayName: Build_api_pushimage_acr
+      - deployment: build-container-image
+        displayName: build-container-image
         environment: dev
         strategy:
           runOnce:
@@ -43,8 +43,8 @@ stages:
                       registry: $(registry)
   - stage: Test
     jobs:
-      - deployment: Build_api_pushimage_acr_test
-        displayName: Build_api_pushimage_acr_test
+      - deployment: build-container-images_test
+        displayName: build-container-images_test
         environment: Test
         strategy:
           runOnce:
