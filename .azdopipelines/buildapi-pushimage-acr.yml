@@ -22,8 +22,8 @@ variables:
 stages:
   - stage: Dev
     jobs:
-      - deployment: build-container-image
-        displayName: build-container-image
+      - deployment: build_container_image
+        displayName: build_container_image
         environment: dev
         strategy:
           runOnce:
@@ -41,10 +41,30 @@ stages:
                       imageName: $(imageName)
                       tag: $(tag)
                       registry: $(registry)
+      - deployment: deploy_containerapp
+        displayName: deploy_containerapp
+        environment: dev
+        strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - checkout: self
+                  - task: AzureCLI@2
+                    displayName: Deploy containerapp
+                    inputs:
+                      azureSubscription: 'masterconnection'
+                      scriptType: 'bash'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: 'Infrastructure/Containers/deploy-containerapp.sh'
+                    env:
+                      APP_NAME: $(APP_NAME)
+                      APP_ENV: $(APP_ENV)
+                      imageName: $(imageName)
+                      tag: $(tag)               
   - stage: Test
     jobs:
-      - deployment: build-container-images_test
-        displayName: build-container-images_test
+      - deployment: build_container_images_test
+        displayName: build_container_images_test
         environment: Test
         strategy:
           runOnce:
