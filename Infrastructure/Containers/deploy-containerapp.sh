@@ -6,8 +6,8 @@
 # export APP_NAME=$APP_NAME
 # export APP_ENV=$APP_ENV
 # export containerRegistryName=$containerRegistryName
-export tagNameE=$tag
-export imageName=$imageName
+# export tagNameE=$tag
+# export imageName=$imageName
 # export uamiName=$uamiName
 # export appInsightName=$appInsightName
 
