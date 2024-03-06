@@ -12,7 +12,7 @@ variables:
  resourceGroupName: "CONTAPP-APIM-DEV"
  testresourceGroupName: "CONTAPP-APIM-TEST"
  location: "eastus"
- APP_NAME: "mydemo"
+ APP_NAME: "mydemos"
  APP_ENV: "dev"
  APP_ENV_TEST: "Test"
 
