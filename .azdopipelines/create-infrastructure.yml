@@ -9,10 +9,10 @@ trigger: none
 pool:
   vmImage: ubuntu-latest
 variables:
- resourceGroupName: "CONTAPP-APIM-DEV-1"
- testresourceGroupName: "CONTAPP-APIM-TEST-1"
+ resourceGroupName: "CONTAPP-APIM-DEV12"
+ testresourceGroupName: "CONTAPP-APIM-TEST12"
  location: "eastus"
- APP_NAME: "mypoc"
+ APP_NAME: "rabopoc"
  APP_ENV: "dev"
  APP_ENV_TEST: "test"
 
