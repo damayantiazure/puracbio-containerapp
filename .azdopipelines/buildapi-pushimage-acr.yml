@@ -61,7 +61,18 @@ stages:
                       APP_NAME: $(APP_NAME)
                       APP_ENV: $(APP_ENV)
                       imageName: $(imageName)
-                      tag: $(tag)               
+                      tag: $(tag)
+                  - task: AzureCLI@2
+                    displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
+                    inputs:
+                      azureSubscription: 'masterconnection'
+                      scriptType: 'bash'
+                      scriptLocation: 'scriptPath'
+                      scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
+                    env:
+                      imageName: $(imageName)
+                      tag: $(tag)
+                      registry: $(registrytest)                   
   - stage: Test
     jobs:
       - deployment: build_container_images_test
