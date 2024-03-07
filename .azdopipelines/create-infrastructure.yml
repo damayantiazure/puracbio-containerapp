@@ -9,10 +9,10 @@ trigger: none
 pool:
   vmImage: ubuntu-latest
 variables:
- resourceGroupName: "CONTAPP-APIM-DEV"
- testresourceGroupName: "CONTAPP-APIM-TEST"
+ resourceGroupName: "CONTAPP-APIM-DEV-1"
+ testresourceGroupName: "CONTAPP-APIM-TEST-1"
  location: "eastus"
- APP_NAME: "mydemos"
+ APP_NAME: "mypoc"
  APP_ENV: "dev"
  APP_ENV_TEST: "test"
 
@@ -38,27 +38,27 @@ stages:
                     appEnv: $(APP_ENV)
                     resourceGroupName: $(resourceGroupName)
                     location: $(location)
-  - stage: Test
-    jobs:
-      - deployment: Test
-        displayName: Create_Infra_Test
-        environment: Test
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - task: AzureCLI@2
-                  inputs:
-                    azureSubscription: 'masterconnection'
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: 'Infrastructure/Platform/create-infra.sh'
-                  env:
-                    appname: $(APP_NAME)
-                    appEnv: $(APP_ENV_TEST)
-                    resourceGroupName: $(testresourceGroupName)
-                    location: $(location)                    
+  # - stage: Test
+  #   jobs:
+  #     - deployment: Test
+  #       displayName: Create_Infra_Test
+  #       environment: Test
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - checkout: self
+  #               - task: AzureCLI@2
+  #                 inputs:
+  #                   azureSubscription: 'masterconnection'
+  #                   scriptType: 'bash'
+  #                   scriptLocation: 'scriptPath'
+  #                   scriptPath: 'Infrastructure/Platform/create-infra.sh'
+  #                 env:
+  #                   appname: $(APP_NAME)
+  #                   appEnv: $(APP_ENV_TEST)
+  #                   resourceGroupName: $(testresourceGroupName)
+  #                   location: $(location)                    
 
 
   
