@@ -70,7 +70,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-11-01-preview' = {
         traffic: trafficDistribution
       }
       dapr: {
-        enabled: false
+        enabled: true
         appPort: containerPort
         appId: containerAppName
       }
