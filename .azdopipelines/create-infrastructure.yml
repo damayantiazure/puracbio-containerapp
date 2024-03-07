@@ -32,7 +32,7 @@ stages:
                     azureSubscription: 'masterconnection'
                     scriptType: 'bash'
                     scriptLocation: 'scriptPath'
-                    scriptPath: 'Infrastructure/Platform/create-infra.sh'
+                    scriptPath: 'Infrastructure/scripts/create-infra.sh'
                   env:
                     appname: $(APP_NAME)
                     appEnv: $(APP_ENV)
@@ -53,7 +53,7 @@ stages:
   #                   azureSubscription: 'masterconnection'
   #                   scriptType: 'bash'
   #                   scriptLocation: 'scriptPath'
-  #                   scriptPath: 'Infrastructure/Platform/create-infra.sh'
+  #                   scriptPath: 'Infrastructure/scripts/create-infra.sh'
   #                 env:
   #                   appname: $(APP_NAME)
   #                   appEnv: $(APP_ENV_TEST)
