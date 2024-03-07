@@ -14,7 +14,7 @@ variables:
  location: "eastus"
  APP_NAME: "mydemos"
  APP_ENV: "dev"
- APP_ENV_TEST: "Test"
+ APP_ENV_TEST: "test"
 
 stages:
   - stage: Dev
