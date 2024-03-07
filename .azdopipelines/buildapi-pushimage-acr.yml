@@ -13,7 +13,7 @@ variables:
  location: "eastus"
  APP_NAME: "mydemos"
  APP_ENV: "dev" 
- APP_ENV_TEST: "Test"  
+ APP_ENV_TEST: "test"  
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
@@ -41,38 +41,20 @@ stages:
                       imageName: $(imageName)
                       tag: $(tag)
                       registry: $(registry)
-      - deployment: deploy_containerapp
-        dependsOn: build_container_image
-        displayName: deploy_containerapp
-        environment: dev
-        strategy:
-            runOnce:
-              deploy:
-                steps:
-                  - checkout: self
-                  - task: AzureCLI@2
-                    displayName: Deploy containerapp
-                    inputs:
-                      azureSubscription: 'masterconnection'
-                      scriptType: 'bash'
-                      scriptLocation: 'scriptPath'
-                      scriptPath: 'Infrastructure/Containers/deploy-containerapp.sh'
-                    env:
-                      APP_NAME: $(APP_NAME)
-                      APP_ENV: $(APP_ENV)
-                      imageName: $(imageName)
-                      tag: $(tag)
-                  - task: AzureCLI@2
-                    displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
-                    inputs:
-                      azureSubscription: 'masterconnection'
-                      scriptType: 'bash'
-                      scriptLocation: 'scriptPath'
-                      scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
-                    env:
-                      imageName: $(imageName)
-                      tag: $(tag)
-                      registry: $(registrytest)                   
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/Containers/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(imageName)
+                    tag: $(tag)      
+
+                        
   - stage: Test
     jobs:
       - deployment: build_container_images_test
