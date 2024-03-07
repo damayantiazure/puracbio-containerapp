@@ -9,9 +9,9 @@ trigger: none
 pool:
   vmImage: ubuntu-latest
 variables:
- resourceGroupName: "CONTAPP-APIM-DEV"
+ resourceGroupName: "CONTAPP-APIM-DEV-1"
  location: "eastus"
- APP_NAME: "mydemos"
+ APP_NAME: "mypoc"
  APP_ENV: "dev" 
  APP_ENV_TEST: "test"  
  imageName: "compliancewebapi"
@@ -56,37 +56,26 @@ stages:
                     resourceGroupName: $(resourceGroupName)      
 
                         
-  - stage: Test
-    jobs:
-      - deployment: build_container_images_test
-        displayName: build_container_images_test
-        environment: Test
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - task: AzureCLI@2
-                  displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
-                  inputs:
-                    azureSubscription: 'masterconnection'
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
-                  env:
-                      imageName: $(imageName)
-                      tag: $(tag)
-                      registry: $(registrytest) 
+  # - stage: Test
+  #   jobs:
+  #     - deployment: build_container_images_test
+  #       displayName: build_container_images_test
+  #       environment: Test
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - checkout: self
+  #               - task: AzureCLI@2
+  #                 displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
+  #                 inputs:
+  #                   azureSubscription: 'masterconnection'
+  #                   scriptType: 'bash'
+  #                   scriptLocation: 'scriptPath'
+  #                   scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
+  #                 env:
+  #                     imageName: $(imageName)
+  #                     tag: $(tag)
+  #                     registry: $(registrytest) 
 
-# - task: AzureCLI@2
-#   displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
-#   inputs:
-#     azureSubscription: 'masterconnection'
-#     scriptType: 'bash'
-#     scriptLocation: 'scriptPath'
-#     scriptPath: 'src/WebApis/ComplianceWebApi/builddocker.sh'
-#   env:
-#       imageName: $(imageName)
-#       tag: $(tag)
-#       registry: $(registry) 
 
