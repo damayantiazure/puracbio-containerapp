@@ -19,4 +19,4 @@ sleep 100
 
 #give that revision a 'green' label
 echo "Add a Label green $imageName"
-az containerapp revision label add --name $imageName --resource-group $resourceGroupName --label $labelgreen --revision $latestRevisionName
+az containerapp revision label add --name $imageName --resource-group $resourceGroupName --label $labelgreen --revision $(latestRevisionName)
