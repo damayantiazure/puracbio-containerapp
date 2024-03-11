@@ -18,6 +18,7 @@ variables:
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
+ latestRevisionName: "$(imageName)--$(tag)"
  registrytest: "$(APP_NAME)contregistry$(APP_ENV_TEST).azurecr.io"
 
 stages:
@@ -66,6 +67,7 @@ stages:
                     containerRegistryName: $(containerRegistryName)                  
                     imageName: $(imageName)
                     tag: $(tag)
+                    latestRevisionName: $(latestRevisionName)
                     resourceGroupName: $(resourceGroupName)       
 
                         
