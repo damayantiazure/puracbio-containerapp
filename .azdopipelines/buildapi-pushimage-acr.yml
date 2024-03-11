@@ -67,8 +67,7 @@ stages:
                   env:  
                     containerRegistryName: $(containerRegistryName)                  
                     imageName: $(imageName)
-                    tag: $(tag)
-                    latestRevisionName: $(latestRevisionName)
+                    tag: $(tag)                    
                     resourceGroupName: $(resourceGroupName)
                 - task: AzureCLI@2
                   displayName: Container app healthcheck witn new revision
