@@ -2,7 +2,6 @@
 
 echo "Waiting for the new revision to be created"
 sleep 60
-
 latestRevisionName=$(az containerapp revision list -n $imageName -g $resourceGroupName --query '[0].name' | tr -d '"')  
 
 echo "Health check for the newly deployed app"
