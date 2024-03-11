@@ -3,6 +3,7 @@
 latestRevisionName=$(az containerapp revision list -n $imageName -g $resourceGroupName --query '[0].name' | tr -d '"')  
 
 echo "Health check for the newly deployed app"
+echo $latestRevisionName
 
 APP_DOMAIN=$(az containerapp env show -g $resourceGroupName -n $acaEnvName --query properties.defaultDomain -o tsv | tr -d '\r\n')
       
