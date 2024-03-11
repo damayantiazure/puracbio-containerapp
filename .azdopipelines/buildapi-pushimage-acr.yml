@@ -17,6 +17,7 @@ variables:
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
+ containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
  registrytest: "$(APP_NAME)contregistry$(APP_ENV_TEST).azurecr.io"
 
 stages:
@@ -53,7 +54,19 @@ stages:
                     APP_ENV: $(APP_ENV)
                     imageName: $(imageName)
                     tag: $(tag)
-                    resourceGroupName: $(resourceGroupName)      
+                    resourceGroupName: $(resourceGroupName)   
+                - task: AzureCLI@2
+                  displayName: Add Label to Container App
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/add-label-containerapp.sh'
+                  env:  
+                    containerRegistryName: $(containerRegistryName)                  
+                    imageName: $(imageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)       
 
                         
   # - stage: Test
