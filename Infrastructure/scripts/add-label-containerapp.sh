@@ -14,8 +14,8 @@ echo "Updating the Container APP $imageName"
 az containerapp update --name $imageName --resource-group $resourceGroupName --image $containerRegistryName.azurecr.io/$imageName:$tag --revision-suffix $tag --set-env-vars REVISION_COMMIT_ID=$tag
 
 #Wait for the new revision to be created
-echo "Waiting for the new revision to be created"
-sleep 100
+# echo "Waiting for the new revision to be created"
+# sleep 100
 
 #give that revision a 'green' label
 # echo "Add a Label green $imageName"
