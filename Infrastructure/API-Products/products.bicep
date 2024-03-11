@@ -4,8 +4,6 @@ param envrionmentName string
 param containerAppName string
 param productName string
 param apiName string
-param azureDevOpsEndpoint string = 'https://dev.azure.com/moim/_apis/connectionData'
-param azureDevOpsEndpointKeyName string = 'azuredevopsendpoint'
 param backendHostKeyName string = 'containerappbackendhostname'
 
 resource environment 'Microsoft.App/managedEnvironments@2022-03-01' existing = {
@@ -20,15 +18,6 @@ resource apiManagementService 'Microsoft.ApiManagement/service@2023-03-01-previe
   name: apimServiceName  
 }
 
-resource nameValueEntryForAzureDevOps 'Microsoft.ApiManagement/service/namedValues@2023-03-01-preview' = {
-  name: azureDevOpsEndpointKeyName
-  parent: apiManagementService
-  properties: {
-    displayName: azureDevOpsEndpointKeyName
-    secret: false
-    value: azureDevOpsEndpoint
-  }
-}
 
 resource nameValueEntryForBackendHost 'Microsoft.ApiManagement/service/namedValues@2023-03-01-preview' = {
   name: backendHostKeyName
