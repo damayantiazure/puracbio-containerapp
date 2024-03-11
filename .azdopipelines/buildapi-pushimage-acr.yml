@@ -81,7 +81,8 @@ stages:
                     containerRegistryName: $(containerRegistryName)
                     acaEnvName: $(acaEnvName)                  
                     imageName: $(imageName)
-                    tag: $(tag)                    
+                    tag: $(tag)
+                    latestRevisionName: $(latestRevisionName)                    
                     resourceGroupName: $(resourceGroupName)           
 
                         
