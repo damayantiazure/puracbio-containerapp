@@ -13,6 +13,7 @@ variables:
  location: "eastus"
  APP_NAME: "mydemos"
  APP_ENV: "dev" 
+ acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
  APP_ENV_TEST: "test"  
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
@@ -68,7 +69,21 @@ stages:
                     imageName: $(imageName)
                     tag: $(tag)
                     latestRevisionName: $(latestRevisionName)
-                    resourceGroupName: $(resourceGroupName)       
+                    resourceGroupName: $(resourceGroupName)
+                - task: AzureCLI@2
+                  displayName: Container app healthcheck witn new revision
+                  continueOnError: true 
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/containerapp-healthcheck.sh'
+                  env:  
+                    containerRegistryName: $(containerRegistryName)
+                    acaEnvName: $(acaEnvName)                  
+                    imageName: $(imageName)
+                    tag: $(tag)                    
+                    resourceGroupName: $(resourceGroupName)           
 
                         
   # - stage: Test
