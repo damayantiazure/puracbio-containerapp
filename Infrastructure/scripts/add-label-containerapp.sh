@@ -4,7 +4,7 @@ echo "Add Label to Container app"
 labelgreen="Green"
 
 previousRevisionName=$(az containerapp revision list -n $imageName -g $resourceGroupName --query '[0].name' | tr -d '"')     
-# latestRevisionName="$imageName--$tag"
+latestRevisionName="$imageName--$tag"
 
 echo $previousRevisionName
 echo $latestRevisionName
