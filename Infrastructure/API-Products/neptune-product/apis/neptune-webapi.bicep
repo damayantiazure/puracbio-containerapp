@@ -33,13 +33,13 @@ resource neptuneWebApi 'Microsoft.ApiManagement/service/apis@2023-03-01-preview'
     serviceUrl: serviceUrl
   }
   
-  resource policy 'policies@2023-03-01-preview' = {    
-    name: 'policy'
-    properties: {
-      format: 'rawxml'
-      value: loadTextContent('../policies/azdo-authorization-policy.xml')
-    }
-  }
+  // resource policy 'policies@2023-03-01-preview' = {    
+  //   name: 'policy'
+  //   properties: {
+  //     format: 'rawxml'
+  //     value: loadTextContent('../policies/azdo-authorization-policy.xml')
+  //   }
+  // }
 }
 
 resource neptuneWebApiWithProduct 'Microsoft.ApiManagement/service/products/apis@2023-03-01-preview' = {
