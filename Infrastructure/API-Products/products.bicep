@@ -78,7 +78,7 @@ module complianceProducts 'neptune-product/compliance-product.bicep' = {
   params: {
     apimServiceName: apimServiceName
     productName: 'complianceproductName'
-    apiName: apiName
+    apiName: 'compliancewebapi'
     serviceUrl: 'https://${environment.properties.staticIp}/'
     versionSetId: neptuneApiVersionSet.outputs.apiVersionSetId
   }
