@@ -27,7 +27,7 @@ resource neptuneWebApi 'Microsoft.ApiManagement/service/apis@2023-03-01-preview'
     apiVersionDescription: apiVersionDescription
     apiVersionSetId: apiVersionSetId
     format: 'openapi+json'
-    value: loadTextContent('neptune-webapi-swagger.json')
+    value: loadTextContent('complianceapi-swagger.json')
     path: apiName
     subscriptionRequired: false
     serviceUrl: serviceUrl
