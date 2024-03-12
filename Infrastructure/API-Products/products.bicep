@@ -45,18 +45,6 @@ module neptuneApiVersionSet 'neptune-product/versionSets/neptune-version-set.bic
   ]
 }
 
-module complianceApiVersionSet 'neptune-product/versionSets/compliance-version-set.bicep' = {
-  name: 'compliance-version-set'
-  params: {
-    name: 'compliance-version-set'
-    apimServiceName: apimServiceName
-    description: 'Version set for Neptune API'
-    versionHeaderName: 'api-version'    
-  }
-  dependsOn: [
-    apiManagementService
-  ]
-}
 
 module neptuneProducts 'neptune-product/neptune-product.bicep' = {
   name: productName
@@ -73,20 +61,7 @@ module neptuneProducts 'neptune-product/neptune-product.bicep' = {
   ]
 }
 
-module complianceProducts 'neptune-product/compliance-product.bicep' = {
-  name: productName
-  params: {
-    apimServiceName: apimServiceName
-    productName: 'complianceproductName'
-    apiName: 'compliancewebapi'
-    serviceUrl: 'https://${environment.properties.staticIp}/'
-    versionSetId: neptuneApiVersionSet.outputs.apiVersionSetId
-  }
-  dependsOn: [
-    environment
-    neptuneContainerApp
-  ]
-}
+
 
 output staticIp string = environment.properties.staticIp
 output neptuneApiBackendFqdn string = neptuneContainerApp.properties.configuration.ingress.fqdn
