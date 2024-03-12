@@ -20,7 +20,28 @@ resource neptuneProduct 'Microsoft.ApiManagement/service/products@2023-03-01-pre
 
 
 
-module neptuneWebApi 'apis/neptune-webapi.bicep' = {
+// module neptuneWebApi 'apis/neptune-webapi.bicep' = {
+//   name: apiName
+//   dependsOn: [
+//     neptuneProduct
+//   ]
+//   params: {
+//     apimServiceName: apimServiceName
+//     productName: productName
+//     apiName: apiName
+//     serviceUrl: serviceUrl
+//     apiRevision: '1'
+//     apiRevisionDescription: 'A new revision of the API'
+//     isCurrent: true
+//     apiType: 'http'
+//     description: 'Neptune Web API'
+//     displayName: 'Neptune Web API'
+//     apiVersion: 'v1-preview-01'
+//     apiVersionDescription: 'A preview version of the API'
+//     apiVersionSetId: versionSetId
+//   }
+// }
+module neptuneWebApi 'apis/compliance-webapi.bicep' = {
   name: apiName
   dependsOn: [
     neptuneProduct
@@ -34,10 +55,11 @@ module neptuneWebApi 'apis/neptune-webapi.bicep' = {
     apiRevisionDescription: 'A new revision of the API'
     isCurrent: true
     apiType: 'http'
-    description: 'Neptune Web API'
-    displayName: 'Neptune Web API'
+    description: 'Compliance Web API'
+    displayName: 'Compliance Web API'
     apiVersion: 'v1-preview-01'
     apiVersionDescription: 'A preview version of the API'
     apiVersionSetId: versionSetId
   }
 }
+
