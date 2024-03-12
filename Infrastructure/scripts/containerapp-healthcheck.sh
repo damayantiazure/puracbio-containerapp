@@ -11,6 +11,7 @@ echo $APP_DOMAIN
       
 echo "Invoking https://$latestRevisionName.$APP_DOMAIN/health"
 status_code=$(curl --write-out %{http_code} --silent --output /dev/null "https://$latestRevisionName.$APP_DOMAIN/health")
+
 echo "status_code: $status_code"
 
 if [[ "$status_code" -ne 200 ]] ; then
