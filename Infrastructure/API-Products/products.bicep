@@ -60,5 +60,20 @@ module neptuneProducts 'neptune-product/neptune-product.bicep' = {
   ]
 }
 
+module complianceProducts 'neptune-product/compliance-product.bicep' = {
+  name: productName
+  params: {
+    apimServiceName: apimServiceName
+    productName: productName
+    apiName: apiName
+    serviceUrl: 'https://${environment.properties.staticIp}/'
+    versionSetId: neptuneApiVersionSet.outputs.apiVersionSetId
+  }
+  dependsOn: [
+    environment
+    neptuneContainerApp
+  ]
+}
+
 output staticIp string = environment.properties.staticIp
 output neptuneApiBackendFqdn string = neptuneContainerApp.properties.configuration.ingress.fqdn
