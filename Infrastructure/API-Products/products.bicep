@@ -45,7 +45,7 @@ module neptuneApiVersionSet 'neptune-product/versionSets/neptune-version-set.bic
   ]
 }
 
-module neptuneApiVersionSet 'neptune-product/versionSets/compliance-version-set.bicep' = {
+module complianceApiVersionSet 'neptune-product/versionSets/compliance-version-set.bicep' = {
   name: 'neptune-version-set'
   params: {
     name: 'neptune-version-set'
