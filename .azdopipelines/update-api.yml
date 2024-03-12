@@ -1,0 +1,41 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+# - master
+
+variables:
+ resourceGroupName: "CONTAPP-APIM-DEV"
+ location: "eastus"
+ APP_NAME: "mydemos"
+ APP_ENV: "dev" 
+ imageName: "compliancewebapi" 
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Dev
+    jobs:
+      - deployment: Update_Api
+        displayName: Update_Api
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/update-api.sh'
+                  env:
+                    appname: $(APP_NAME)
+                    appEnv: $(APP_ENV)
+                    resourceGroupName: $(resourceGroupName)
+                    location: $(location)
+                    imagename: $(imageName)
