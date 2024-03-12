@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-export resourceGroupName="APIM-DEVOPS"
-export location="westeurope"
-export APP_NAME="solar"
-export APP_ENV="dev"
+# export resourceGroupName="APIM-DEVOPS"
+# export location="westeurope"
+# export APP_NAME="solar"
+# export APP_ENV="dev"
 
 echo "Updating API products..."
 
