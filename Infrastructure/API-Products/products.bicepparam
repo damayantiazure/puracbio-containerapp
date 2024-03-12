@@ -6,6 +6,7 @@ var imageName = readEnvironmentVariable('imageName')
 
 param apimServiceName = '${appname}apim${appEnv}13'
 param envrionmentName = '${appname}-appenv-${appEnv}'
+param imageName = '${imageName}'
 param containerAppName = '${imageName}'
 param productName = '${appname}-product'
 param apiName = '${appname}-api'
