@@ -32,7 +32,7 @@ stages:
                     azureSubscription: 'masterconnection'
                     scriptType: 'bash'
                     scriptLocation: 'scriptPath'
-                    scriptPath: 'Infrastructure/API-Products/update-api.sh'
+                    scriptPath: 'Infrastructure/scripts/update-api.sh'
                   env:
                     appname: $(APP_NAME)
                     appEnv: $(APP_ENV)
