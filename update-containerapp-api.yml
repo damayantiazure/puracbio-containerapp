@@ -1,0 +1,90 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+#- master
+
+pool:
+  vmImage: ubuntu-latest
+variables:
+ resourceGroupName: "CONTAPP-APIM-DEV"
+ location: "eastus"
+ APP_NAME: "mydemos"
+ APP_ENV: "dev" 
+ acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
+ APP_ENV_TEST: "test"  
+ imageName: "compliancewebapi"
+ tag: "$(Build.BuildId)"
+ registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
+ containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)"
+ latestRevisionName: "$(imageName)--$(tag)"
+ registrytest: "$(APP_NAME)contregistry$(APP_ENV_TEST).azurecr.io"
+
+stages:
+  - stage: Dev
+    jobs:
+      - deployment: build_container_image
+        displayName: build_container_image
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/builddocker.sh'
+                  env:
+                      imageName: $(imageName)
+                      tag: $(tag)
+                      registry: $(registry)
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp to Dev
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(imageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)   
+                - task: AzureCLI@2
+                  displayName: Add Label to Container App
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/add-label-containerapp.sh'
+                  env:  
+                    containerRegistryName: $(containerRegistryName)                  
+                    imageName: $(imageName)
+                    tag: $(tag)                    
+                    resourceGroupName: $(resourceGroupName)
+                - task: AzureCLI@2
+                  displayName: Container app healthcheck witn new revision
+                  continueOnError: true 
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/containerapp-healthcheck.sh'
+                  env:  
+                    containerRegistryName: $(containerRegistryName)
+                    acaEnvName: $(acaEnvName)                  
+                    imageName: $(imageName)
+                    tag: $(tag)
+                    latestRevisionName: $(latestRevisionName)                    
+                    resourceGroupName: $(resourceGroupName)           
+
+ 
+
+
