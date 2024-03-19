@@ -13,8 +13,7 @@ variables:
  location: "eastus"
  APP_NAME: "mydemos"
  APP_ENV: "dev" 
- acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
- APP_ENV_TEST: "test"  
+ acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)" 
  imageName: "compliancewebapi"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
@@ -70,20 +69,16 @@ stages:
                     tag: $(tag)                    
                     resourceGroupName: $(resourceGroupName)
                 - task: AzureCLI@2
-                  displayName: Container app healthcheck witn new revision
-                  continueOnError: true 
                   inputs:
                     azureSubscription: 'masterconnection'
                     scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: 'Infrastructure/scripts/containerapp-healthcheck.sh'
-                  env:  
-                    containerRegistryName: $(containerRegistryName)
-                    acaEnvName: $(acaEnvName)                  
-                    imageName: $(imageName)
-                    tag: $(tag)
-                    latestRevisionName: $(latestRevisionName)                    
-                    resourceGroupName: $(resourceGroupName)           
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |                      
+                      latestRevisionName=$(az containerapp revision list --resource-group $resourceGroupName --name $imageName --query '[].name' -o tsv | sort -r | head -n 1)                      
+                      echo $latestRevisionName                      
+                      fqdn=$(az containerapp revision show --resource-group $resourceGroupName --name $imageName --revision <revision_name> --query 'fqdn' -o tsv)
+                      echo $fqdn  
+
 
  
 
