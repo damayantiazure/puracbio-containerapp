@@ -74,10 +74,10 @@ stages:
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: |                      
-                      latestRevisionName=$(az containerapp revision list --resource-group $resourceGroupName --name $imageName --query '[].name' -o tsv | sort -r | head -n 1)                      
-                      echo $latestRevisionName                      
-                      fqdn=$(az containerapp revision show --resource-group $resourceGroupName --name $imageName --revision <revision_name> --query 'fqdn' -o tsv)
-                      echo $fqdn  
+                      latestRevisionName=$(az containerapp revision list --resource-group $(resourceGroupName) --name $(imageName) --query '[].name' -o tsv | sort -r | head -n 1)                      
+                      echo $(latestRevisionName)                      
+                      fqdn=$(az containerapp revision show --resource-group $(resourceGroupName) --name $(imageName) --revision $(latestRevisionName) --query 'fqdn' -o tsv)
+                      echo $(fqdn)  
 
 
  
