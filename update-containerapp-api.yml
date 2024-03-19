@@ -32,49 +32,49 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                # - task: AzureCLI@2
-                #   displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
-                #   inputs:
-                #     azureSubscription: 'masterconnection'
-                #     scriptType: 'bash'
-                #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/builddocker.sh'
-                #   env:
-                #       imageName: $(imageName)
-                #       tag: $(tag)
-                #       registry: $(registry)
-                # - task: AzureCLI@2
-                #   displayName: Deploy containerapp to Dev
-                #   inputs:
-                #     azureSubscription: 'masterconnection'
-                #     scriptType: 'bash'
-                #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
-                #   env:
-                #     APP_NAME: $(APP_NAME)
-                #     APP_ENV: $(APP_ENV)
-                #     imageName: $(imageName)
-                #     tag: $(tag)
-                #     resourceGroupName: $(resourceGroupName)   
-                # - task: AzureCLI@2
-                #   displayName: Add Label to Container App
-                #   inputs:
-                #     azureSubscription: 'masterconnection'
-                #     scriptType: 'bash'
-                #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/add-label-containerapp.sh'
-                #   env:  
-                #     containerRegistryName: $(containerRegistryName)                  
-                #     imageName: $(imageName)
-                #     tag: $(tag)                    
-                #     resourceGroupName: $(resourceGroupName)
+                - task: AzureCLI@2
+                  displayName: Build docker image for ComplianceWebApi and push to Azure container registry 
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/builddocker.sh'
+                  env:
+                      imageName: $(imageName)
+                      tag: $(tag)
+                      registry: $(registry)
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp to Dev
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(imageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)   
+                - task: AzureCLI@2
+                  displayName: Add Label to Container App
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/add-label-containerapp.sh'
+                  env:  
+                    containerRegistryName: $(containerRegistryName)                  
+                    imageName: $(imageName)
+                    tag: $(tag)                    
+                    resourceGroupName: $(resourceGroupName)
                 - task: AzureCLI@2
                   inputs:
                     azureSubscription: 'masterconnection'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: |
-                      currentRevisionName=$(az containerapp revision list -n compliancewebapi -g CONTAPP-APIM-DEV --query '[0].name' | tr -d '"')
+                      currentRevisionName=$(az containerapp revision list -n $(imageName) -g $(resourceGroupName) --query '[0].name' | tr -d '"')
                       echo $(currentRevisionName)                       
                       latestRevisionName=$(az containerapp revision list --resource-group $(resourceGroupName) --name $(imageName) --query '[].name' -o tsv | sort -r | head -n 1)                      
                       echo $(latestRevisionName)
@@ -82,11 +82,12 @@ stages:
                       contAppNewRevisionfqdn=$(az containerapp revision show --resource-group $(resourceGroupName) --name $(imageName) --revision $(latestRevisionName) --query 'properties.fqdn' -o tsv)
                       echo $(contAppNewRevisionfqdn)
                       sh 'Infrastructure/scripts/update-api.sh'
-                  env:  
-                    containerRegistryName: $(containerRegistryName)                  
-                    imageName: $(imageName)
-                    tag: 790                   
+                  env:
+                    appname: $(APP_NAME)
+                    appEnv: $(APP_ENV)
                     resourceGroupName: $(resourceGroupName)
+                    location: $(location)
+                    imagename: $(imageName)
                     contAppNewRevisionfqdn: $(contAppNewRevisionfqdn)
                      
 
