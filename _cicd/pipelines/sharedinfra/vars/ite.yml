@@ -1,5 +1,0 @@
-variables:
-  environment: ite
-  azureSubscription: reg-dev-eu-devaut (SPN)
-  resourceGroupName: azdo-compliancy-${{ variables.environment }}-shared-resources
-  storageAccount: sharedcompl${{ variables.environment }}sa
