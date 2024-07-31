@@ -13,3 +13,4 @@ param acaEnvName = '${appname}-appenv-${appEnv}'
 param tagName = '${tag}'
 param imageName = '${image}'
 param appInsightName = '${appname}-appinsights-${appEnv}'
+param containerPort = 8080
