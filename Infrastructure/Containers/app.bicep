@@ -29,7 +29,7 @@ module frontendApp 'modules/http-app.bicep' = {
     containerRegistryUsername: ''
     registryPassword: ''    
     useManagedIdentityForImagePull: true
-    containerPort: 8080
+    containerPort: containerPort
     enableIngress: true
     isExternalIngress: true // external ingress for a vent app is still a private IP
     minReplicas: 1
