@@ -1,6 +1,0 @@
-@Compliancy.PipelineValidationApi_HostAddress = http://localhost:5124
-
-GET {{Compliancy.PipelineValidationApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

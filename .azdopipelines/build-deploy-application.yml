@@ -15,6 +15,8 @@ variables:
  APP_ENV: "dev" 
  acaEnvName: "$(APP_NAME)-appenv-$(APP_ENV)"
  imageName: "ablbumapi"
+ apiimageName: "ablbumapi"
+ uiimageName: "ablbumui"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)" 
@@ -38,7 +40,8 @@ stages:
                     scriptLocation: 'scriptPath'
                     scriptPath: 'Infrastructure/scripts/builddocker.sh'
                   env:
-                      imageName: $(imageName)
+                      apiimageName: $(apiimageName)
+                      uiimageName: $(uiimageName)
                       tag: $(tag)
                       registry: $(registry)
                 - task: AzureCLI@2
@@ -51,7 +54,7 @@ stages:
                   env:
                     APP_NAME: $(APP_NAME)
                     APP_ENV: $(APP_ENV)
-                    imageName: $(imageName)
+                    apiimageName: $(apiimageName)
                     tag: $(tag)
                     resourceGroupName: $(resourceGroupName)   
                 # - task: AzureCLI@2
