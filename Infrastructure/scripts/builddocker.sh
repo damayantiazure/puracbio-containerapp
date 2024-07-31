@@ -6,7 +6,8 @@ docker login $registry --username 00000000-0000-0000-0000-000000000000 --passwor
 
 echo "Building Images with Tag '${imageName}:${tag}'"
 #docker build -t ${registry}/${imageName}:${tag} -f ./containerapps-albumapi/src/dockerfile .
-docker build -t ${registry}/${imageName}:${tag} -f ./containerapps-albumapi/src dockerfile .
+cd containerapps-albumapi/src
+docker build -t ${registry}/${imageName}:${tag} -f dockerfile .
 
 echo "Pushing to '$registry'"
 docker push ${registry}/${imageName}:${tag}
