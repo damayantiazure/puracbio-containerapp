@@ -56,7 +56,7 @@ stages:
                     APP_ENV: $(APP_ENV)
                     imageName: $(apiimageName)
                     tag: $(tag)
-                   resourceGroupName: $(resourceGroupName)   
+                    resourceGroupName: $(resourceGroupName)   
                 # - task: AzureCLI@2
                 #   displayName: Add Label to Container App
                 #   inputs:
