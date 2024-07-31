@@ -41,19 +41,19 @@ stages:
                       imageName: $(imageName)
                       tag: $(tag)
                       registry: $(registry)
-                # - task: AzureCLI@2
-                #   displayName: Deploy containerapp to Dev
-                #   inputs:
-                #     azureSubscription: 'masterconnection'
-                #     scriptType: 'bash'
-                #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
-                #   env:
-                #     APP_NAME: $(APP_NAME)
-                #     APP_ENV: $(APP_ENV)
-                #     imageName: $(imageName)
-                #     tag: $(tag)
-                #     resourceGroupName: $(resourceGroupName)   
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp to Dev
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(imageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)   
                 # - task: AzureCLI@2
                 #   displayName: Add Label to Container App
                 #   inputs:
