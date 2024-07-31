@@ -42,7 +42,7 @@ module frontendApp 'modules/http-containerapp.bicep' = {
     containerRegistryUsername: ''
     registryPassword: ''    
     useManagedIdentityForImagePull: true
-    containerPort: 80
+    containerPort: 8080
     enableIngress: true
     isExternalIngress: true
     minReplicas: 1
