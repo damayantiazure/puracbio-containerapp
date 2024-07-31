@@ -7,6 +7,7 @@ param location string = resourceGroup().location
 param acaEnvName string 
 param uamiName string
 param appInsightName string
+param containerPort int
 
 
 resource acaEnvironment 'Microsoft.App/managedEnvironments@2022-11-01-preview'  existing = {   name: acaEnvName }
