@@ -2,7 +2,6 @@
 param envrionmentName string
 param location string = resourceGroup().location
 param appInsightKey string
-param infrastructureSubnetId string
 param laWorkspaceName string
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
@@ -16,12 +15,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-03-01' = {
     logAnalytics
   ]
   properties: {
-    daprAIInstrumentationKey: appInsightKey
-
-    vnetConfiguration: {
-      internal: true
-      infrastructureSubnetId: infrastructureSubnetId
-    }
+    daprAIInstrumentationKey: appInsightKey    
 
     appLogsConfiguration: {      
       destination: 'log-analytics'

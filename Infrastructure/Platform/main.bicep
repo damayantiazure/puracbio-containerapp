@@ -85,8 +85,7 @@ module appInsights 'modules/app-insights.bicep' = {
 module acaEnvironment 'modules/environment.bicep' = {
   name: acaEnvName
   params: {
-    appInsightKey: appInsights.outputs.InstrumentationKey
-    infrastructureSubnetId: virtualNetwork.outputs.defaultSubnetId
+    appInsightKey: appInsights.outputs.InstrumentationKey    
     location: location
     envrionmentName: acaEnvName
     laWorkspaceName: logAnalyticsName
