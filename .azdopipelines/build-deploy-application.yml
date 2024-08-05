@@ -17,6 +17,7 @@ variables:
  imageName: "ablbumapi"
  apiimageName: "ablbumapi1"
  uiimageName: "ablbumui1"
+ pythonmageName: "ablbumapipython"
  tag: "$(Build.BuildId)"
  registry: "$(APP_NAME)contregistry$(APP_ENV).azurecr.io"
  containerRegistryName: "$(APP_NAME)contregistry$(APP_ENV)" 
@@ -69,7 +70,20 @@ stages:
                     APP_ENV: $(APP_ENV)
                     imageName: $(uiimageName)
                     tag: $(tag)
-                    resourceGroupName: $(resourceGroupName)       
+                    resourceGroupName: $(resourceGroupName) 
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp for Albumuipython
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(pythonmageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)           
                 # - task: AzureCLI@2
                 #   displayName: Add Label to Container App
                 #   inputs:

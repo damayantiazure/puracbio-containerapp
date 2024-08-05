@@ -12,6 +12,10 @@ docker build -t ${registry}/${apiimageName}:${tag} -f dockerfile .
 cd containerapps-albumui/src
 docker build -t ${registry}/${uiimageName}:${tag} -f dockerfile .
 
+cd containerapps-albumapi-python/src
+docker build -t ${registry}/${pythonmageName}:${tag} -f dockerfile .
+
 echo "Pushing to '$registry'"
 docker push ${registry}/${apiimageName}:${tag}
 docker push ${registry}/${uiimageName}:${tag}
+docker push ${registry}/${pythonmageName}:${tag}
