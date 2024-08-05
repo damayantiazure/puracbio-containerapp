@@ -45,7 +45,7 @@ stages:
                       tag: $(tag)
                       registry: $(registry)
                 - task: AzureCLI@2
-                  displayName: Deploy containerapp to Dev
+                  displayName: Deploy containerapp for Albumapi
                   inputs:
                     azureSubscription: 'masterconnection'
                     scriptType: 'bash'
@@ -56,7 +56,20 @@ stages:
                     APP_ENV: $(APP_ENV)
                     imageName: $(apiimageName)
                     tag: $(tag)
-                    resourceGroupName: $(resourceGroupName)   
+                    resourceGroupName: $(resourceGroupName)
+                - task: AzureCLI@2
+                  displayName: Deploy containerapp for Albumui
+                  inputs:
+                    azureSubscription: 'masterconnection'
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                  env:
+                    APP_NAME: $(APP_NAME)
+                    APP_ENV: $(APP_ENV)
+                    imageName: $(uiimageName)
+                    tag: $(tag)
+                    resourceGroupName: $(resourceGroupName)       
                 # - task: AzureCLI@2
                 #   displayName: Add Label to Container App
                 #   inputs:
