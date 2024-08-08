@@ -15,11 +15,11 @@ echo "Building Images albumui"
 cd containerapps-albumui/src
 docker build -t ${registry}/${uiimageName}:${tag} -f dockerfile .
 
-echo "Building Images albumapi-python"
-cd containerapps-albumapi-python/src
-docker build -t ${registry}/${pythonmageName}:${tag} -f dockerfile .
+# echo "Building Images albumapi-python"
+# cd containerapps-albumapi-python/src
+# docker build -t ${registry}/${pythonmageName}:${tag} -f dockerfile .
 
 echo "Pushing to '$registry'"
 docker push ${registry}/${apiimageName}:${tag}
 docker push ${registry}/${uiimageName}:${tag}
-docker push ${registry}/${pythonmageName}:${tag}
+# docker push ${registry}/${pythonmageName}:${tag}
