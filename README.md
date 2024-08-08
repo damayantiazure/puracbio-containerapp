@@ -58,6 +58,8 @@ This repo having a POC for Infra-as-code and deplying the Infra and apps as Cont
   ![image](https://github.com/user-attachments/assets/86fa5a15-a672-4279-9b4b-4630fa387355)
 
   Note: The above Azure resources will be deployed using the Infra-as-code and using devops pipeline
+  
+  Learn Bicep : https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/learn-bicep
 
 #  Application/APIs
 - There are three folders for apis - the docker files are created under each apis
@@ -70,14 +72,36 @@ This repo having a POC for Infra-as-code and deplying the Infra and apps as Cont
 
   Note: The Apis will be built using docker build commands and published into Azure Container regitry and the container apps will be created using the images and everything has been automated using scripts and devops pipelines
 
-## Devops pipelines
+# Devops pipelines
 - There are two important devops pipelines already created in this repo
 - Go to .adopipelines folder - 1. create-infrastructure.yml  2. build-deploy-application.yml
+
+DevOps Pipelines: https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops
+
+# Service Connection
+This POC need a service connection to connect and authenticate to Azure for deploying Azure Services and differnt other tasks
+You can find the service connections for this POC by searching for azureSubscription: 'masterconnection'. You can find the service connection in the pipeline YML files
+
+Create Service connection: https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops
   
  # 1. create-infrastructure.yml 
 
  Creates the basic service for the Platform
- Create a new Pipeline
+ 
+ Create a new Pipeline using the existing pipeline: create-infrastructure.yml 
+ 
+ Update few things before running the pipeline:
+ 
+ 1. Service connection: Use your service connection or create a service connection with teh same name - "masterconnection" 
+
+ 2. Change the Resource Group Name
+    resourceGroupName: "puracbiodemo-rg"
+ 4. Change the App Name:
+    APP_NAME: "puracdemo"
+
+   Save the pipeline and run, After successfully completion, go to your Azure portal -> Subscription -> Resource Group - All your Azure Resources should be created
+   ![image](https://github.com/user-attachments/assets/1a34e03c-53a1-4b11-99d4-cc456d04ffd7)
+
  
  # 2. build-deploy-application.yml
 
