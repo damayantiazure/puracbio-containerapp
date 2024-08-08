@@ -71,46 +71,20 @@ stages:
                     imageName: $(uiimageName)
                     tag: $(tag)
                     resourceGroupName: $(resourceGroupName) 
-                - task: AzureCLI@2
-                  displayName: Deploy containerapp for Albumuipython
-                  inputs:
-                    azureSubscription: 'masterconnection'
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
-                  env:
-                    APP_NAME: $(APP_NAME)
-                    APP_ENV: $(APP_ENV)
-                    imageName: $(pythonmageName)
-                    tag: $(tag)
-                    resourceGroupName: $(resourceGroupName)           
                 # - task: AzureCLI@2
-                #   displayName: Add Label to Container App
+                #   displayName: Deploy containerapp for Albumuipython
                 #   inputs:
                 #     azureSubscription: 'masterconnection'
                 #     scriptType: 'bash'
                 #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/add-label-containerapp.sh'
-                #   env:  
-                #     containerRegistryName: $(containerRegistryName)                  
-                #     imageName: $(imageName)
-                #     tag: $(tag)                    
-                #     resourceGroupName: $(resourceGroupName)
-                # - task: AzureCLI@2
-                #   displayName: Container app healthcheck witn new revision
-                #   continueOnError: true 
-                #   inputs:
-                #     azureSubscription: 'masterconnection'
-                #     scriptType: 'bash'
-                #     scriptLocation: 'scriptPath'
-                #     scriptPath: 'Infrastructure/scripts/containerapp-healthcheck.sh'
-                #   env:  
-                #     containerRegistryName: $(containerRegistryName)
-                #     acaEnvName: $(acaEnvName)                  
-                #     imageName: $(imageName)
+                #     scriptPath: 'Infrastructure/scripts/deploy-containerapp.sh'
+                #   env:
+                #     APP_NAME: $(APP_NAME)
+                #     APP_ENV: $(APP_ENV)
+                #     imageName: $(pythonmageName)
                 #     tag: $(tag)
-                #     latestRevisionName: $(latestRevisionName)                    
                 #     resourceGroupName: $(resourceGroupName)           
+               
 
                         
   # - stage: Test
