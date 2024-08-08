@@ -99,6 +99,9 @@ Create Service connection: https://learn.microsoft.com/en-us/azure/devops/pipeli
  4. Change the App Name:
     APP_NAME: "puracdemo"
 
+    ![image](https://github.com/user-attachments/assets/6cd0ab2f-c5aa-4668-bdfd-1ee4e0766211)
+
+
    Save the pipeline and run, After successfully completion, go to your Azure portal -> Subscription -> Resource Group - All your Azure Resources should be created
    ![image](https://github.com/user-attachments/assets/1a34e03c-53a1-4b11-99d4-cc456d04ffd7)
 
