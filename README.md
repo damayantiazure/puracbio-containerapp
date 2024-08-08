@@ -57,13 +57,27 @@ This repo having a POC for Infra-as-code and deplying the Infra and apps as Cont
 
   ![image](https://github.com/user-attachments/assets/86fa5a15-a672-4279-9b4b-4630fa387355)
 
+  Note: The above Azure resources will be deployed using the Infra-as-code and using devops pipeline
+
 #  Application/APIs
 - There are three folders for apis - the docker files are created under each apis
   
   1. containerapps-albumapi
   2. containerapps-albumui
-  3. containerapps-albumapi-python   
+  3. containerapps-albumapi-python
+ 
+  ![image](https://github.com/user-attachments/assets/eb37d451-2d40-4133-ae9a-3f5cc1fe5da0)
 
+  Note: The Apis will be built using docker build commands and published into Azure Container regitry and the container apps will be created using the images and everything has been automated using scripts and devops pipelines
 
-## Deployment diagrams
-![Deployment diagram](_docs/deployment-diagram.png "Deployment diagram")
+## Devops pipelines
+- There are two important devops pipelines already created in this repo
+- Go to .adopipelines folder - 1. create-infrastructure.yml  2. build-deploy-application.yml
+  
+ # 1. create-infrastructure.yml 
+
+ Creates the basic service for the Platform
+ Create a new Pipeline
+ 
+ # 2. build-deploy-application.yml
+
