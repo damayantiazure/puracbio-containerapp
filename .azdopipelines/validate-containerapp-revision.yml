@@ -122,20 +122,6 @@ steps:
         az containerapp ingress traffic set -n $(imageName) -g $(resourceGroupName) --revision-weight $latestRevisionName=100
         exit 0
       fi
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'masterconnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Updating API products..."
-      echo "Deploying products Bicep file..."
-      az deployment group create --resource-group $(resourceGroupName) --template-file 'Infrastructure/API-Products/products.bicep' --parameters apimServiceName=$(apimServiceName) productName=$(productName) envrionmentName=$(acaEnvName) containerAppName=$(imageName) apiName=$(apiName)
-      
-
-
-
-
 
 
       
