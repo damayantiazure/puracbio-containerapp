@@ -127,10 +127,11 @@ Create Service connection: https://learn.microsoft.com/en-us/azure/devops/pipeli
 
  ![image](https://github.com/user-attachments/assets/8cfa6806-a4b6-40e4-8667-2ced2fb96fee)
 
- Click on one of the container app -> Click on the Application URL. EX: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io
+ Click on one of the container app -> Click on the Application URL. 
+ EX: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io
 
- Add /albums in the end of the URL and see how the api works. Ex: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io/albums
-
+ Add /albums in the end of the URL and see how the api works. 
+ Ex: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io/albums
 
  Note: You can add more apis, build and deploy the apis to container apps.
 
