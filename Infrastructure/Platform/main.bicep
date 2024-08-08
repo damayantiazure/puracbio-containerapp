@@ -9,12 +9,8 @@ param logAnalyticsName string
 param appInsightName string
 param acaEnvName string
 
-param apimServiceName string
 param publicIpAddressName string
-param publisherEmail string
-param publisherName string
-param sku string
-param skuCount int
+
 
 module virtualNetwork 'modules/virtual-network.bicep' = {
   name: vnetName
