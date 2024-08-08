@@ -10,8 +10,5 @@ param logAnalyticsName = '${appname}-log-analytics-${appEnv}'
 param appInsightName = '${appname}-appinsights-${appEnv}'
 param acaEnvName = '${appname}-appenv-${appEnv}'
 
-param publisherName = 'compliancewebapi Inc.'
-param sku = 'Premium' // (Premium | Standard | Developer | Basic | Consumption)
-param skuCount = 1
 param vnetName = '${appname}-vnet-${appEnv}'
 param publicIpAddressName = '${appname}-publicip-${appEnv}'
