@@ -46,10 +46,24 @@ This repo having a POC for Infra-as-code and deplying the Infra and apps as Cont
 	- For Infrastructure Deployment
 	- For building apps, Pushing docker images to Container app creating 	container apps using the images
 
-# Architecture
-- Diagrams are made with https://app.diagrams.net/
-- Azure icons: https://github.com/ourchitecture/azure-drawio-icons
-- Recommended to use the 'Draw.io integration' vscode extension
+## Repo Structure
+
+# Infrastructure (Bicep Templates)
+- The Infrastructure code(Bicep) files are there under Infrastructure folder
+  
+- Platform folder contains all Platform related Bicep templates
+- Container folder contains all Container app related
+- The Script folder is having the script files for different deployments
+
+  ![image](https://github.com/user-attachments/assets/86fa5a15-a672-4279-9b4b-4630fa387355)
+
+#  Application/APIs
+- There are three folders for apis - the docker files are created under each apis
+  
+  1. containerapps-albumapi
+  2. containerapps-albumui
+  3. containerapps-albumapi-python   
+
 
 ## Deployment diagrams
 ![Deployment diagram](_docs/deployment-diagram.png "Deployment diagram")
