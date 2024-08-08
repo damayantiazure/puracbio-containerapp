@@ -88,18 +88,4 @@ module acaEnvironment 'modules/environment.bicep' = {
   }
 }
 
-module apimService 'modules/apim.bicep' = {
-  name: apimServiceName
-  params: {
-    apimServiceName: apimServiceName
-    location: location
-    sku: sku
-    skuCount: skuCount
-    publisherEmail: publisherEmail
-    publisherName: publisherName
-    publicIpAddressName: publicIpAddressName
-    subnetName: virtualNetwork.outputs.apimSubnetName
-    virtualNetworkName: virtualNetwork.name
-  }
-}
 
