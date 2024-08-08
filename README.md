@@ -1,24 +1,50 @@
 # Introduction 
-Compliancy framework contains all the compliancy functions.
-The functions are separated in multiple function apps that are deployed seperately.
+This repo having a POC for Infra-as-code and deplying the Infra and apps as Container apps
 
-See Readme of each function app for more information about that specific function app.
+# Pre-requisites!
+1.Azure Subscription
 
-- [AuditLogging](/src/Functions/AuditLogging/README.md)
-- [ComplianceScanner - Online](/src/Functions/ComplianceScanner/Online/README.md)
-- [ComplianceScanner - Batch](/src/Functions/ComplianceScanner/Batch/README.md)
-- [Sm9Changes](/src/Functions/Sm9Changes/README.md)
-- [ValidateGates](/src/Functions/ValidateGates/README.md)
-- [MonitoringDashboard](/src/Functions/MonitoringDashboard/README.md)
-- [PipelineBreaker](/src/Functions/PipelineBreaker/Decorator/README.md)
+2.VS Code
 
-# Getting Started
-- https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference
-- https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local
+3.Docker Desktop
 
-# Build and Test
-- dotnet build
-- dotnet test
+4.Bicep – For Infra-as-code
+
+5.Git Version control system
+
+6.DevOps Organization, Project/ Github
+
+7.A Service Connection – A service Principal
+
+# Azure Services getting deployed in this POC
+1.Container App
+
+2.Container App Environment
+
+3.Application Insight
+
+4.Log Analytics Workspace
+
+5.Managed Identity
+
+6.Virtual Network
+
+7.Container Registry 
+
+8.Key Vault
+
+# DevOps Requirements
+1.DevOps Organization
+
+2.DevOps Project
+
+3.Git Repo
+
+4.Service Connection (Service principal)
+
+5.Two Separate devops pipelines
+	- For Infrastructure Deployment
+	- For building apps, Pushing docker images to Container app creating 	container apps using the images
 
 # Architecture
 - Diagrams are made with https://app.diagrams.net/
