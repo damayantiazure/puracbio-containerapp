@@ -86,14 +86,13 @@ Create Service connection: https://learn.microsoft.com/en-us/azure/devops/pipeli
   
  # 1. create-infrastructure.yml 
 
- Creates the basic service for the Platform
+ This pipeline Creates the basic service for the Platform
  
  Create a new Pipeline using the existing pipeline: create-infrastructure.yml 
  
  Update few things before running the pipeline:
  
  1. Service connection: Use your service connection or create a service connection with teh same name - "masterconnection" 
-
  2. Change the Resource Group Name
     resourceGroupName: "puracbiodemo-rg"
  4. Change the App Name:
@@ -107,4 +106,35 @@ Create Service connection: https://learn.microsoft.com/en-us/azure/devops/pipeli
 
  
  # 2. build-deploy-application.yml
+
+ This pipeline builds the docker images for the apis, pushes the images to the Azure container registry and Creates container apps
+
+ Create a new Pipeline using the existing pipeline: build-deploy-application.yml
+
+ Update few things before running the pipeline:
+
+ 1. Service connection: Use your service connection or create a service connection with teh same name - "masterconnection" 
+ 2. Change the Resource Group Name
+    resourceGroupName: "puracbiodemo-rg"
+ 3. Change the App Name:
+    APP_NAME: "puracdemo"
+
+    Note: Make sure you are using the same Resource Group Name and App Name as Previous pipeline, because this pipeline expects the Azure Resources already created by the previous pipeline
+
+    ![image](https://github.com/user-attachments/assets/86c95de0-3072-46d8-8b91-c6b4eeb41ca2)
+
+ Run the pipeline and go to the Resource Group. You will find the Container apps created with the image names, you have provided in the pipeline.
+
+ ![image](https://github.com/user-attachments/assets/8cfa6806-a4b6-40e4-8667-2ced2fb96fee)
+
+ Click on one of the container app -> Click on the Application URL. EX: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io
+
+ Add /albums in the end of the URL and see how the api works. Ex: https://ablbumapi1.kindwave-91ebfdd2.westeurope.azurecontainerapps.io/albums
+
+
+ Note: You can add more apis, build and deploy the apis to container apps.
+
+
+
+ 
 
